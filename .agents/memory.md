@@ -66,3 +66,17 @@
 - **Đồng bộ hóa Trait & Wrapper Methods**:
   * Khi controller sử dụng `CrudOperationsTrait` (ví dụ: `BrandController`), bắt buộc phải khai báo đầy đủ các phương thức public wrapper tương ứng (`edit`, `status`, `numericalOrder`, `destroy`, `destroyAll`) để định tuyến từ route file, tránh lỗi runtime `Method ... does not exist`.
 
+---
+
+## 🤖 KIẾN TRÚC MULTI-AGENT SYSTEM (Chốt T09/2026)
+- **Cấu trúc 4 Roles chuyên biệt trong `.agents/roles/`**:
+  * `orchestrator.md`: Lead phân rã task, điều phối, quản lý commit theo Rule 8.
+  * `frontend-specialist.md`: Chuyên trách Blade, Tailwind, Mobile 2-cols, Zero-CDN, gom CSS/JS.
+  * `backend-architect.md`: Chuyên trách Layered Architecture (`Controller → Service → Repository → Model`), Seeder, Cache.
+  * `qa-inspector.md`: Độc lập kiểm thử Zero-Hardcode, xác thực HTTP status code 200/302, audit file uploads rác.
+- **Tập hợp Kỹ năng tự động hóa On-Demand trong `.agents/skills/`**:
+  * `theme-rebuild`: Chu trình chuyển đổi chủ đề/ngành hàng trọn gói.
+  * `hardcode-scanner`: Kịch bản & regex quét mã nguồn tìm dữ liệu tĩnh vi phạm Rule 1.
+  * `asset-optimizer`: Kịch bản đối chiếu CSDL và thanh lọc thư mục media uploads.
+
+

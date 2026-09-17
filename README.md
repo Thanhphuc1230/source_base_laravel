@@ -7,6 +7,7 @@
 ## 🚀 Tính năng cốt lõi
 
 - **Kiến trúc Layered chuẩn mực**: Phân tách rõ ràng trách nhiệm `Controller → Service → Repository → Model`, không viết query SQL rải rác trong Controller.
+- **Hệ Thống Multi-Agent AI Squad (`.agents/`)**: Tích hợp quy chuẩn phát triển phần mềm đa tác nhân chia vai trò rõ rệt (Tech Lead Orchestrator, Frontend Specialist, Backend Architect, QA Inspector) cùng bộ kỹ năng tự động hóa (Skills) giúp AI dựng website chính xác 100%, không bị phân tán hay hallucination.
 - **Dynamic Website Data (Tuyệt đối KHÔNG Hardcode)**: Tự động dùng biến động từ `$web` (`$web->name_vn`, `$web->phone`, `$web->email`, `$web->logo`, `$web->map`, `$web->zalo`,...).
 - **Chuyển Đổi Chủ Đề Website Siêu Tốc (`site:rebuild`)**: Lệnh Artisan độc quyền `php artisan site:rebuild --topic="<tên_topic>"` tự động dọn sạch media rác, reset database, tải hình ảnh WebP chất lượng cao và seed dữ liệu chuẩn ngành nghề (ví dụ: `watches`, `travel`,...).
 - **Giao Diện Light Luxury & Modern Retail**: Phong cách thiết kế hiện đại, nền sáng thoáng (`bg-[#FAFAFA]`), chữ đen tuyền tương phản cao (`#111111`), điểm nhấn Vàng Kim Gold (`#D4AF37`), thẻ sản phẩm bo tròn `rounded-2xl` viền mờ `border-slate-100` với hiệu ứng nâng khối mượt mà `hover:-translate-y-1.5 hover:shadow-2xl`.
@@ -55,8 +56,18 @@ HTTP Request
 
 ```text
 source_laravel/
-├── .agents/                    # Bộ quy tắc & Tài liệu hướng dẫn cho AI & Dev
-│   ├── AGENTS.md               # 10 Quy tắc cốt lõi của dự án Base
+├── .agents/                    # Bộ quy tắc & Hệ thống Multi-Agent AI Squad
+│   ├── AGENTS.md               # 10 Quy tắc cốt lõi & Master Orchestration
+│   ├── roles/                  # 4 Chuyên viên chuyên biệt:
+│   │   ├── orchestrator.md     # [Tech Lead] Tiếp nhận, phân rã task & quản lý commit
+│   │   ├── frontend-specialist.md # [UI/UX & Frontend] Blade, Tailwind, Mobile 2-cols, Zero-CDN
+│   │   ├── backend-architect.md # [Backend] Layered Architecture, Seeder, Service, Cache
+│   │   └── qa-inspector.md     # [QA & Auditor] Quét hardcode, audit routes 200/302, dọn media
+│   ├── skills/                 # Bộ kỹ năng tự động hóa on-demand:
+│   │   ├── theme-rebuild/      # Tự động hóa chuyển đổi ngành hàng trọn gói
+│   │   ├── hardcode-scanner/   # Quét phát hiện text/data cứng trong views
+│   │   └── asset-optimizer/    # Đối chiếu CSDL & dọn dẹp uploads
+│   ├── rules/                  # Ràng buộc kiến trúc chuyên sâu
 │   ├── architecture.md         # Quy chuẩn kiến trúc Controller - Service - Repository
 │   ├── frontend-design.md      # Quy chuẩn thiết kế Frontend (Light Luxury, Tailwind, Animations)
 │   ├── frontend-data-map.md    # Bản đồ biến động $web & Blade Partials

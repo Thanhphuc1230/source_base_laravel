@@ -1,6 +1,29 @@
-# AGENTS.md – Quy tắc cốt lõi dự án Base
+# AGENTS.md – Quy tắc cốt lõi & Đội ngũ Multi-Agent dự án Base
 
-> File này được AI tự động đọc mỗi phiên. Xem các file chi tiết trong thư mục `.agents/` để biết thêm.
+> File này được AI tự động nạp mỗi phiên làm việc. Hệ thống vận hành theo mô hình **Tổ đội Kỹ thuật Đa tác nhân (Multi-Agent Engineering Squad)**.
+
+---
+
+## 👥 ĐỘI NGŨ MULTI-AGENT CHUYÊN MÔN HÓA (ROLES)
+
+Khi nhận prompt từ người dùng, AI sẽ phân tách nhiệm vụ và đóng vai trò tương ứng:
+
+| Role | File định nghĩa | Trách nhiệm chính |
+|---|---|---|
+| **Lead Orchestrator** | [`.agents/roles/orchestrator.md`](./roles/orchestrator.md) | Phân rã yêu cầu, điều phối chuyên viên, kiểm soát Git & Commit (Rule 8). |
+| **Frontend Specialist** | [`.agents/roles/frontend-specialist.md`](./roles/frontend-specialist.md) | Blade views, Tailwind CSS, Responsive (Mobile 2 cột), Zero-CDN, Zero-Hardcode. |
+| **Backend Architect** | [`.agents/roles/backend-architect.md`](./roles/backend-architect.md) | Layered Architecture (`Controller → Service → Repository → Model`), Seeder, DB. |
+| **QA Inspector** | [`.agents/roles/qa-inspector.md`](./roles/qa-inspector.md) | Kiểm thử độc lập, quét Zero-Hardcode, xác thực Route 200/302, audit media. |
+
+---
+
+## ⚡ BỘ KỸ NĂNG TỰ ĐỘNG HÓA (SKILLS)
+
+| Kỹ năng | File cấu hình | Mô tả |
+|---|---|---|
+| **`theme-rebuild`** | [`.agents/skills/theme-rebuild/SKILL.md`](./skills/theme-rebuild/SKILL.md) | Chuyển đổi toàn bộ chủ đề website sang ngành hàng mới (`site:rebuild`). |
+| **`hardcode-scanner`** | [`.agents/skills/hardcode-scanner/SKILL.md`](./skills/hardcode-scanner/SKILL.md) | Quét tự động mã nguồn Blade Views để phát hiện vi phạm Rule 1. |
+| **`asset-optimizer`** | [`.agents/skills/asset-optimizer/SKILL.md`](./skills/asset-optimizer/SKILL.md) | Audit và thanh lọc thư mục `public/uploads/` đối chiếu cơ sở dữ liệu. |
 
 ---
 
@@ -58,7 +81,7 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
 
 ## QUY TẮC SỐ 6 – KHÔNG DÙNG CDN (DOWNLOAD LOCAL ASSETS)
 
-- Tải local toàn bộ Font ("Noto Sans", "Roboto"), Tailwind CSS (compiled), FontAwesome, và thư viện Scroll Animation (AOS / Sal.js / Intersection Observer custom) vào `public/frontend/`.
+- Tải local toàn bộ Font ("Noto Sans", "Roboto"), Tailwind CSS (compiled), FontAwesome, và thư viện Scroll Animation vào `public/frontend/`.
 - Không nhúng CDN từ bên thứ ba.
 
 ---
@@ -76,9 +99,11 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
 2. **COMMIT THEO YÊU CẦU ĐƠN LẺ:** Khi user yêu cầu *"Commit code giúp tôi"*, AI CHỈ ĐƯỢC COMMIT DUY NHẤT LẦN ĐÓ cho công việc/task hiện tại.
 3. **LUÔN HỎI LẠI Ở TASK TIẾP THEO:** Sau khi hoàn thành một task mới tiếp theo, AI KHÔNG ĐƯỢC tự động commit dựa trên lệnh cũ. AI phải dừng lại và hỏi user: *"Tôi đã hoàn thành task [Tên Task]. Bạn có muốn tôi commit các thay đổi này không?"*.
 
+---
+
 ## QUY TẮC SỐ 9 – QUY TRÌNH CHUYỂN ĐỔI CHỦ ĐỀ/THEME (TOPIC REBUILD)
 
-Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới (ví dụ: Đồng hồ, Mỹ phẩm, Spa, Du lịch...):
+Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới (ví dụ: Đồng hồ, Mỹ phẩm, Spa, Du lịch, Nội thất...):
 1. BẮT BUỘC thực thi Artisan command đầu tiên: `php artisan site:rebuild --topic="<tên_topic>"` (Để hệ thống dọn sạch media rác, reset DB và seed đúng bộ dữ liệu/hình ảnh của ngành hàng đó).
 2. SAU ĐÓ MỚI tiến hành tùy biến file Blade và CSS (`theme-style.css`).
 3. Chạy lệnh xóa cache: `php artisan optimize:clear`.
@@ -91,19 +116,19 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
 - **Gom về File chuẩn:** 
   - Mọi JS tương tác UI/UX phải viết nối tiếp vào `public/frontend/js/main.js` (hoặc `resources/views/frontend/partials/script.blade.php`).
   - Mọi CSS tùy biến phải viết vào `public/frontend/css/theme-style.css`.
-- **Tái sử dụng Partials:** Các phần tử UI nổi (như nút Cuộn lên đầu trang, Hotline, Zalo) BẮT BUỘC nằm chung trong `resources/views/frontend/partials/buttons.blade.php`, không tạo file Blade mới.
+- **Tái sử dụng Partials:** Các phần tử UI nổi (như nút Cuộn lên đầu trang, Hotline, Zalo) BẮT BUỘC nằm chung trong `resources/views/frontend/partials/contact_buttons.blade.php`.
 - **Tối giản Code:** Ưu tiên dùng Vanilla JS ngắn gọn hoặc Tailwind CSS classes thay vì viết thêm các thư viện/script cồng kềnh.
 
 ---
 
-## CÁC FILE THAM KHẢO CHI TIẾT
+## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |
 |---|---|
-| `.agents/rules/01-architecture-boundary.md` | Ranh giới kiến trúc & quy tắc Zero-Hardcode khi làm Theme |
-| `.agents/rules/02-theme-building-process.md` | Quy trình 3 bước chuẩn hóa khởi tạo & tùy biến Theme |
-| `.agents/frontend-design.md` | Quy chuẩn thiết kế Frontend (Font, Tailwind, Scroll Animation, UI/UX) |
-| `.agents/frontend-data-map.md` | Bảng đầy đủ biến động, partials, helper functions |
-| `.agents/architecture.md` | Cấu trúc thư mục, Models, Services, Repositories |
-| `.agents/new-website-workflow.md` | Quy trình tạo website mới trong 1 phiên chat |
-| `.agents/memory.md` | Lịch sử quyết định kiến trúc & UI/UX dài hạn |
+| [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) | Ranh giới kiến trúc & quy tắc Zero-Hardcode khi làm Theme |
+| [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) | Quy trình 3 bước chuẩn hóa khởi tạo & tùy biến Theme |
+| [`.agents/frontend-design.md`](./frontend-design.md) | Quy chuẩn thiết kế Frontend (Font, Tailwind, Scroll Animation, UI/UX) |
+| [`.agents/frontend-data-map.md`](./frontend-data-map.md) | Bảng đầy đủ biến động, partials, helper functions |
+| [`.agents/architecture.md`](./architecture.md) | Cấu trúc thư mục, Models, Services, Repositories |
+| [`.agents/new-website-workflow.md`](./new-website-workflow.md) | Quy trình tạo website mới trong 1 phiên chat |
+| [`.agents/memory.md`](./memory.md) | Lịch sử quyết định kiến trúc & UI/UX dài hạn |
