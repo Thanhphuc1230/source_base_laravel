@@ -50,50 +50,52 @@
 
     {{-- Schema JSON-LD --}}
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="{{ asset('css/image-flip.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/image-flip.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/theme-style.css') }}">
 
-<!-- Google Fonts (Playfair Display & Montserrat & Plus Jakarta Sans) -->
+<!-- Font (Inter & Plus Jakarta Sans) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <!-- FontAwesome 6 Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Tailwind CSS Play CDN (Luxury Dark & Gold configuration) -->
+<!-- Tailwind CSS Play CDN (Editorial Luxury Interior & Architecture Configuration) -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
     tailwind.config = {
         theme: {
             extend: {
                 colors: {
-                    dark: {
-                        950: '#0A0A0A',
-                        900: '#0F0F0F', // Deep luxury background
-                        850: '#141414',
-                        800: '#181818', // Card background
-                        700: '#222222', // Hover surface
-                        600: '#2A2A2A', // Border color
+                    cream: '#F9F8F6',
+                    'cream-surface': '#FFFFFF',
+                    'beige-warm': '#F4F0EA',
+                    charcoal: {
+                        DEFAULT: '#2C2C2A',
+                        900: '#1E1E1C',
+                        800: '#2C2C2A',
+                        700: '#3D3D3A',
+                        600: '#555550',
+                        500: '#6E6E6A',
+                        400: '#9E9E98',
+                        300: '#C7C5BF',
+                        200: '#E8E4DE',
+                        100: '#F4F0EA',
                     },
-                    gold: {
-                        50: '#fffdf5',
-                        100: '#fef9e7',
-                        200: '#fcf0c3',
-                        300: '#f9e494',
-                        400: '#f3d258',
-                        500: '#D4AF37', // Royal Gold Metallic
-                        600: '#c59d29',
-                        700: '#a37b1c',
-                        800: '#84601b',
-                        900: '#6f4f1a',
-                        950: '#422c09',
-                    }
+                    taupe: {
+                        oak: '#8C7A6B',
+                        light: '#A69282',
+                        dark: '#6F5E50',
+                        50: '#F9F7F5',
+                        100: '#F2EDE7',
+                    },
+                    'border-subtle': '#E8E2D9',
+                    'border-warm': '#E2DBD0',
                 },
                 fontFamily: {
-                    sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
-                    serif: ['"Playfair Display"', 'Georgia', 'serif'],
-                    heading: ['"Playfair Display"', 'Montserrat', 'serif'],
+                    sans: ['Inter', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    heading: ['Inter', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
                 }
             }
         }

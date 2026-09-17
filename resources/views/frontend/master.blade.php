@@ -4,7 +4,7 @@
     @include('frontend.partials.head')
     @yield('styles')
 </head>
-<body class="bg-[#FAFAFA] text-slate-800 antialiased font-sans flex flex-col min-h-screen selection:bg-gold-500 selection:text-white">
+<body class="bg-cream text-charcoal-600 antialiased font-sans flex flex-col min-h-screen selection:bg-taupe-oak selection:text-white">
 
     <!-- Header Navbar -->
     @include('frontend.partials.header')
@@ -28,6 +28,6 @@
     <script>
         window.addToCartUrl = "{{ url('/add-to-cart') }}";
     </script>
-    <script src="{{ asset('js/cart.js') }}"></script>
+    <script src="{{ asset('frontend/js/cart.js') }}"></script>
 </body>
 </html>

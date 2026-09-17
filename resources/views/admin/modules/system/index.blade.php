@@ -161,5 +161,5 @@
     </div>
 
     @include('admin.partials.ckeditor')
-    <script src="{{ asset('js/admin/system-lang.js') }}"></script>
+    <script src="{{ asset('admin/js/system-lang.js') }}"></script>
 @endsection

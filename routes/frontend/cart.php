@@ -16,5 +16,5 @@ Route::name('web.')
         // Checkout
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
         Route::post('/checkout-store', [CheckoutController::class, 'checkoutStore'])->name('checkoutStore');
-        Route::get('/order-success', [CheckoutController::class, 'orderSuccess'])->name('orderSuccess');
+        Route::get('/order-success/{orderId?}', [CheckoutController::class, 'orderSuccess'])->name('orderSuccess');
     });

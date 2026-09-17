@@ -33,6 +33,8 @@ class Project extends Model
         'keyword_en',
         'description_vn',
         'description_en',
+        'status',
+        'home',
     ];
 
     public function getSlugAttribute()

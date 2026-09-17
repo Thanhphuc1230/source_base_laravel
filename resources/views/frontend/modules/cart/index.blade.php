@@ -125,5 +125,5 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/cart-page.js') }}"></script>
+<script src="{{ asset('frontend/js/cart-page.js') }}"></script>
 @endpush

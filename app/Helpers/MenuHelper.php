@@ -16,7 +16,10 @@ if (!function_exists('getUrlMenu')) {
             if (empty($item->link) || $item->link === '#') {
                 return '#';
             }
-            return $item->link;
+            if (str_starts_with($item->link, 'http://') || str_starts_with($item->link, 'https://')) {
+                return $item->link;
+            }
+            return url($item->link);
         }
 
         // Tạo cache key duy nhất

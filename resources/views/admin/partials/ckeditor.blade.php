@@ -1,5 +1,5 @@
 {{-- ============================================================ --}}
-{{-- CKEditor 4 Full – Auto-init via public/js/admin/ckeditor-init.js --}}
+{{-- CKEditor 4 Full – Auto-init via public/admin/js/ckeditor-init.js --}}
 {{-- Include partial này ở cuối trang có form cần editor         --}}
 {{-- ============================================================ --}}
-<script src="{{ asset('js/admin/ckeditor-init.js') }}"></script>
+<script src="{{ asset('admin/js/ckeditor-init.js') }}"></script>

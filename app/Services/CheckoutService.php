@@ -57,8 +57,12 @@ class CheckoutService
             // Create order products
             $this->createOrderProducts($orderStatus->id_order_status);
 
-            // Send notification email
-            $this->sendOrderNotification($orderStatus->id_order_status);
+            // Send notification email (Safely handled so SMTP failure never breaks order placement)
+            try {
+                $this->sendOrderNotification($orderStatus->id_order_status);
+            } catch (\Throwable $mailEx) {
+                Log::warning('Order notification email skipped or failed: ' . $mailEx->getMessage());
+            }
 
             DB::commit();
 
@@ -151,6 +155,10 @@ class CheckoutService
             }
 
             $mailer = $this->mailConfigService->createMailer();
+            if (!$mailer) {
+                Log::warning('Mailer could not be created or SMTP not configured.');
+                return;
+            }
             
             // Send to admin
             $adminEmail = DB::table('tp_systems')->value('email_alert');
@@ -165,7 +173,7 @@ class CheckoutService
                 $mailer->to($customerEmail)->send(new AlertOrder($orderDetails, $template));
                 Log::info('Order notification email sent to customer: ' . $customerEmail);
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             // Log error but don't fail the order
             Log::error('Failed to send order notification email: ' . $e->getMessage());
         }

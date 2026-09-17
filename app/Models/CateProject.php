@@ -29,6 +29,8 @@ class CateProject extends Model
         'image_en',
         'stt',
         'parent_id',
+        'status',
+        'home',
     ];
 
     public function getSlugAttribute()

@@ -58,10 +58,18 @@ class HomeService
             ->limit(3)
             ->get();
 
-        $data['about_section'] = About::where('status', 1)
+        $data['featured_projects'] = \App\Models\Project::with('cate')
+            ->where('status', 1)
+            ->where('home', 1)
             ->orderBy('stt', 'asc')
-            ->orderBy('created_at', 'desc')
-            ->first();
+            ->limit(6)
+            ->get();
+
+        $data['about_section'] = About::where('uuid', '8037faa4-c262-41d7-aed5-60a479531b4f')->first()
+            ?? About::where('status', 1)
+                ->orderBy('stt', 'asc')
+                ->orderBy('created_at', 'desc')
+                ->first();
 
         $data['features'] = Feature::where('status', 1)
             ->orderBy('stt', 'asc')

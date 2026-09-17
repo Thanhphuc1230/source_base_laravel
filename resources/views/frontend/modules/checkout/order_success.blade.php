@@ -12,10 +12,10 @@
         </div>
 
         <div class="space-y-2">
-            <span class="text-gold-600 text-xs font-extrabold uppercase tracking-widest">Cảm ơn bạn!</span>
-            <h1 class="text-3xl font-heading font-black text-slate-900">Đặt Hàng Thành Công</h1>
-            <p class="text-xs text-slate-500 max-w-md mx-auto">
-                Đơn hàng của bạn đã được tiếp nhận thành công. Đội ngũ chuyên viên của {{ $web->name_vn ?? 'AURA LUXURY WATCHES' }} sẽ liên hệ lại với bạn trong thời gian sớm nhất.
+            <span class="badge-editorial">Cảm ơn bạn!</span>
+            <h1 class="text-3xl font-heading font-bold text-charcoal">Đặt Hàng Thành Công</h1>
+            <p class="text-xs text-charcoal-muted max-w-md mx-auto">
+                Đơn hàng của bạn đã được tiếp nhận thành công. Đội ngũ chuyên viên của {{ $web->name_vn ?? 'NỘI THẤT & KIẾN TRÚC BASE' }} sẽ liên hệ lại với bạn trong thời gian sớm nhất.
             </p>
         </div>
 

@@ -92,9 +92,16 @@ class CheckoutController extends Controller
         }
     }
 
-    public function orderSuccess($orderId)
+    public function orderSuccess(Request $request, $orderId = null)
     {
-        $orderDetails = $this->checkoutService->getOrderDetails($orderId);
+        if (!$orderId) {
+            $orderId = $request->route('orderId') 
+                ?? $request->query('orderId') 
+                ?? $request->query('order') 
+                ?? (is_numeric(key($request->query())) ? key($request->query()) : null);
+        }
+
+        $orderDetails = $orderId ? $this->checkoutService->getOrderDetails((int)$orderId) : null;
 
         if (!$orderDetails) {
             Alert::error(

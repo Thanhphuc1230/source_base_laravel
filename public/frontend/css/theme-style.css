@@ -1,41 +1,48 @@
 /**
  * =========================================================================
- * THEME STYLING: LIGHT LUXURY WATCH RETAIL (ĐỒNG HỒ CAO CẤP - BẢN SÁNG)
- * Phong cách: Nền Sáng Thoáng - Sang Trọng - Tinh Tế - Mượt Mà
+ * THEME STYLING: EDITORIAL LUXURY INTERIOR & ARCHITECTURE
+ * Phong cách: Editorial Luxury (Studio McGee & Becki Owens)
+ * Màu sắc: Alabaster Linen Cream (#F9F8F6), Warm Oat (#F4F0EA),
+ *          Deep Charcoal (#2C2C2A), Taupe Oak (#8C7A6B)
  * =========================================================================
  */
 
 :root {
-    /* Color Palette */
-    --color-bg-main: #FAFAFA;          /* Light Airy Background */
-    --color-bg-surface: #FFFFFF;       /* Pure White Surface */
-    --color-bg-subtle: #F8FAFC;        /* Subtle Light Slate Surface */
-    --color-primary: #111111;          /* Premium Pitch Black */
-    --color-primary-dark: #0A0A0A;
-    
-    --color-gold: #D4AF37;             /* Royal Gold Metallic */
-    --color-gold-hover: #B8973A;       /* Refined Deep Gold */
-    --color-gold-light: #FBF5E5;       /* Soft Warm Gold Wash */
-    --color-gold-gradient: linear-gradient(135deg, #DFBA49 0%, #C5A028 50%, #9E7D17 100%);
-    --color-gold-badge: linear-gradient(135deg, #FDF8ED 0%, #F5E8C7 100%);
+    /* Base Color Palette */
+    --color-cream: #F9F8F6;
+    --color-cream-surface: #FFFFFF;
+    --color-beige-warm: #F4F0EA;
+    --color-charcoal: #2C2C2A;
+    --color-charcoal-muted: #555550;
+    --color-charcoal-light: #6E6E6A;
+    --color-taupe-oak: #8C7A6B;
+    --color-taupe-light: #A69282;
+    --color-taupe-dark: #6F5E50;
+    --color-border-subtle: #E8E2D9;
+    --color-border-warm: #E2DBD0;
 
-    --color-text-main: #111111;        /* Crisp Charcoal Heading Text */
-    --color-text-body: #475569;        /* Soft Slate Body Text */
-    --color-text-muted: #64748B;       /* Secondary Muted Text */
-    --color-text-dim: #94A3B8;         /* Subtle Border / Icon Color */
-    
-    --color-border: #E2E8F0;          /* Clean Border */
-    --color-border-subtle: #F1F5F9;   /* Very Soft Border */
-    --color-border-gold: rgba(212, 175, 55, 0.4);
+    /* Semantic Aliases */
+    --color-bg-main: var(--color-cream);
+    --color-bg-surface: var(--color-cream-surface);
+    --color-bg-subtle: var(--color-beige-warm);
+    --color-primary: var(--color-charcoal);
+    --color-primary-dark: #1E1E1C;
+
+    --color-text-main: var(--color-charcoal);
+    --color-text-body: var(--color-charcoal-muted);
+    --color-text-muted: var(--color-charcoal-light);
+    --color-text-dim: #9E9E98;
+
+    --color-border: var(--color-border-subtle);
 
     /* Typography */
-    --font-heading: 'Playfair Display', 'Montserrat', serif;
-    --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
-    
+    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -2px rgba(0, 0, 0, 0.02);
-    --shadow-card-hover: 0 20px 35px -10px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-gold-glow: 0 0 20px rgba(212, 175, 55, 0.2);
+    --shadow-subtle: 0 2px 12px -2px rgba(44, 44, 42, 0.04), 0 1px 4px -1px rgba(44, 44, 42, 0.02);
+    --shadow-editorial: 0 10px 30px -5px rgba(44, 44, 42, 0.07), 0 4px 10px -2px rgba(44, 44, 42, 0.03);
+    --shadow-elevated: 0 20px 40px -12px rgba(44, 44, 42, 0.12), 0 8px 16px -4px rgba(44, 44, 42, 0.04);
 
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -45,8 +52,8 @@
    Base & Typography
    ========================================================================= */
 body {
-    background-color: var(--color-bg-main);
-    color: var(--color-text-body);
+    background-color: var(--color-cream);
+    color: var(--color-charcoal-muted);
     font-family: var(--font-sans);
     letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
@@ -54,214 +61,282 @@ body {
 
 h1, h2, h3, h4, h5, h6, .font-heading {
     font-family: var(--font-heading);
-    color: var(--color-text-main);
-    letter-spacing: 0.01em;
+    color: var(--color-charcoal);
+    letter-spacing: -0.02em;
+    font-weight: 600;
 }
 
 /* =========================================================================
-   Gold Gradients & Metallic Accents
+   Badges & Editorial Pills
    ========================================================================= */
-.text-gold-gradient {
-    background: var(--color-gold-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.badge-editorial {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background-color: #EDE8E1;
+    color: var(--color-charcoal);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: 9999px;
 }
 
-.bg-gold-gradient {
-    background: var(--color-gold-gradient);
+.badge-editorial-dark {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background-color: rgba(44, 44, 42, 0.85);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+    backdrop-filter: blur(8px);
 }
 
-.gold-divider {
+.badge-editorial-oak {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background-color: rgba(140, 122, 107, 0.12);
+    color: var(--color-taupe-oak);
+    border: 1px solid rgba(140, 122, 107, 0.25);
+    border-radius: 9999px;
+}
+
+/* =========================================================================
+   Navigation & Editorial Header Links
+   ========================================================================= */
+.nav-link-editorial {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-charcoal);
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.5rem;
+    transition: var(--transition-smooth);
+    position: relative;
+}
+
+.nav-link-editorial:hover {
+    color: var(--color-taupe-oak);
+    background-color: rgba(140, 122, 107, 0.06);
+}
+
+.nav-link-editorial.active {
+    color: var(--color-taupe-oak);
+    font-weight: 600;
+}
+
+.nav-link-editorial.active::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0.875rem;
+    right: 0.875rem;
     height: 2px;
-    background: var(--color-gold-gradient);
-    width: 50px;
-    margin: 12px auto;
+    background-color: var(--color-taupe-oak);
     border-radius: 2px;
 }
 
 /* =========================================================================
-   Luxury Buttons
+   Buttons
    ========================================================================= */
-.btn-gold {
-    background: var(--color-gold-gradient);
-    color: #FFFFFF;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 0.75rem 1.75rem;
-    border-radius: 9999px;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
-    transition: var(--transition-smooth);
+.btn-editorial-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-}
-
-.btn-gold:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
-    filter: brightness(1.05);
-}
-
-.btn-outline-gold {
-    background: transparent;
-    color: var(--color-gold);
-    border: 1px solid var(--color-gold);
+    gap: 0.5rem;
+    background-color: var(--color-charcoal);
+    color: #FFFFFF;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    padding: 0.75rem 1.75rem;
+    padding: 0.75rem 1.625rem;
     border-radius: 9999px;
+    border: 1px solid var(--color-charcoal);
     transition: var(--transition-smooth);
+    box-shadow: 0 4px 14px rgba(44, 44, 42, 0.15);
+}
+
+.btn-editorial-primary:hover {
+    background-color: var(--color-taupe-oak);
+    border-color: var(--color-taupe-oak);
+    color: #FFFFFF;
+    box-shadow: 0 6px 20px rgba(140, 122, 107, 0.25);
+    transform: translateY(-1px);
+}
+
+.btn-editorial-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-}
-
-.btn-outline-gold:hover {
-    background: var(--color-gold);
+    gap: 0.5rem;
+    background-color: var(--color-taupe-oak);
     color: #FFFFFF;
-    box-shadow: 0 4px 18px rgba(212, 175, 55, 0.3);
-    transform: translateY(-2px);
-}
-
-.btn-dark-luxury {
-    background: var(--color-primary);
-    color: #FFFFFF;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    padding: 0.75rem 1.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1.625rem;
     border-radius: 9999px;
+    border: 1px solid var(--color-taupe-oak);
     transition: var(--transition-smooth);
+    box-shadow: 0 4px 14px rgba(140, 122, 107, 0.2);
+}
+
+.btn-editorial-secondary:hover {
+    background-color: var(--color-taupe-light);
+    border-color: var(--color-taupe-light);
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.btn-editorial-outline {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
+    background-color: transparent;
+    color: var(--color-charcoal);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1.625rem;
+    border-radius: 9999px;
+    border: 1px solid var(--color-charcoal);
+    transition: var(--transition-smooth);
 }
 
-.btn-dark-luxury:hover {
-    background: var(--color-gold);
+.btn-editorial-outline:hover {
+    background-color: var(--color-charcoal);
     color: #FFFFFF;
-    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
+}
+
+.btn-editorial-light {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #FFFFFF;
+    color: var(--color-charcoal);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.75rem 1.625rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: var(--transition-smooth);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.btn-editorial-light:hover {
+    background-color: var(--color-taupe-oak);
+    color: #FFFFFF;
+    border-color: var(--color-taupe-oak);
+    transform: translateY(-1px);
 }
 
 /* =========================================================================
-   Light Luxury Cards & Hover Effects
+   Editorial Cards & Dividers
    ========================================================================= */
-.luxury-card {
-    background-color: var(--color-bg-surface);
+.card-editorial {
+    background-color: #FFFFFF;
     border: 1px solid var(--color-border-subtle);
     border-radius: 1rem;
-    overflow: hidden;
     transition: var(--transition-smooth);
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--shadow-subtle);
 }
 
-.luxury-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--color-border-gold);
-    box-shadow: var(--shadow-card-hover);
+.card-editorial:hover {
+    border-color: var(--color-taupe-light);
+    box-shadow: var(--shadow-editorial);
+    transform: translateY(-3px);
+}
+
+.divider-editorial {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--color-border-subtle) 20%, var(--color-border-subtle) 80%, transparent 100%);
+    width: 100%;
+}
+
+.tag-line-oak {
+    display: inline-block;
+    width: 32px;
+    height: 2px;
+    background-color: var(--color-taupe-oak);
+    vertical-align: middle;
+    margin-right: 8px;
+}
+
+/* =========================================================================
+   Image Aspect Ratios & Zoom Container
+   ========================================================================= */
+.aspect-16-11 {
+    aspect-ratio: 16 / 11;
+}
+
+.aspect-4-3 {
+    aspect-ratio: 4 / 3;
 }
 
 .zoom-container {
     overflow: hidden;
-    position: relative;
 }
 
 .zoom-container img {
-    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.luxury-card:hover .zoom-container img {
-    transform: scale(1.06);
-}
-
-/* =========================================================================
-   Header & Navigation (Light Luxury)
-   ========================================================================= */
-.nav-link-luxury {
-    color: #334155;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding-bottom: 0.35rem;
-    position: relative;
-    transition: var(--transition-smooth);
-}
-
-.nav-link-luxury:hover,
-.nav-link-luxury.active {
-    color: var(--color-gold);
-}
-
-.nav-link-luxury::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--color-gold-gradient);
-    transition: width 0.3s ease, left 0.3s ease;
-    border-radius: 2px;
-}
-
-.nav-link-luxury:hover::after,
-.nav-link-luxury.active::after {
-    width: 100%;
-    left: 0;
+.zoom-container:hover img {
+    transform: scale(1.05);
 }
 
 /* =========================================================================
-   Scroll Animations (Intersection Observer)
+   Slider Transitions
    ========================================================================= */
-.scroll-anim {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
+.slide-item {
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.scroll-anim.fade-up {
-    opacity: 0;
-    transform: translateY(24px);
+.slide-dot {
+    transition: all 0.3s ease;
 }
 
-.scroll-anim.is-visible {
+/* =========================================================================
+   Header Specific Styles
+   ========================================================================= */
+.header-brand-logo {
+    transition: transform 0.3s ease;
+}
+
+.header-brand-logo:hover {
+    transform: scale(1.02);
+}
+
+/* Dropdown Menu styling */
+.dropdown-menu-editorial {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+}
+
+.group:hover .dropdown-menu-editorial {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0);
-}
-
-.scroll-anim.zoom-in {
-    transform: scale(0.95);
-}
-
-.scroll-anim.zoom-in.is-visible {
-    transform: scale(1);
-}
-
-.delay-100 { transition-delay: 100ms; }
-.delay-200 { transition-delay: 200ms; }
-.delay-300 { transition-delay: 300ms; }
-
-/* =========================================================================
-   Custom Scrollbar
-   ========================================================================= */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #F8FAFC;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #CBD5E1;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #D4AF37;
 }
