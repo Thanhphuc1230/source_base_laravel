@@ -6,7 +6,7 @@
 
 ## 🎨 UI/UX & STYLING (Cập nhật chuẩn Modern Web 2026)
 - **Framework CSS:** Tailwind CSS (compile file local hoặc Play CDN cấu hình chỉn chu).
-- **Typography:** Bắt buộc dùng font hiện đại Tiếng Việt: `Inter`, `Be Vietnam Pro`, hoặc `Plus Jakarta Sans`.
+- **Typography (Font mặc định bắt buộc):** Luôn luôn sử dụng font stack mặc định tối ưu chuẩn cho tiếng Việt: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;`. Tuyệt đối không tự ý thay đổi font stack khác trừ khi người dùng yêu cầu riêng.
 - **Phong cách:** Modern Premium Web Design (Thân thiện, bo tròn `rounded-xl`/`2xl`, shadow mượt, hover scale nhẹ 1.03-1.05, phân mảng phối màu Niche Color Palette theo ngành nghề).
 - **Icon Safety:** Tuyệt đối ghi đúng class FontAwesome (`fas fa-...`, `fab fa-...`) hoặc SVG Inline để tránh lỗi ô vuông.
 - **Animation:** Dùng Intersection Observer JS (`.scroll-anim.fade-up`) tạo hiệu ứng cuộn mượt.

@@ -36,8 +36,8 @@
     --color-border: var(--color-border-subtle);
 
     /* Typography */
-    --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 
     /* Shadows */
     --shadow-subtle: 0 2px 12px -2px rgba(44, 44, 42, 0.04), 0 1px 4px -1px rgba(44, 44, 42, 0.02);

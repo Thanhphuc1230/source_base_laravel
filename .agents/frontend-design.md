@@ -35,17 +35,9 @@ Tất cả các file CSS/Tailwind phải cấu hình font family theo chuẩn:
   font-display: swap;
 }
 
-body {
-  font-family: "Noto Sans", Roboto, sans-serif;
-  color: #333333;
-  line-height: 1.6;
-  background-color: #f8fafc;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Roboto", "Noto Sans", sans-serif;
-  font-weight: 700;
-  color: #0f172a;
+/* Font mặc định tối ưu tiếng Việt chuẩn toàn hệ thống: */
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 }
 ```
 

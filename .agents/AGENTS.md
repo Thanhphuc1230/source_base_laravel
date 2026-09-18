@@ -68,7 +68,7 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
 
 ## QUY TẮC SỐ 5 – THẨM MỸ GIAO DIỆN CHUẨN UI/UX HIỆN ĐẠI (MODERN PREMIUM WEB DESIGN)
 
-- **Định hướng thẩm mỹ:** Không sử dụng phong cách cũ kỹ. Giao diện phải đạt chuẩn Modern Premium Web: màu sắc hài hòa theo ngành hàng (Niche Palette), Typography cao cấp (Inter, Be Vietnam Pro, Plus Jakarta Sans), khoảng trắng thoáng đãng, phân cấp typography rõ ràng.
+- **Định hướng thẩm mỹ:** Không sử dụng phong cách cũ kỹ. Giao diện phải đạt chuẩn Modern Premium Web: màu sắc hài hòa theo ngành hàng (Niche Palette), Typography cao cấp tối ưu tiếng Việt bắt buộc: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;`, khoảng trắng thoáng đãng, phân cấp typography rõ ràng.
 - **UI/UX & Component Details:** 
   - Card/Button có shadow nhẹ (`shadow-sm` hover thành `shadow-xl`), bo góc viền chuẩn (`rounded-xl` hoặc `rounded-2xl`).
   - Mọi button, card phải có hiệu ứng mượt `transition-all duration-300 ease-in-out`.

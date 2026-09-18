@@ -4,7 +4,7 @@
 - **Thiết kế & Cắt giao diện Blade (View Engineering):** Chuyên trách toàn bộ các file trong `resources/views/frontend/` và `resources/views/admin/components/`.
 - **Thẩm mỹ Hiện đại (Modern Editorial Luxury / Light Luxury):**
   - Màu sắc hài hòa theo ngành hàng (Niche Palette).
-  - Typography cao cấp: Inter, Be Vietnam Pro, Plus Jakarta Sans (`public/frontend/fonts/`).
+  - Typography cao cấp tối ưu tiếng Việt bắt buộc: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;` (`public/frontend/fonts/`).
   - Khoảng trắng (whitespace) thoáng đãng, phân cấp typography rõ ràng, card nâng khối (`shadow-sm` hover `shadow-xl`, bo góc `rounded-xl`/`rounded-2xl`).
 - **Responsive Chuẩn 100%:** Mobile bắt buộc hiển thị **2 cột** cho danh sách sản phẩm và tin tức (`grid grid-cols-2 gap-3`).
 - **Tập trung Asset:**
