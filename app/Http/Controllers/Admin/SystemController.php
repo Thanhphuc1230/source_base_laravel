@@ -43,6 +43,9 @@ class SystemController extends BaseController
         // Handle favicon - Update existing favicon
         $data['favicon'] = $this->updateImage($request, $system, 'logo', 'favicon');
 
+        // Handle share_image - Update existing share_image
+        $data['share_image'] = $this->updateImage($request, $system, 'logo', 'share_image');
+
         Cache::forget('website_data');
         if ($system) {
             $this->systemRepository->update($data, $id);

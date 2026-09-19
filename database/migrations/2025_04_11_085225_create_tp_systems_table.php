@@ -30,15 +30,19 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('zalo')->nullable();
 
-            // Seo website
+            // Seo website & Custom Scripts
             $table->string('favicon')->nullable();
             $table->string('logo')->nullable();
+            $table->string('share_image')->nullable();
+            $table->string('meta_title')->nullable();
             $table->string('name_vn')->nullable();
             $table->string('name_en')->nullable();
             $table->text('description_vn')->nullable();
             $table->text('description_en')->nullable();
             $table->text('keyword_vn')->nullable();
             $table->text('keyword_en')->nullable();
+            $table->mediumText('header_js')->nullable();
+            $table->mediumText('body_js')->nullable();
 
             // Contact page text settings
             $table->string('contact_title_vn')->nullable();

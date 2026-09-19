@@ -29,11 +29,14 @@ class FrontendComposer
     {
         $cacheTtl = 120; // 2 giờ
 
+        $systemData = \App\Services\CacheService::remember('system', 'frontend_web_data', $cacheTtl, function() {
+            return System::first();
+        });
+
         $data = [
             // 1. Dữ liệu hệ thống (Tag: system)
-            'web' => \App\Services\CacheService::remember('system', 'frontend_web_data', $cacheTtl, function() {
-                return System::first();
-            }),
+            'web' => $systemData,
+            'website' => $systemData,
 
             // 2. Dữ liệu Menu (Tag: menu)
             'menu' => \App\Services\CacheService::remember('menu', 'frontend_menu_data', $cacheTtl, function() {

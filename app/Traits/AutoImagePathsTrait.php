@@ -39,6 +39,11 @@ trait AutoImagePathsTrait
         return $this->resolveImageUrl($value);
     }
 
+    public function getShareImageAttribute($value)
+    {
+        return $this->resolveImageUrl($value);
+    }
+
     protected function resolveImageUrl($value)
     {
         if (empty($value)) {

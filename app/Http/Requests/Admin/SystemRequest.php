@@ -46,12 +46,16 @@ class SystemRequest extends BaseAdminRequest
             // SEO & Branding
             'favicon' => 'nullable|image|mimes:ico,png,jpg,jpeg|max:5120',
             'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:10240',
+            'share_image' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:10240',
+            'meta_title' => 'nullable|string|max:255',
             'name_vn' => 'nullable|string|max:255',
             'name_en' => 'nullable|string|max:255',
             'description_vn' => 'nullable|string|max:500',
             'description_en' => 'nullable|string|max:500',
             'keyword_vn' => 'nullable|string|max:1000',
             'keyword_en' => 'nullable|string|max:1000',
+            'header_js' => 'nullable|string',
+            'body_js' => 'nullable|string',
 
             // Map embed
             'map' => 'nullable|string|max:2000',

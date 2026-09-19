@@ -35,6 +35,8 @@ class System extends Model
         'zalo',
         'favicon',
         'logo',
+        'share_image',
+        'meta_title',
         'name_vn',
         'name_en',
         'description_vn',
