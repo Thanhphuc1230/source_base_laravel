@@ -2,274 +2,224 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
     <url>
         <loc>http://localhost</loc>
-    
+        <lastmod>2026-09-19T10:24:04+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-cao-cap.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-cao-cap.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/luxury-tours.html" />
-    
+        <loc>http://localhost/sofa-ghe-thu-gian.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/sofa-ghe-thu-gian.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/sofas-and-armchairs.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/luxury-tours.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-cao-cap.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/luxury-tours.html" />
-    
+        <loc>http://localhost/sofas-and-armchairs.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/sofa-ghe-thu-gian.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/sofas-and-armchairs.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-quoc-te.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-quoc-te.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/international-tours.html" />
-    
+        <loc>http://localhost/ban-an-ghe-an.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ban-an-ghe-an.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/dining-tables-chairs.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/international-tours.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-quoc-te.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/international-tours.html" />
-    
+        <loc>http://localhost/dining-tables-chairs.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ban-an-ghe-an.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/dining-tables-chairs.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-trong-nuoc.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-trong-nuoc.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/domestic-tours.html" />
-    
+        <loc>http://localhost/tu-ke-decor-cao-cap.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tu-ke-decor-cao-cap.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/cabinets-decor.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/domestic-tours.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-trong-nuoc.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/domestic-tours.html" />
-    
+        <loc>http://localhost/cabinets-decor.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tu-ke-decor-cao-cap.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/cabinets-decor.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-du-lich-ha-long-2-ngay-1-dem-du-thuyen-5-sao.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-ha-long-2-ngay-1-dem-du-thuyen-5-sao.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ha-long-bay-2-days-1-night-5-star-cruise-tour.html" />
-    
+        <loc>http://localhost/phong-ngu-master.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/phong-ngu-master.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/master-bedroom.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/ha-long-bay-2-days-1-night-5-star-cruise-tour.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-ha-long-2-ngay-1-dem-du-thuyen-5-sao.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ha-long-bay-2-days-1-night-5-star-cruise-tour.html" />
-    
+        <loc>http://localhost/master-bedroom.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/phong-ngu-master.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/master-bedroom.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-ha-giang-hung-vi-cot-co-lung-cu-3-ngay-2-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-ha-giang-hung-vi-cot-co-lung-cu-3-ngay-2-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ha-giang-loop-lung-cu-flag-tower-3-days-2-nights.html" />
-    
+        <loc>http://localhost/sofa-modular-monterey-boucle.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/sofa-modular-monterey-boucle.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/sofa-modular-monterey-boucle.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/ha-giang-loop-lung-cu-flag-tower-3-days-2-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-ha-giang-hung-vi-cot-co-lung-cu-3-ngay-2-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ha-giang-loop-lung-cu-flag-tower-3-days-2-nights.html" />
-    
+        <loc>http://localhost/ban-an-go-soi-warm-oak-oakhaven.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ban-an-go-soi-warm-oak-oakhaven.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ban-an-go-soi-warm-oak-oakhaven.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-da-nang-hoi-an-ba-na-hills-4-ngay-3-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-da-nang-hoi-an-ba-na-hills-4-ngay-3-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/da-nang-hoi-an-ba-na-hills-4-days-3-nights.html" />
-    
+        <loc>http://localhost/ghe-thu-gian-solstice-linen-armchair.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ghe-thu-gian-solstice-linen-armchair.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ghe-thu-gian-solstice-linen-armchair.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/da-nang-hoi-an-ba-na-hills-4-days-3-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-da-nang-hoi-an-ba-na-hills-4-ngay-3-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/da-nang-hoi-an-ba-na-hills-4-days-3-nights.html" />
-    
+        <loc>http://localhost/tu-console-go-oc-cho-burl-walnut.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tu-console-go-oc-cho-burl-walnut.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tu-console-go-oc-cho-burl-walnut.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-phu-quoc-thien-duong-dao-ngoc-3-ngay-2-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-phu-quoc-thien-duong-dao-ngoc-3-ngay-2-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/phu-quoc-island-paradise-3-days-2-nights.html" />
-    
+        <loc>http://localhost/giuong-ngu-master-boc-da-nappa.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/giuong-ngu-master-boc-da-nappa.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/master-bed-italian-nappa-leather.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/phu-quoc-island-paradise-3-days-2-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-phu-quoc-thien-duong-dao-ngoc-3-ngay-2-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/phu-quoc-island-paradise-3-days-2-nights.html" />
-    
+        <loc>http://localhost/master-bed-italian-nappa-leather.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/giuong-ngu-master-boc-da-nappa.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/master-bed-italian-nappa-leather.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-du-lich-nhat-ban-mua-hoa-anh-dao-cung-duong-vang-6-ngay-5-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-nhat-ban-mua-hoa-anh-dao-cung-duong-vang-6-ngay-5-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/japan-cherry-blossom-golden-route-6-days-5-nights.html" />
-    
+        <loc>http://localhost/tu-ruou-canh-kinh-slimline-led.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tu-ruou-canh-kinh-slimline-led.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/slimline-glass-wine-cabinet-sensor-led.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/japan-cherry-blossom-golden-route-6-days-5-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-nhat-ban-mua-hoa-anh-dao-cung-duong-vang-6-ngay-5-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/japan-cherry-blossom-golden-route-6-days-5-nights.html" />
-    
+        <loc>http://localhost/slimline-glass-wine-cabinet-sensor-led.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tu-ruou-canh-kinh-slimline-led.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/slimline-glass-wine-cabinet-sensor-led.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-phap-thuy-si-y-hanh-trinh-chau-au-co-kinh-9-ngay-8-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-phap-thuy-si-y-hanh-trinh-chau-au-co-kinh-9-ngay-8-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/france-switzerland-italy-classic-europe-9-days-8-nights.html" />
-    
+        <loc>http://localhost/ban-tra-doi-mat-da-marble-calacatta.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ban-tra-doi-mat-da-marble-calacatta.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/calacatta-marble-dual-coffee-table.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/france-switzerland-italy-classic-europe-9-days-8-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-phap-thuy-si-y-hanh-trinh-chau-au-co-kinh-9-ngay-8-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/france-switzerland-italy-classic-europe-9-days-8-nights.html" />
-    
+        <loc>http://localhost/calacatta-marble-dual-coffee-table.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/ban-tra-doi-mat-da-marble-calacatta.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/calacatta-marble-dual-coffee-table.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-du-lich-han-quoc-mua-thu-lang-man-seoul-nami-5-ngay-4-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-han-quoc-mua-thu-lang-man-seoul-nami-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/korea-romantic-autumn-seoul-nami-5-days-4-nights.html" />
-    
+        <loc>http://localhost/bo-ban-trang-diem-hien-dai-kem-guong-led.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/bo-ban-trang-diem-hien-dai-kem-guong-led.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/modern-dressing-table-set-led-mirror.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/korea-romantic-autumn-seoul-nami-5-days-4-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-han-quoc-mua-thu-lang-man-seoul-nami-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/korea-romantic-autumn-seoul-nami-5-days-4-nights.html" />
-    
+        <loc>http://localhost/modern-dressing-table-set-led-mirror.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/bo-ban-trang-diem-hien-dai-kem-guong-led.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/modern-dressing-table-set-led-mirror.html" />
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-du-lich-thai-lan-bangkok-pattaya-bay-tron-goi-5-ngay-4-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-thai-lan-bangkok-pattaya-bay-tron-goi-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/thailand-bangkok-pattaya-all-inclusive-5-days-4-nights.html" />
-    
+        <loc>http://localhost/the-horizon-oasis-villa-thao-dien.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/thailand-bangkok-pattaya-all-inclusive-5-days-4-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-du-lich-thai-lan-bangkok-pattaya-bay-tron-goi-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/thailand-bangkok-pattaya-all-inclusive-5-days-4-nights.html" />
-    
+        <loc>http://localhost/grand-heritage-manor-ciputra.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-nghi-duong-sieu-sang-maldives-5-ngay-4-dem-resort-5-sao-tron-goi.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-nghi-duong-sieu-sang-maldives-5-ngay-4-dem-resort-5-sao-tron-goi.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/luxury-maldives-resort-5-days-4-nights-all-inclusive.html" />
-    
+        <loc>http://localhost/amara-pine-boutique-hotel-da-lat.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/luxury-maldives-resort-5-days-4-nights-all-inclusive.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-nghi-duong-sieu-sang-maldives-5-ngay-4-dem-resort-5-sao-tron-goi.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/luxury-maldives-resort-5-days-4-nights-all-inclusive.html" />
-    
+        <loc>http://localhost/lumiere-concept-flagship-showroom.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/tour-thuong-ngoan-mua-thu-thuy-si-ngoi-lang-co-grindelwald-8-ngay-7-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-thuong-ngoan-mua-thu-thuy-si-ngoi-lang-co-grindelwald-8-ngay-7-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/switzerland-autumn-grindelwald-scenic-tour-8-days-7-nights.html" />
-    
+        <loc>http://localhost/hillside-sanctuary-villa-tam-dao.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/switzerland-autumn-grindelwald-scenic-tour-8-days-7-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-thuong-ngoan-mua-thu-thuy-si-ngoi-lang-co-grindelwald-8-ngay-7-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/switzerland-autumn-grindelwald-scenic-tour-8-days-7-nights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/tour-chau-au-canh-dong-hoa-oai-huong-provence-monaco-8-ngay-7-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-chau-au-canh-dong-hoa-oai-huong-provence-monaco-8-ngay-7-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/europe-provence-lavender-fields-monaco-8-days-7-nights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/europe-provence-lavender-fields-monaco-8-days-7-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-chau-au-canh-dong-hoa-oai-huong-provence-monaco-8-ngay-7-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/europe-provence-lavender-fields-monaco-8-days-7-nights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/tour-sa-mac-dubai-nghi-duong-khach-san-canh-buom-7-sao-burj-al-arab-5-ngay-4-dem.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-sa-mac-dubai-nghi-duong-khach-san-canh-buom-7-sao-burj-al-arab-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/dubai-desert-burj-al-arab-7-star-hotel-5-days-4-nights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/dubai-desert-burj-al-arab-7-star-hotel-5-days-4-nights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tour-sa-mac-dubai-nghi-duong-khach-san-canh-buom-7-sao-burj-al-arab-5-ngay-4-dem.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/dubai-desert-burj-al-arab-7-star-hotel-5-days-4-nights.html" />
-    
+        <loc>http://localhost/oceanfront-royal-residence-nha-trang.html</loc>
+        <lastmod>2026-09-11T10:49:29+07:00</lastmod>
+
             </url>
     <url>
         <loc>http://localhost/tin-tuc.html</loc>
         <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tin-tuc.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/news.html" />
-    
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tin-tuc.html" />
+        <lastmod>2026-09-11T10:49:30+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/news.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/tin-tuc.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/news.html" />
-    
+        <loc>http://localhost/xu-huong-modern-organic-noi-that-cao-cap.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/xu-huong-modern-organic-noi-that-cao-cap.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/xu-huong-modern-organic-noi-that-cao-cap.html" />
+        <lastmod>2026-09-11T10:49:30+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/bi-quyet-san-ve-may-bay-gia-re-cho-ky-nghi-le.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/bi-quyet-san-ve-may-bay-gia-re-cho-ky-nghi-le.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/secrets-to-booking-cheap-flights-for-holidays.html" />
-    
+        <loc>http://localhost/loi-ich-dat-san-xuat-noi-that-truc-tiep-tai-xuong.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/loi-ich-dat-san-xuat-noi-that-truc-tiep-tai-xuong.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/loi-ich-dat-san-xuat-noi-that-truc-tiep-tai-xuong.html" />
+        <lastmod>2026-09-11T10:49:30+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/secrets-to-booking-cheap-flights-for-holidays.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/bi-quyet-san-ve-may-bay-gia-re-cho-ky-nghi-le.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/secrets-to-booking-cheap-flights-for-holidays.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/cam-nang-an-uong-tha-ga-khi-di-du-lich-da-nang.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/cam-nang-an-uong-tha-ga-khi-di-du-lich-da-nang.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ultimate-street-food-guide-in-da-nang-city.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/ultimate-street-food-guide-in-da-nang-city.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/cam-nang-an-uong-tha-ga-khi-di-du-lich-da-nang.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/ultimate-street-food-guide-in-da-nang-city.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/kinh-nghiem-chuan-bi-hanh-ly-du-lich-mua-he-toi-gian.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/kinh-nghiem-chuan-bi-hanh-ly-du-lich-mua-he-toi-gian.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tips-for-packing-a-minimalist-summer-travel-suitcase.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/tips-for-packing-a-minimalist-summer-travel-suitcase.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/kinh-nghiem-chuan-bi-hanh-ly-du-lich-mua-he-toi-gian.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tips-for-packing-a-minimalist-summer-travel-suitcase.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/kinh-nghiem-di-cap-treo-fansipan-khong-lo-bi-do-cao.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/kinh-nghiem-di-cap-treo-fansipan-khong-lo-bi-do-cao.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tips-for-riding-fansipan-cable-car-without-fear-of-heights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/tips-for-riding-fansipan-cable-car-without-fear-of-heights.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/kinh-nghiem-di-cap-treo-fansipan-khong-lo-bi-do-cao.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/tips-for-riding-fansipan-cable-car-without-fear-of-heights.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/top-5-bai-bien-dep-hoang-so-dang-di-nhat-viet-nam.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/top-5-bai-bien-dep-hoang-so-dang-di-nhat-viet-nam.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/top-5-pristine-beaches-you-must-visit-in-vietnam.html" />
-    
-            </url>
-    <url>
-        <loc>http://localhost/top-5-pristine-beaches-you-must-visit-in-vietnam.html</loc>
-        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/top-5-bai-bien-dep-hoang-so-dang-di-nhat-viet-nam.html" />
-        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/top-5-pristine-beaches-you-must-visit-in-vietnam.html" />
-    
+        <loc>http://localhost/nghe-thuat-phoi-mau-trung-tinh-studio-mcgee.html</loc>
+        <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/nghe-thuat-phoi-mau-trung-tinh-studio-mcgee.html" />
+        <xhtml:link rel="alternate" hreflang="en" href="http://localhost/nghe-thuat-phoi-mau-trung-tinh-studio-mcgee.html" />
+        <lastmod>2026-09-11T10:49:30+07:00</lastmod>
+
             </url>
     <url>
         <loc>http://localhost/gioi-thieu.html</loc>
         <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/gioi-thieu.html" />
         <xhtml:link rel="alternate" hreflang="en" href="http://localhost/about-us.html" />
-    
+        <lastmod>2026-09-11T10:19:36+07:00</lastmod>
+
             </url>
     <url>
         <loc>http://localhost/about-us.html</loc>
         <xhtml:link rel="alternate" hreflang="vi" href="http://localhost/gioi-thieu.html" />
         <xhtml:link rel="alternate" hreflang="en" href="http://localhost/about-us.html" />
-    
+        <lastmod>2026-09-11T10:19:36+07:00</lastmod>
+
             </url>
     <url>
-        <loc>http://localhost/lien-he.html</loc>
-    
+        <loc>http://localhost/lien-he</loc>
+        <lastmod>2026-09-19T10:24:04+07:00</lastmod>
+
             </url>
 </urlset>

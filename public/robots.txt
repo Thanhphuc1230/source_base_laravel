@@ -1,2 +1,7 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /admintv/
+Disallow: /api/
+
+Sitemap: http://localhost/sitemap.xml
