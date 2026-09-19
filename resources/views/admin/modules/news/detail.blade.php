@@ -117,21 +117,7 @@
                         </div>
                         <!-- end card -->
 
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">SEO</h5>
-                            </div>
-                            <div class="card-body">
-                                @include('admin.partials.localized-fields', [
-                                    'fields' => [
-                                        ['base' => 'keyword', 'label' => 'Từ khóa', 'col' => 'col-md-12', 'rows' => 3, 'type' => 'textarea'],
-                                        ['base' => 'description', 'label' => 'Mô tả ngắn', 'col' => 'col-md-12', 'rows' => 3, 'type' => 'textarea'],
-                                    ],
-                                    'model' => $page ?? null,
-                                ])
-                            </div>
-                            <!-- end card body -->
-                        </div>
+                        @include('admin.partials.seo-fields', ['model' => $page ?? null])
                         <!-- end card -->
 
                     </div>
