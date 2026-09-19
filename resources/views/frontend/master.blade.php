@@ -5,6 +5,10 @@
     @yield('styles')
 </head>
 <body class="bg-cream text-charcoal-600 antialiased font-sans flex flex-col min-h-screen selection:bg-taupe-oak selection:text-white">
+    {{-- Dynamic Body Scripts (Google Tag Manager NoScript, Chat widgets, etc.) --}}
+    @if(!empty($website->body_js))
+        {!! $website->body_js !!}
+    @endif
 
     <!-- Header Navbar -->
     @include('frontend.partials.header')

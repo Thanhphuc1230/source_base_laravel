@@ -16,39 +16,51 @@
     <link rel="preload" href="@yield('images')" as="image">
     <link rel="alternate" hreflang="x-default" href="{{ route('web.home') }}">
     <link rel="alternate" hreflang="vi" href="{{ route('web.home') }}">
-    <link rel="canonical" href="{{ request()->fullUrl() }}">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Open Graph / Meta Facebook & Zalo & Viber -->
     <meta property="og:locale" content="vi_VN">
-    <meta property="og:type" content="{{ $web->meta_name ?? 'website' }}">
-    <meta property="og:site_name" content="{{ $web->meta_name ?? 'Base' }}">
-    <meta property="og:title" content="@yield('module')">
-    <meta property="og:description" content="@yield('description')">
-    <meta property="og:url" content="{{ request()->fullUrl() }}">
+    <meta property="og:type" content="@yield('og_type', $website->meta_name ?? 'website')">
+    <meta property="og:site_name" content="{{ $website->name_vn ?? $website->meta_name ?? 'Base' }}">
+    <meta property="og:title" content="@yield('module', $website->meta_title ?? $website->name_vn ?? 'Base')">
+    <meta property="og:description" content="@yield('description', $website->description_vn ?? '')">
+    <meta property="og:url" content="{{ url()->current() }}">
 
-    @if(View::hasSection('images') && trim(View::yieldContent('images')) != '')
-        <meta property="og:image" content="@yield('images')">
-        <meta property="og:image:secure_url" content="@yield('images')">
-        <meta property="og:image:alt" content="@yield('module')">
-    @else
-        <meta property="og:image" content="{{ $web->logo ?? '' }}">
-        <meta property="og:image:secure_url" content="{{ $web->logo ?? '' }}">
-        <meta property="og:image:alt" content="{{ $web->name_vn ?? 'Base' }}">
+    @php
+        $seoImage = null;
+        if (View::hasSection('images') && trim(View::yieldContent('images')) != '') {
+            $seoImage = trim(View::yieldContent('images'));
+        } elseif (!empty($website->share_image)) {
+            $seoImage = $website->share_image;
+        } elseif (!empty($website->logo)) {
+            $seoImage = $website->logo;
+        }
+        if ($seoImage && !str_starts_with($seoImage, 'http')) {
+            $seoImage = asset($seoImage);
+        }
+    @endphp
+    @if($seoImage)
+        <meta property="og:image" content="{{ $seoImage }}">
+        <meta property="og:image:secure_url" content="{{ $seoImage }}">
+        <meta property="og:image:alt" content="@yield('module', $website->name_vn ?? 'Base')">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta name="twitter:image" content="{{ $seoImage }}">
     @endif
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('module')">
-    <meta name="twitter:description" content="@yield('description')">
-    @if(View::hasSection('images') && trim(View::yieldContent('images')) != '')
-        <meta name="twitter:image" content="@yield('images')">
-    @else
-        <meta name="twitter:image" content="{{ $web->logo ?? '' }}">
-    @endif
+    <meta name="twitter:title" content="@yield('module', $website->meta_title ?? $website->name_vn ?? 'Base')">
+    <meta name="twitter:description" content="@yield('description', $website->description_vn ?? '')">
 
-    {{-- Schema JSON-LD --}}
+    {{-- Schema Structured Data JSON-LD --}}
+    @include('frontend.partials.schema')
+
+    {{-- Dynamic Header Scripts (Google Tag Manager, GA4, Search Console, Pixel) --}}
+    @if(!empty($website->header_js))
+        {!! $website->header_js !!}
+    @endif
     <!-- STYLESHEETS -->
     <link rel="stylesheet" href="{{ asset('frontend/css/image-flip.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/css/theme-style.css') }}">
