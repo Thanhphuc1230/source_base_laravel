@@ -21,3 +21,4 @@ yarn-error.log
 /.cursor
 docs_backup/
 /scratch/
+storage/framework
