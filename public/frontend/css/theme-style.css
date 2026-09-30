@@ -293,6 +293,11 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     aspect-ratio: 4 / 3;
 }
 
+.aspect-hero-slider {
+    aspect-ratio: 1920 / 1280;
+    width: 100%;
+}
+
 .zoom-container {
     overflow: hidden;
 }

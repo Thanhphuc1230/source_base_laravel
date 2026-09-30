@@ -20,11 +20,11 @@ function showSlide(index) {
 
     dots.forEach((dot, i) => {
         if (i === index) {
-            dot.classList.add('bg-gold-500', 'w-8', 'border-gold-500');
-            dot.classList.remove('bg-white/40');
+            dot.classList.add('bg-taupe-oak', 'w-8', 'border-taupe-oak');
+            dot.classList.remove('bg-white/50');
         } else {
-            dot.classList.remove('bg-gold-500', 'w-8', 'border-gold-500');
-            dot.classList.add('bg-white/40');
+            dot.classList.remove('bg-taupe-oak', 'w-8', 'border-taupe-oak');
+            dot.classList.add('bg-white/50');
         }
     });
 
