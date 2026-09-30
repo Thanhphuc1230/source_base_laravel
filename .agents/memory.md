@@ -16,10 +16,12 @@
 
 ---
 
-## ⚙️ GIT & COMMIT CONTROL (QUY TẮC SỐ 8)
+## ⚙️ GIT & COMMIT CONTROL (QUY TẮC SỐ 8 & 11)
 - KHÔNG BAO GIỜ tự động commit/push code nếu không có yêu cầu trực tiếp từ user trong phiên chat.
 - Mỗi lệnh commit từ user chỉ có giá trị cho LẦN ĐÓ cho task hiện tại.
 - Mọi task tiếp theo bắt buộc phải HỎI XIN PHÉP user trước khi commit (`"Tôi đã hoàn thành task [Tên Task]. Bạn có muốn tôi commit các thay đổi này không?"`).
+- **Commit message 100% tiếng Anh:** Bắt buộc tuân thủ chuẩn Conventional Commits (`feat:`, `fix:`, `refactor:`, `chore:`...), tuyệt đối không viết commit message bằng tiếng Việt.
+- **Code Comments 100% tiếng Anh & Tối giản (Quy tắc 11):** Mọi comment trong code (PHP, Blade, JS, CSS) bắt buộc viết bằng tiếng Anh, tuyệt đối không comment tiếng Việt, không sửa/thêm comment tràn lan, giữ code sạch và tự tường minh.
 
 ---
 

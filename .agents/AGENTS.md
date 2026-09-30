@@ -98,6 +98,7 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
 1. **KHÔNG TỰ Ý COMMIT HAY PUSH:** AI tuyệt đối KHÔNG ĐƯỢC tự động chạy lệnh `git commit` hoặc `git push` trong bất kỳ trường hợp nào trừ khi user ra lệnh trực tiếp trong phiên chat đó.
 2. **COMMIT THEO YÊU CẦU ĐƠN LẺ:** Khi user yêu cầu *"Commit code giúp tôi"*, AI CHỈ ĐƯỢC COMMIT DUY NHẤT LẦN ĐÓ cho công việc/task hiện tại.
 3. **LUÔN HỎI LẠI Ở TASK TIẾP THEO:** Sau khi hoàn thành một task mới tiếp theo, AI KHÔNG ĐƯỢC tự động commit dựa trên lệnh cũ. AI phải dừng lại và hỏi user: *"Tôi đã hoàn thành task [Tên Task]. Bạn có muốn tôi commit các thay đổi này không?"*.
+4. **CHUẨN COMMITS TIẾNG ANH (CONVENTIONAL COMMITS):** Commit message BẮT BUỘC viết bằng tiếng Anh theo chuẩn Conventional Commits (ví dụ: `feat: ...`, `fix: ...`, `refactor: ...`, `chore: ...`). Tuyệt đối KHÔNG viết commit message bằng tiếng Việt.
 
 ---
 
@@ -118,6 +119,17 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
   - Mọi CSS tùy biến phải viết vào `public/frontend/css/theme-style.css`.
 - **Tái sử dụng Partials:** Các phần tử UI nổi (như nút Cuộn lên đầu trang, Hotline, Zalo) BẮT BUỘC nằm chung trong `resources/views/frontend/partials/contact_buttons.blade.php`.
 - **Tối giản Code:** Ưu tiên dùng Vanilla JS ngắn gọn hoặc Tailwind CSS classes thay vì viết thêm các thư viện/script cồng kềnh.
+
+---
+
+## QUY TẮC SỐ 11 – QUY CHUẨN COMMENT & COMMIT (ENGLISH ONLY & MINIMAL COMMENTS)
+
+- **Ngôn ngữ 100% tiếng Anh (No Vietnamese in Code Comments & Commits):**
+  - Mọi comment trong toàn bộ mã nguồn (PHP, Blade, JS, CSS, SQL, Config...) BẮT BUỘC viết bằng tiếng Anh. Tuyệt đối KHÔNG viết comment bằng tiếng Việt trong code.
+  - Mọi Commit message BẮT BUỘC viết bằng tiếng Anh theo chuẩn Conventional Commits. Tuyệt đối KHÔNG viết commit message bằng tiếng Việt.
+- **Tối giản & Giữ sạch mã nguồn (Minimal & Clean Comments):**
+  - Tuyệt đối KHÔNG sửa đổi comment tràn lan hoặc thêm comment giải thích thừa thãi, rườm rà.
+  - Ưu tiên code tự tường minh (Self-documenting code). Chỉ viết comment khi thật sự cần thiết để giải thích lý do (rationale) hoặc logic nghiệp vụ phức tạp.
 
 ---
 
