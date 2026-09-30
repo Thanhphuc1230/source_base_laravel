@@ -21,7 +21,7 @@
             <span>Thanh toán & Đặt hàng</span>
         </h1>
 
-        <form action="{{ route('web.checkoutStore') }}" method="POST">
+        <form id="checkout-form" action="{{ route('web.checkoutStore') }}" method="POST">
             @csrf
             <input type="hidden" name="total" value="{{ $total }}">
 
@@ -167,9 +167,9 @@
 
                         <!-- Submit Buttons -->
                         <div class="space-y-3">
-                            <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-emerald-950 font-black py-4 rounded-xl transition-all duration-300 shadow-md hover:scale-102 flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-lock text-sm"></i>
-                                <span>Xác nhận đặt hàng</span>
+                            <button type="submit" id="btn-submit-order" class="w-full bg-gold-500 hover:bg-gold-600 text-emerald-950 font-black py-4 rounded-xl transition-all duration-300 shadow-md flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-lock text-sm" id="btn-icon"></i>
+                                <span id="btn-text">Xác nhận đặt hàng</span>
                             </button>
                             <a href="{{ route('web.cart') }}" class="w-full bg-gray-50 hover:bg-gray-100 border border-gray-200 text-emerald-950 font-bold py-3 flex items-center justify-center space-x-2 rounded-xl transition-colors">
                                 <i class="fa-solid fa-chevron-left text-3xs"></i>
@@ -181,4 +181,55 @@
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkoutForm = document.getElementById('checkout-form');
+            const submitBtn = document.getElementById('btn-submit-order');
+            const btnIcon = document.getElementById('btn-icon');
+            const btnText = document.getElementById('btn-text');
+
+            if (!checkoutForm || !submitBtn) return;
+
+            let isSubmitting = false;
+
+            checkoutForm.addEventListener('submit', function (e) {
+                // Check form validity
+                if (!checkoutForm.checkValidity()) {
+                    return;
+                }
+
+                // Prevent double submission
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                // Disable button & show spinner
+                isSubmitting = true;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75', 'cursor-not-allowed', 'pointer-events-none');
+                submitBtn.classList.remove('hover:scale-102');
+
+                if (btnIcon) {
+                    btnIcon.className = 'fa-solid fa-circle-notch fa-spin text-sm';
+                }
+                if (btnText) {
+                    btnText.textContent = 'Đang xử lý đơn hàng...';
+                }
+
+                // Fallback timeout
+                setTimeout(function () {
+                    if (isSubmitting) {
+                        isSubmitting = false;
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed', 'pointer-events-none');
+                        submitBtn.classList.add('hover:scale-102');
+                        if (btnIcon) btnIcon.className = 'fa-solid fa-lock text-sm';
+                        if (btnText) btnText.textContent = 'Xác nhận đặt hàng';
+                    }
+                }, 15000);
+            });
+        });
+    </script>
 @endsection
