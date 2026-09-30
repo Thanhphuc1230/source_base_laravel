@@ -45,31 +45,40 @@ class CheckoutService
      */
     public function processOrder(Request $request): ?int
     {
-        try {
-            DB::beginTransaction();
+        $cart = $this->cartService->getCart();
 
-            // Create shipping info
+        if (empty($cart)) {
+            throw new \RuntimeException('Cart is empty or order has already been processed.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // 1. Create shipping info
             $shipping = $this->createShipping($request);
 
-            // Create order status
+            // 2. Create order status
             $orderStatus = $this->createOrderStatus($request, $shipping->id_order_shipping);
 
-            // Create order products
-            $this->createOrderProducts($orderStatus->id_order_status);
+            // 3. Create order products
+            $this->createOrderProducts($orderStatus->id_order_status, $cart);
 
-            // Send notification email (Safely handled so SMTP failure never breaks order placement)
+            // 4. Clear cart atomically within the transaction
+            $this->cartService->clearCart();
+
+            DB::commit();
+
+            // 5. Send notification email outside transaction (so email failure never breaks order placement)
             try {
                 $this->sendOrderNotification($orderStatus->id_order_status);
             } catch (\Throwable $mailEx) {
                 Log::warning('Order notification email skipped or failed: ' . $mailEx->getMessage());
             }
 
-            DB::commit();
-
             return $orderStatus->id_order_status;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
+            Log::error('DB Transaction rolled back during checkout: ' . $e->getMessage());
             throw $e;
         }
     }
@@ -116,9 +125,9 @@ class CheckoutService
      * @param int $orderStatusId
      * @return void
      */
-    private function createOrderProducts(int $orderStatusId): void
+    private function createOrderProducts(int $orderStatusId, ?array $cart = null): void
     {
-        $cart = $this->cartService->getCart();
+        $cart = $cart ?? $this->cartService->getCart();
 
         foreach ($cart as $product) {
             OrderProduct::create([

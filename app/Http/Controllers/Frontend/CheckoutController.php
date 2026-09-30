@@ -7,6 +7,7 @@ use App\Services\CheckoutService;
 use App\Services\CartService;
 use App\Services\RateLimitService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -42,7 +43,18 @@ class CheckoutController extends Controller
 
     public function checkoutStore(Request $request)
     {
-        // Basic validation
+        // Ensure cart has items before processing
+        if ($this->cartService->isEmpty()) {
+            Alert::warning(
+                app()->getLocale() == 'en' ? 'Empty Cart' : 'Giỏ hàng đang trống',
+                app()->getLocale() == 'en' 
+                    ? 'Your cart is empty or this order has already been processed.' 
+                    : 'Giỏ hàng đang trống hoặc đơn hàng đã được xử lý trước đó.'
+            );
+            return redirect()->route('web.cart');
+        }
+
+        // Validate request data
         $request->validate([
             'f_name_order' => 'required|string|max:255',
             'l_name_order' => 'required|string|max:255',
@@ -60,17 +72,29 @@ class CheckoutController extends Controller
         if ($this->rateLimitService->isBlocked($ip)) {
             Alert::error(
                 app()->getLocale() == 'en' ? 'Too Many Checkout Attempts' : 'Quá nhiều lần thử thanh toán',
-                app()->getLocale() == 'en' ? 'Please try again later' : 'Vui lòng thử lại sau'
+                app()->getLocale() == 'en' ? 'Please try again later' : 'Vui lòng thử lại sau ít phút'
             );
 
             return back()->withInput();
         }
 
+        // Atomic lock to prevent duplicate submissions
+        $sessionId = session()->getId();
+        $lockKey = 'checkout_lock_' . ($sessionId ?: md5($ip . $request->userAgent()));
+        $lock = Cache::lock($lockKey, 10);
+
+        if (!$lock->get()) {
+            Alert::warning(
+                app()->getLocale() == 'en' ? 'Processing Order' : 'Đơn hàng đang xử lý',
+                app()->getLocale() == 'en' 
+                    ? 'Your order is currently being processed. Please do not submit again.' 
+                    : 'Đơn hàng của bạn đang được hệ thống xử lý, vui lòng không thao tác lại!'
+            );
+            return back()->withInput();
+        }
+
         try {
             $orderId = $this->checkoutService->processOrder($request);
-
-            // Clear cart after successful order
-            $this->checkoutService->clearCartAfterOrder();
 
             // Clear rate limit attempts on successful checkout
             $this->rateLimitService->clearAttempts($ip);
@@ -81,14 +105,17 @@ class CheckoutController extends Controller
             // Increment attempts on failure
             $this->rateLimitService->incrementAttempts($ip);
 
-            Log::error('Checkout failed: ' . $e->getMessage());
+            Log::error('Checkout failed: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             Alert::error(
                 app()->getLocale() == 'en' ? 'Order Failed' : 'Đặt hàng thất bại',
-                app()->getLocale() == 'en' ? 'Please try again' : 'Vui lòng thử lại'
+                app()->getLocale() == 'en' ? 'An error occurred, please try again.' : 'Có lỗi xảy ra khi tạo đơn hàng, vui lòng thử lại!'
             );
 
             return back()->withInput();
+
+        } finally {
+            optional($lock)->release();
         }
     }
 
