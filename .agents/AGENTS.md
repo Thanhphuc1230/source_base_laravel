@@ -74,6 +74,11 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
   - Mọi button, card phải có hiệu ứng mượt `transition-all duration-300 ease-in-out`.
   - Floating action buttons đặt bên phải (`fixed bottom-5 right-5 z-50`).
 - **Icon Safety (An toàn Icon):** Dùng FontAwesome v6 chuẩn syntax (bắt buộc prefix `fa-`, ví dụ: `fas fa-shopping-cart`, `fas fa-phone-alt`, `fab fa-facebook`) hoặc SVG Inline để tuyệt đối KHÔNG bị vỡ/ô vuông icon.
+- **Khoảng cách Section (Section Spacing / Padding):** Tuyệt đối KHÔNG dùng padding top/bottom quá lớn (`py-16`, `py-20`, `py-24`) làm rời rạc bố cục. Bắt buộc giới hạn padding top/bottom của các section ở mức tinh tế: **15px** (`py-[15px]`).
+- **Nút/Icon Header (Cart, Language Switcher & Hotline Styling):**
+  - **Không để số điện thoại trên Header:** Giữ Header thanh thoát, không đặt nút gọi/SĐT trên Header chính. Hotline & Zalo tập trung tại floating action button bên phải (`fixed bottom-5 right-5`).
+  - **Icon Giỏ hàng (Cart Icon):** Giữ nguyên bản mộc, KHÔNG bọc hình tròn/vuông nền màu (`no border-radius, no background`), chỉ hiển thị icon giỏ hàng tinh tế cùng badge số lượng nhỏ gọn phía trên.
+  - **Lá cờ Ngôn ngữ (Language Switcher Flags):** KHÔNG dùng border-radius hay background/nền bọc xung quanh. KHÔNG dùng dropdown phức tạp; hiển thị trực tiếp 2 lá cờ (Tiếng Việt & Tiếng Anh) nằm ngang cạnh nhau (`flex items-center gap-2`), mộc, phẳng, không bo góc và không nền.
 - **Scroll Animations:** Tích hợp hiệu ứng xuất hiện khi cuộn trang (Fade/Slide/Zoom in) bằng Intersection Observer API (`.scroll-anim.fade-up`).
 - **Responsive:** Chuẩn Responsive 100%. Mobile: tin tức và sản phẩm bắt buộc hiển thị **2 cột** (`grid grid-cols-2 gap-3`).
 

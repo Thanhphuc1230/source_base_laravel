@@ -149,3 +149,25 @@ Sử dụng thư viện Scroll Animation nhẹ lưu tại local (`public/fronten
 * **Tin tức (News Grid):**
   * Mobile (`< 640px`): `grid grid-cols-2 gap-3`
   * Desktop (`> 1024px`): `grid-cols-3 gap-6`
+
+---
+
+## 5. QUY CHUẨN KHOẢNG CÁCH SECTION (SECTION SPACING / PADDING)
+
+* **Giới hạn khoảng cách:** Tuyệt đối KHÔNG dùng padding top/bottom quá cao (`py-16`, `py-20`, `py-24`) khiến website bị loãng và thưa thớt nội dung.
+* **Quy định bắt buộc:** Mọi section nội dung chuẩn hóa padding top/bottom ở mức **15px** (`py-[15px]`).
+
+---
+
+## 6. QUY CHUẨN HEADER ICONS & LANGUAGE SWITCHER
+
+* **Không hiển thị số điện thoại / Hotline ở Header:**
+  - Không đặt nút SĐT / hotline trong header thanh điều hướng chính nhằm giữ UI header tối giản, thông thoáng.
+  - Các nút gọi điện / Zalo đã được bố trí chuyên nghiệp tại floating action button góc dưới phải màn hình (`contact_buttons.blade.php`).
+* **Icon Giỏ hàng (Cart Icon):**
+  - Giữ icon tự nhiên, phẳng và mộc.
+  - **KHÔNG dùng background hay border-radius** (không bọc trong thẻ tròn/vuông nền xám hay viền).
+  - Chỉ hiển thị icon thuần túy (như `<i class="fa-solid fa-cart-shopping"></i>` hoặc `<i class="fa-solid fa-bag-shopping"></i>`) kèm badge đếm số lượng tinh tế.
+* **Cụm cờ ngôn ngữ (Language Switcher Flags):**
+  - **KHÔNG dùng border-radius hay background/nền** bọc quanh lá cờ.
+  - **KHÔNG dùng dropdown ẩn**: Hiển thị trực tiếp **2 lá cờ nằm ngang cạnh nhau** (`flex items-center gap-2`), mộc, phẳng, click trực tiếp để chuyển ngôn ngữ (VI / EN).

@@ -12,6 +12,11 @@
 - **Animation:** Dùng Intersection Observer JS (`.scroll-anim.fade-up`) tạo hiệu ứng cuộn mượt.
 - **Mobile Grid:** Sản phẩm & Tin tức luôn chia 2 cột trên Mobile (`grid-cols-2`).
 - **Không dùng Dark Theme nguyên khối cho bán lẻ:** Tuyệt đối không dùng Dark Theme nguyên khối (nền đen tuyền) cho các website bán lẻ commercial trừ khi người dùng yêu cầu riêng. Mặc định ưu tiên Light Modern Premium Design để tối ưu trải nghiệm mua sắm.
+- **Khoảng cách Section:** Bắt buộc padding top/bottom của các section chỉ 15px (`py-[15px]`), tuyệt đối không dùng padding quá cao (`py-16`, `py-20`, `py-24`) làm loãng bố cục trang.
+- **Nút/Icon Header (Cart, Language Switcher, Hotline):**
+  - **Không để số điện thoại trên Header:** Giữ thanh header thoáng và tối giản, hotline & Zalo bố trí ở floating action buttons góc dưới bên phải màn hình.
+  - **Cart Icon:** Giữ mộc tự nhiên, tuyệt đối không dùng border-radius kèm nền background (không bọc trong khối tròn/vuông xám), chỉ hiển thị icon phẳng cùng badge số lượng.
+  - **Lá cờ ngôn ngữ:** Tuyệt đối không dùng border-radius hay background/nền bọc quanh lá cờ, không dùng dropdown ẩn; hiển thị trực tiếp 2 lá cờ nằm ngang cạnh nhau (`flex items-center gap-2`) phẳng và rõ ràng.
 - **Tập trung Asset (Quy tắc số 10):** Tuyệt đối không tạo các file `.js`/`.css` lẻ tẻ cho từng component nhỏ (như `back-to-top.js`). Mọi JS UI/UX gom vào `main.js` hoặc `script.blade.php`; CSS tùy biến viết vào `theme-style.css`; các nút UI nổi tái sử dụng tập trung trong `buttons.blade.php` (hoặc `contact_buttons.blade.php`). Ưu tiên Vanilla JS ngắn gọn và Tailwind CSS.
 
 ---
