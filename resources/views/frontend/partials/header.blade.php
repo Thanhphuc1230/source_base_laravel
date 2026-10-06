@@ -57,64 +57,31 @@
 
             <!-- Header Actions (Cart, Hotline, Language, Mobile Toggle) -->
             <div class="flex items-center space-x-3 sm:space-x-4">
-                <!-- Cart Icon with Badge -->
-                <a href="{{ route('web.cart') }}" class="relative p-1 text-charcoal hover:text-taupe-oak transition-colors duration-200" title="Giỏ hàng">
-                    <div class="bg-beige-warm hover:bg-stone-200/80 p-2.5 rounded-full border border-border-subtle hover:border-taupe-oak/40 transition-all duration-300 relative shadow-2xs">
-                        <i class="fa-solid fa-bag-shopping text-sm text-charcoal"></i>
-                        <span id="cart-badge-count" class="absolute -top-1 -right-1 bg-taupe-oak text-white text-3xs font-extrabold rounded-full h-5 w-5 flex items-center justify-center border-2 border-white shadow-xs transition-transform duration-300 {{ ($cart_count ?? 0) > 0 ? 'scale-100' : 'scale-0' }}">
-                            {{ $cart_count ?? 0 }}
-                        </span>
-                    </div>
+                <!-- Cart Icon with Badge (No background, no border-radius) -->
+                <a href="{{ route('web.cart') }}" class="relative inline-flex items-center text-charcoal hover:text-taupe-oak transition-colors duration-200 px-1 py-1" title="Giỏ hàng">
+                    <i class="fa-solid fa-bag-shopping text-lg text-charcoal hover:text-taupe-oak transition-colors"></i>
+                    <span id="cart-badge-count" class="absolute -top-1 -right-2 bg-taupe-oak text-white text-3xs font-extrabold rounded-full h-4 w-4 flex items-center justify-center shadow-xs transition-transform duration-300 {{ ($cart_count ?? 0) > 0 ? 'scale-100' : 'scale-0' }}">
+                        {{ $cart_count ?? 0 }}
+                    </span>
                 </a>
 
-                <!-- Language Switcher (Zero-CDN inline SVG flags) -->
-                <div class="relative group">
-                    <button class="flex items-center space-x-1.5 text-xs font-semibold uppercase tracking-wider text-charcoal bg-beige-warm border border-border-subtle px-2.5 py-1.5 rounded-full focus:outline-none transition-all duration-200">
-                        @if(session('locale') == 'en')
-                            <svg class="w-4 h-3 rounded-xs" viewBox="0 0 640 480">
-                                <path fill="#bd3d44" d="M0 0h640v480H0z"/>
-                                <path stroke="#fff" stroke-width="37" d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
-                                <path fill="#192f5d" d="M0 0h256v258H0z"/>
-                            </svg>
-                            <span>EN</span>
-                        @else
-                            <svg class="w-4 h-3 rounded-xs" viewBox="0 0 640 480">
-                                <path fill="#da251d" d="M0 0h640v480H0z"/>
-                                <path fill="#ff0" d="M320 133l27 82h86l-70 51 27 82-70-51-70 51 27-82-70-51h86z"/>
-                            </svg>
-                            <span>VI</span>
-                        @endif
-                        <i class="fa-solid fa-chevron-down text-3xs text-charcoal-light"></i>
-                    </button>
-                    <!-- Dropdown -->
-                    <div class="absolute right-0 mt-1.5 w-36 bg-white rounded-xl shadow-xl border border-border-subtle py-1.5 hidden group-hover:block transition-all duration-200 z-50">
-                        <a href="{{ route('lang', ['locale' => 'vn']) }}" class="flex items-center space-x-2.5 px-3.5 py-2 text-xs font-medium text-charcoal hover:bg-beige-warm hover:text-taupe-oak transition-colors">
-                            <svg class="w-4 h-3 rounded-xs" viewBox="0 0 640 480">
-                                <path fill="#da251d" d="M0 0h640v480H0z"/>
-                                <path fill="#ff0" d="M320 133l27 82h86l-70 51 27 82-70-51-70 51 27-82-70-51h86z"/>
-                            </svg>
-                            <span>Tiếng Việt</span>
-                        </a>
-                        <a href="{{ route('lang', ['locale' => 'en']) }}" class="flex items-center space-x-2.5 px-3.5 py-2 text-xs font-medium text-charcoal hover:bg-beige-warm hover:text-taupe-oak transition-colors">
-                            <svg class="w-4 h-3 rounded-xs" viewBox="0 0 640 480">
-                                <path fill="#bd3d44" d="M0 0h640v480H0z"/>
-                                <path stroke="#fff" stroke-width="37" d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
-                                <path fill="#192f5d" d="M0 0h256v258H0z"/>
-                            </svg>
-                            <span>English</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Dynamic Hotline Call Button -->
-                @if(!empty($web->phone))
-                <div class="hidden xl:block">
-                    <a href="tel:{{ $web->phone }}" class="flex items-center space-x-2 bg-charcoal hover:bg-taupe-oak text-white font-medium px-4 py-2 rounded-full border border-charcoal hover:border-taupe-oak transition-all duration-300 shadow-xs group">
-                        <i class="fa-solid fa-phone text-xs text-taupe-light group-hover:text-white"></i>
-                        <span class="text-xs uppercase tracking-wider font-semibold">{{ $web->phone }}</span>
+                <!-- Language Switcher (Two flags side-by-side, no background, no border-radius) -->
+                <div class="flex items-center space-x-2">
+                    <a href="{{ route('lang', ['locale' => 'vn']) }}" class="inline-block transition-opacity duration-200 {{ session('locale') == 'vn' || !session('locale') ? 'opacity-100' : 'opacity-40 hover:opacity-100' }}" title="Tiếng Việt">
+                        <svg class="w-5 h-3.5 block" viewBox="0 0 640 480">
+                            <path fill="#da251d" d="M0 0h640v480H0z"/>
+                            <path fill="#ff0" d="M320 133l27 82h86l-70 51 27 82-70-51-70 51 27-82-70-51h86z"/>
+                        </svg>
+                    </a>
+                    <a href="{{ route('lang', ['locale' => 'en']) }}" class="inline-block transition-opacity duration-200 {{ session('locale') == 'en' ? 'opacity-100' : 'opacity-40 hover:opacity-100' }}" title="English">
+                        <svg class="w-5 h-3.5 block" viewBox="0 0 640 480">
+                            <path fill="#bd3d44" d="M0 0h640v480H0z"/>
+                            <path stroke="#fff" stroke-width="37" d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                            <path fill="#192f5d" d="M0 0h256v258H0z"/>
+                        </svg>
                     </a>
                 </div>
-                @endif
+
 
                 <!-- Hamburger Mobile Menu Toggle -->
                 <button type="button" onclick="toggleMobileMenu()" class="lg:hidden p-2 text-charcoal hover:text-taupe-oak focus:outline-none transition-colors" aria-label="Toggle Navigation">

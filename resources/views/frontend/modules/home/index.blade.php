@@ -10,7 +10,7 @@
 
     <!-- 2. Section Năng Lực Nhà Máy (About Section uuid: 8037faa4-c262-41d7-aed5-60a479531b4f) -->
     @if(isset($about_section) && $about_section)
-        <section class="py-16 sm:py-24 bg-beige-warm border-y border-border-subtle scroll-anim fade-up" id="factory-about">
+        <section class="py-[15px] bg-beige-warm border-y border-border-subtle scroll-anim fade-up" id="factory-about">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
                     <!-- Cột trái: Khung ảnh 4:3 bo góc rounded-3xl có tag và stat badge nổi -->
@@ -91,7 +91,7 @@
     @endif
 
     <!-- 3. Section Dự Án Chọn Lọc (Grid 3 cột md:grid-cols-2 lg:grid-cols-3 gap-8, tỉ lệ ảnh 16:11, tag Modern Organic) -->
-    <section class="py-16 sm:py-24 bg-cream scroll-anim fade-up" id="featured-projects">
+    <section class="py-[15px] bg-cream scroll-anim fade-up" id="featured-projects">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between mb-12">
                 <div class="text-center md:text-left space-y-1.5">
@@ -172,7 +172,7 @@
     </section>
 
     <!-- 4. Section Bộ Sưu Tập Nội Thất May Đo (Bespoke) - Mobile 2 cột (grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6) -->
-    <section class="py-16 sm:py-24 bg-white border-t border-border-subtle scroll-anim fade-up" id="bespoke-products">
+    <section class="py-[15px] bg-white border-t border-border-subtle scroll-anim fade-up" id="bespoke-products">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between mb-12">
                 <div class="text-center md:text-left space-y-1.5">
@@ -209,7 +209,7 @@
     </section>
 
     <!-- 5. Section Tạp Chí Kiến Trúc & Cảm Hứng Sống - Mobile 2 cột (grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6) -->
-    <section class="py-16 sm:py-24 bg-cream border-t border-border-subtle scroll-anim fade-up" id="architecture-journal">
+    <section class="py-[15px] bg-cream border-t border-border-subtle scroll-anim fade-up" id="architecture-journal">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col md:flex-row items-center justify-between mb-12">
                 <div class="text-center md:text-left space-y-1.5">
@@ -277,7 +277,7 @@
 
     <!-- 6. Features Value Section (Cam Kết Giá Trị) -->
     @if(isset($features) && $features->isNotEmpty())
-        <section class="py-16 bg-white border-t border-border-subtle scroll-anim fade-up">
+        <section class="py-[15px] bg-white border-t border-border-subtle scroll-anim fade-up">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     @foreach($features as $feat)
