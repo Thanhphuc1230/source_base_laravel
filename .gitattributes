@@ -7,5 +7,15 @@
 *.php diff=php
 
 /.github export-ignore
+/.agents export-ignore
+/docs export-ignore
+/docs_backup export-ignore
+/tests export-ignore
+/phpunit.xml export-ignore
+/.phpunit.result.cache export-ignore
+/.env.testing export-ignore
+/.editorconfig export-ignore
+/README.md export-ignore
+/.deployignore export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore

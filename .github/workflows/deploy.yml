@@ -1,0 +1,44 @@
+name: Deploy Laravel App to HestiaCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/chienthangr/web/chienthangroup.vn/public_html
+            git fetch origin main
+            
+            # Checkout code while strictly excluding images, docs, tests, and dev files
+            git checkout origin/main -- . ':!public/images' ':!.agents' ':!docs' ':!docs_backup' ':!tests' ':!.github' ':!README.md' ':!phpunit.xml' ':!.env.testing' ':!.editorconfig'
+            
+            # Clean up any leftover dev, test, doc, and agent files on hosting
+            rm -rf .agents docs docs_backup tests .github README.md phpunit.xml .phpunit.result.cache .env.testing .editorconfig
+            
+            export PATH=$PATH:/usr/local/bin:/usr/bin:~/.composer/vendor/bin
+            if command -v composer &> /dev/null; then
+                composer install --no-dev --optimize-autoloader --no-interaction
+            elif [ -f /usr/local/bin/composer ]; then
+                /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
+            fi
+            
+            php artisan migrate --force --no-interaction
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan images:optimize --no-interaction

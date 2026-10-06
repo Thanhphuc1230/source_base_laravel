@@ -1,0 +1,15 @@
+# Deployment exclude list
+.git/
+.github/
+.agents/
+docs/
+docs_backup/
+README.md
+tests/
+phpunit.xml
+.phpunit.result.cache
+.env.testing
+.editorconfig
+.gitattributes
+.gitignore
+node_modules/
