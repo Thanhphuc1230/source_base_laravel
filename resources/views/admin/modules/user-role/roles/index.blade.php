@@ -28,96 +28,93 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center flex-wrap gap-2">
                                 <div class="flex-grow-1">
-                                    <a href="{{ route('admin.user-role.roles.create') }}" class="btn btn-success add-btn">
-                                        <i class="ri-add-fill me-1 align-bottom"></i> Tạo vai trò mới
+                                    <a href="{{ route('admin.user-role.roles.create') }}"
+                                        class="btn btn-success d-inline-flex align-items-center justify-content-center px-3 rounded-2"
+                                        style="height: 38px; font-weight: 500; font-size: 13px;">
+                                        <i class="ri-add-line fs-16 me-1"></i> Tạo vai trò mới
                                     </a>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <div class="hstack text-nowrap gap-2">
-                                        <a href="{{ route('admin.user-role.index') }}" class="btn btn-soft-secondary">
-                                            <i class="ri-arrow-left-line align-bottom me-1"></i> Quay lại danh sách user
-                                        </a>
-                                    </div>
+                                    <a href="{{ route('admin.user-role.index') }}"
+                                        class="btn btn-soft-secondary d-inline-flex align-items-center justify-content-center px-3 rounded-2"
+                                        style="height: 38px; font-weight: 500; font-size: 13px;">
+                                        <i class="ri-arrow-left-line fs-15 me-1"></i> Quay lại danh sách user
+                                    </a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="card-body">
                             <div class="table-responsive table-card mb-1">
-                                <table class="table table-nowrap table-striped-columns mb-0">
-                                    <thead class="table-light text-muted">
+                                <table class="table align-middle table-nowrap table-hover mb-0">
+                                    <thead class="table-light text-muted text-uppercase fs-11" style="background-color: #f8fafc;">
                                         <tr>
-                                            <th>ID</th>
-                                            <th>Tên vai trò</th>
-                                            <th>Tên hiển thị</th>
-                                            <th>Mô tả</th>
-                                            <th>Số quyền</th>
-                                            <th>Số người dùng</th>
-                                            <th>Ngày tạo</th>
-                                            <th class="text-end">Hành động</th>
+                                            <th class="text-center" style="width: 50px;">ID</th>
+                                            <th class="text-start">Tên vai trò</th>
+                                            <th class="text-start">Tên hiển thị</th>
+                                            <th class="text-start">Mô tả</th>
+                                            <th class="text-center" style="width: 110px;">Số quyền</th>
+                                            <th class="text-center" style="width: 120px;">Số người dùng</th>
+                                            <th class="text-center" style="width: 120px;">Ngày tạo</th>
+                                            <th class="text-center" style="width: 100px;">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody class="list form-check-all">
                                         @forelse ($roles as $role)
                                             <tr>
-                                                <td>{{ $role->id }}</td>
-                                                <td>
-                                                    <span class="badge bg-primary-subtle text-primary">{{ $role->name }}</span>
+                                                <td class="text-center text-muted fw-semibold fs-12">{{ $role->id }}</td>
+                                                <td class="text-start">
+                                                    <span class="category-badge">{{ $role->name }}</span>
                                                 </td>
-                                                <td class="fw-semibold">{{ $role->display_name }}</td>
-                                                <td>
+                                                <td class="text-start fw-bold text-dark">{{ $role->display_name }}</td>
+                                                <td class="text-start text-muted fs-12">
                                                     @if ($role->description)
-                                                        <span class="text-muted">{{ Str::limit($role->description, 50) }}</span>
+                                                        {{ Str::limit($role->description, 50) }}
                                                     @else
-                                                        <span class="text-muted fst-italic">Chưa có mô tả</span>
+                                                        <span class="fst-italic text-secondary">Chưa có mô tả</span>
                                                     @endif
                                                 </td>
-                                                <td>
-                                                    <span class="badge bg-info-subtle text-info">
+                                                <td class="text-center">
+                                                    <span class="badge bg-info-subtle text-info px-2 py-1">
                                                         {{ $role->permissions->count() }} quyền
                                                     </span>
                                                 </td>
-                                                <td>
-                                                    <span class="badge bg-success-subtle text-success">
+                                                <td class="text-center">
+                                                    <span class="badge bg-success-subtle text-success px-2 py-1">
                                                         {{ $role->users->count() }} người dùng
                                                     </span>
                                                 </td>
-                                                <td>{{ $role->created_at->format('d/m/Y H:i') }}</td>
-                                                <td>
-                                                    <div class="d-flex gap-2 justify-content-end">
-                                                        <div class="edit">
-                                                            <a href="{{ route('admin.user-role.roles.edit', ['id' => $role->id]) }}" 
-                                                               class="btn btn-sm btn-success edit-item-btn">
-                                                               <i class="ri-pencil-fill"></i> Sửa
-                                                            </a>
-                                                        </div>
+                                                <td class="text-center text-muted fs-12">{{ $role->created_at->format('d/m/Y H:i') }}</td>
+                                                <td class="text-center">
+                                                    <div class="d-flex align-items-center justify-content-center" style="gap: 6px;">
+                                                        <a href="{{ route('admin.user-role.roles.edit', ['id' => $role->id]) }}" 
+                                                           class="action-btn-ghost action-edit" title="Chỉnh sửa">
+                                                           <i class="ri-pencil-line"></i>
+                                                        </a>
                                                         @if ($role->users->count() == 0)
-                                                            <div class="remove">
-                                                                <form action="{{ route('admin.user-role.roles.destroy', ['id' => $role->id]) }}" 
-                                                                      method="POST" 
-                                                                      onsubmit="return confirm('Bạn có chắc muốn xóa vai trò này?')">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-danger remove-item-btn">
-                                                                        <i class="ri-delete-bin-fill"></i> Xóa
-                                                                    </button>
-                                                                </form>
-                                                            </div>
+                                                            <form action="{{ route('admin.user-role.roles.destroy', ['id' => $role->id]) }}" 
+                                                                  method="POST" 
+                                                                  onsubmit="return confirm('Bạn có chắc muốn xóa vai trò này?')"
+                                                                  class="m-0 p-0" style="display: inline;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="action-btn-ghost action-delete border-0 bg-transparent" title="Xóa">
+                                                                    <i class="ri-delete-bin-line"></i>
+                                                                </button>
+                                                            </form>
                                                         @else
-                                                            <button class="btn btn-sm btn-secondary" disabled title="Không thể xóa vai trò đang được sử dụng">
-                                                                <i class="ri-delete-bin-fill"></i> Xóa
-                                                            </button>
+                                                            <span class="action-btn-ghost text-muted opacity-50" title="Không thể xóa vai trò đang được sử dụng" style="cursor: not-allowed;">
+                                                                <i class="ri-delete-bin-line"></i>
+                                                            </span>
                                                         @endif
                                                     </div>
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="8" class="text-center py-4">
-                                                    <div class="text-muted">
-                                                        <i class="ri-folder-open-line display-6"></i>
-                                                        <p class="mt-2">Chưa có vai trò nào được tạo</p>
-                                                    </div>
+                                                <td colspan="8" class="text-center py-4 text-muted">
+                                                    <i class="ri-folder-open-line display-6 d-block mb-1"></i>
+                                                    Chưa có vai trò nào được tạo
                                                 </td>
                                             </tr>
                                         @endforelse

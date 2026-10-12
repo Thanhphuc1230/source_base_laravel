@@ -14,65 +14,72 @@
 
                         <div class="card-body">
                             <div class="listjs-table" id="customerList">
-                                <div class="row g-4 mb-3">
+                                <div class="row g-3 mb-3 align-items-center">
                                     @hasPermission('user.create')
                                     <div class="col-sm-auto">
-                                        <div>
-                                            <a type="button" href="{{ route('admin.user.create') }}"
-                                                class="btn btn-success add-btn"><i
-                                                    class="ri-add-line align-bottom me-1"></i> Thêm </a>
-                                        </div>
+                                        <a href="{{ route('admin.user.create') }}"
+                                            class="btn btn-success d-inline-flex align-items-center justify-content-center px-3 rounded-2"
+                                            style="height: 38px; font-weight: 500; font-size: 13px;">
+                                            <i class="ri-add-line fs-16 me-1"></i> Thêm mới
+                                        </a>
                                     </div>
                                     @endhasPermission
                                     @hasPermission('user.delete')
                                     <div class="col-sm-auto">
-                                        <button type="button" id="deleteSelectedItems" class="btn btn-danger add-btn">
-                                            <i class="ri-delete-bin-5-line"></i> Xóa đã chọn
+                                        <button type="button" id="deleteSelectedItems"
+                                            class="btn btn-danger d-inline-flex align-items-center justify-content-center px-3 rounded-2"
+                                            style="height: 38px; font-weight: 500; font-size: 13px;">
+                                            <i class="ri-delete-bin-5-line fs-15 me-1"></i> Xóa đã chọn
                                         </button>
                                     </div>
                                     @endhasPermission
                                     <div class="col-sm">
-                                        <div class="d-flex justify-content-sm-end">
-                                            <div class="search-box ms-2">
-                                                <form action="{{ route('admin.user.index') }}" method="get"
-                                                    style="display: flex; gap: 10px;">
-                                                    @csrf
-                                                    <select class="form-select" name="level" style="width: auto;">
-                                                        <option value="">Tất cả cấp độ</option>
-                                                        <option value="1" {{ request('level') == '1' ? 'selected' : '' }}>Admin</option>
-                                                        <option value="2" {{ request('level') == '2' ? 'selected' : '' }}>Staff</option>
-                                                        <option value="3" {{ request('level') == '3' ? 'selected' : '' }}>User</option>
-                                                    </select>
-                                                    <select class="form-select" name="status" style="width: auto;">
-                                                        <option value="">Tất cả trạng thái</option>
-                                                        <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Hoạt động</option>
-                                                        <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Khóa</option>
-                                                    </select>
-                                                    <input type="text" class="form-control search" name="search"
-                                                        placeholder="Tìm kiếm..." value="{{ request('search') }}" style="height: 37.5px; width: 200px;">
-                                                    <button type="submit"
-                                                        class="btn btn-success w-lg waves-effect waves-light"
-                                                        style="height: 37.5px">Tìm kiếm</button>
-                                                </form>
-                                            </div>
+                                        <div class="d-flex justify-content-sm-end align-items-center">
+                                            <form action="{{ route('admin.user.index') }}" method="get"
+                                                class="d-flex align-items-center gap-2 m-0 p-0 flex-wrap flex-sm-nowrap">
+                                                <select class="form-select rounded-2" name="level" onchange="this.form.submit()"
+                                                    style="width: 140px; max-width: 140px; height: 38px; font-size: 13px;">
+                                                    <option value="">Cấp độ</option>
+                                                    <option value="1" {{ request('level') == '1' ? 'selected' : '' }}>Admin</option>
+                                                    <option value="2" {{ request('level') == '2' ? 'selected' : '' }}>Staff</option>
+                                                    <option value="3" {{ request('level') == '3' ? 'selected' : '' }}>User</option>
+                                                </select>
+                                                <select class="form-select rounded-2" name="status" onchange="this.form.submit()"
+                                                    style="width: 140px; max-width: 140px; height: 38px; font-size: 13px;">
+                                                    <option value="">Trạng thái</option>
+                                                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Hoạt động</option>
+                                                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Khóa</option>
+                                                </select>
+                                                <div class="admin-search-box">
+                                                    <input type="text" class="form-control admin-search-input" name="search"
+                                                        value="{{ request('search') }}" placeholder="Tìm kiếm... (Enter)">
+                                                    <i class="ri-search-line search-icon"></i>
+                                                    @if(request('search'))
+                                                        <a href="{{ route('admin.user.index', array_filter(['level' => request('level'), 'status' => request('status')])) }}"
+                                                           class="clear-btn" title="Xóa tìm kiếm">
+                                                            <i class="ri-close-circle-fill fs-14"></i>
+                                                        </a>
+                                                    @endif
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="table-responsive table-card mt-3 mb-1">
-                                    <table class="table align-middle table-nowrap" id="customerTable">
-                                        <thead class="table-light">
+                                    <table class="table align-middle table-nowrap table-hover" id="customerTable">
+                                        <thead class="table-light text-muted text-uppercase fs-11" style="background-color: #f8fafc;">
                                             <tr>
-                                                <th><input type="checkbox" id="checkAll"></th>
-                                                <th class="sort">ID</th>
-                                                <th class="sort">Họ tên</th>
-                                                <th class="sort">Username</th>
-                                                <th class="sort">Email</th>
-                                                <th class="sort">SĐT</th>
-                                                <th class="sort">Cấp độ</th>
-                                                <th class="sort">Trạng thái</th>
-                                                <th class="sort">Ngày tạo</th>
-                                                <th class="sort">Hành động</th>
+                                                <th class="text-center" style="width: 40px;"><input type="checkbox" class="form-check-input" id="checkAll"></th>
+                                                <th class="text-center" style="width: 50px;">ID</th>
+                                                <th class="text-start">Họ tên</th>
+                                                <th class="text-start">Username</th>
+                                                <th class="text-start">Email</th>
+                                                <th class="text-start" style="width: 120px;">SĐT</th>
+                                                <th class="text-center" style="width: 100px;">Cấp độ</th>
+                                                <th class="text-center" style="width: 100px;">Trạng thái</th>
+                                                <th class="text-center" style="width: 110px;">Ngày tạo</th>
+                                                <th class="text-center" style="width: 100px;">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody class="list form-check-all">
@@ -84,43 +91,43 @@
                                                     @method('DELETE')
                                                     @foreach ($list as $item)
                                                         <tr>
-                                                            <td><input class="form-check-input" type="checkbox" name="uuids[]"
+                                                            <td class="text-center"><input class="form-check-input" type="checkbox" name="uuids[]"
                                                                     value="{{ $item->uuid }}"></td>
-                                                            <td>{{ $item->id }}</td>
-                                                            <td>{{ $item->fullname }}</td>
-                                                            <td>{{ $item->username }}</td>
-                                                            <td>{{ $item->email }}</td>
-                                                            <td>{{ $item->phone ?: '-' }}</td>
-                                                            <td>
+                                                            <td class="text-center text-muted fw-semibold fs-12">{{ $item->id }}</td>
+                                                            <td class="text-start fw-medium text-dark">{{ $item->fullname }}</td>
+                                                            <td class="text-start text-muted fs-12">{{ $item->username }}</td>
+                                                            <td class="text-start text-muted fs-12">{{ $item->email }}</td>
+                                                            <td class="text-start text-muted fs-12">{{ $item->phone ?: '-' }}</td>
+                                                            <td class="text-center">
                                                                 @if($item->level == 1)
-                                                                    <span class="badge bg-danger">Admin</span>
+                                                                    <span class="badge bg-danger-subtle text-danger px-2 py-1">Admin</span>
                                                                 @elseif($item->level == 2)
-                                                                    <span class="badge bg-warning">Staff</span>
+                                                                    <span class="badge bg-warning-subtle text-warning px-2 py-1">Staff</span>
                                                                 @else
-                                                                    <span class="badge bg-info">User</span>
+                                                                    <span class="badge bg-info-subtle text-info px-2 py-1">User</span>
                                                                 @endif
                                                             </td>
-                                                            <td>
+                                                            <td class="text-center">
                                                                 @if($item->status)
-                                                                    <span class="badge bg-success">Hoạt động</span>
+                                                                    <span class="badge bg-success-subtle text-success px-2 py-1">Hoạt động</span>
                                                                 @else
-                                                                    <span class="badge bg-secondary">Khóa</span>
+                                                                    <span class="badge bg-secondary-subtle text-secondary px-2 py-1">Khóa</span>
                                                                 @endif
                                                             </td>
-                                                            <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
-                                                            <td>
-                                                                <div class="d-flex gap-2">
+                                                            <td class="text-center text-muted fs-12">{{ $item->created_at->format('d/m/Y H:i') }}</td>
+                                                            <td class="text-center">
+                                                                <div class="d-flex align-items-center justify-content-center" style="gap: 6px;">
                                                                     @hasPermission('user.edit')
                                                                     <a href="{{ route('admin.user.edit', $item->uuid) }}"
-                                                                        class="btn btn-sm btn-warning">
-                                                                        <i class="ri-edit-line"></i>
+                                                                        class="action-btn-ghost action-edit" title="Chỉnh sửa">
+                                                                        <i class="ri-pencil-line"></i>
                                                                     </a>
                                                                     @endhasPermission
                                                                     @hasPermission('user.delete')
                                                                     @if($item->level != 1 && $item->id != auth()->id())
-                                                                    <button type="button" class="btn btn-sm btn-danger delete-item"
+                                                                    <button type="button" class="action-btn-ghost action-delete delete-item border-0 bg-transparent"
                                                                         data-uuid="{{ $item->uuid }}"
-                                                                        data-name="{{ $item->fullname }}">
+                                                                        data-name="{{ $item->fullname }}" title="Xóa">
                                                                         <i class="ri-delete-bin-line"></i>
                                                                     </button>
                                                                     @endif
@@ -132,7 +139,7 @@
                                                 </form>
                                             @else
                                                 <tr>
-                                                    <td colspan="10" class="text-center">Không có dữ liệu</td>
+                                                    <td colspan="10" class="text-center py-4 text-muted">Không có dữ liệu</td>
                                                 </tr>
                                             @endif
                                         </tbody>
@@ -140,8 +147,10 @@
                                 </div>
 
                                 @if (count($list) > 0)
-                                <div class="d-flex justify-content-center">
-                                    {{ $list->appends(request()->query())->links() }}
+                                <div class="d-flex justify-content-end">
+                                    <div class="pagination-wrap hstack gap-2" style="display: flex;">
+                                        {{ $list->appends(request()->query())->links() }}
+                                    </div>
                                 </div>
                                 @endif
                             </div>
