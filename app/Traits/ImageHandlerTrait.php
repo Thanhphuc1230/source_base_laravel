@@ -61,12 +61,59 @@ trait ImageHandlerTrait
     }
 
     /**
-     * Helper method để loại bỏ kept_images khỏi request data
-     * Sử dụng trong controllers để tránh lỗi "Column not found"
+     * Save video for create/store operations
+     */
+    protected function saveVideo(Request $request, $folder = null, $field = 'video')
+    {
+        $folder = $folder ?? $this->imageFolder;
+
+        if ($request->hasFile($field)) {
+            $file = $request->file($field);
+            $extension = strtolower($file->getClientOriginalExtension());
+            $filename = 'video_' . \Illuminate\Support\Str::random(12) . '_' . time() . '.' . $extension;
+            $destinationPath = public_path("uploads/{$folder}");
+            if (!\Illuminate\Support\Facades\File::exists($destinationPath)) {
+                \Illuminate\Support\Facades\File::makeDirectory($destinationPath, 0755, true);
+            }
+            $file->move($destinationPath, $filename);
+            return "uploads/{$folder}/{$filename}";
+        }
+
+        return null;
+    }
+
+    /**
+     * Update video for edit/update operations
+     */
+    protected function updateVideo(Request $request, $model, $folder = null, $field = 'video')
+    {
+        $folder = $folder ?? $this->imageFolder;
+
+        if ($request->input('delete_video') == '1') {
+            if (!empty($model->$field) && \Illuminate\Support\Facades\File::exists(public_path($model->$field))) {
+                @\Illuminate\Support\Facades\File::delete(public_path($model->$field));
+            }
+            if (!$request->hasFile($field)) {
+                return null;
+            }
+        }
+
+        if ($request->hasFile($field)) {
+            if (!empty($model->$field) && \Illuminate\Support\Facades\File::exists(public_path($model->$field))) {
+                @\Illuminate\Support\Facades\File::delete(public_path($model->$field));
+            }
+            return $this->saveVideo($request, $folder, $field);
+        }
+
+        return $model->$field;
+    }
+
+    /**
+     * Helper method to exclude internal form fields from request data
      */
     protected function cleanRequestData($request, $excludeFields = [])
     {
-        $defaultExclude = ['_token', 'return_back', 'return_list', 'currentPage', 'kept_images'];
+        $defaultExclude = ['_token', 'return_back', 'return_list', 'currentPage', 'kept_images', 'delete_video'];
         $excludeFields = array_merge($defaultExclude, $excludeFields);
 
         return $request->except($excludeFields);

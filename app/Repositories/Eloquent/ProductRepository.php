@@ -32,20 +32,20 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $query = $this->model->query();
 
         // Search filter
-        if (isset($filters['search'])) {
-            $searchTerm = $filters['search'];
+        if (!empty($filters['search'])) {
+            $searchTerm = trim($filters['search']);
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
+                    ->orWhere('name_en', 'LIKE', "%{$searchTerm}%");
             });
         }
 
-        // Category filter
-        if (isset($filters['category']) && $filters['category'] != 0) {
-            $categoryId = $filters['category'];
-            $query->where(function ($q) use ($categoryId) {
-                $q->where('id_cate_product', $categoryId);
-            });
+        // Category filter (support both single category and child categories)
+        if (!empty($filters['category']) && $filters['category'] != 0) {
+            $categoryId = (int) $filters['category'];
+            $childCategoryIds = CateProduct::where('parent_id', $categoryId)->pluck('id_cate_product')->toArray();
+            $categoryIds = array_merge([$categoryId], $childCategoryIds);
+            $query->whereIn('category_id', $categoryIds);
         }
 
         // Sorting
@@ -53,7 +53,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $sortDirection = $filters['sort_direction'] ?? 'desc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->with('cate')->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'hot', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_product')->orderBy('created_at', 'desc')
+        return $query->with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
+            ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'hot', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_product')
             ->paginate($perPage);
     }
 

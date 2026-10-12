@@ -31,7 +31,9 @@ class ProductRequest extends BaseAdminRequest
             'image_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
 
             'image_detail' => 'nullable|array',
-            'image_detail.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'image_detail.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,mp4,webm,mov,ogg|max:51200',
+
+            'video' => 'nullable|file|mimes:mp4,webm,mov,ogg|max:51200',
 
             'price' => 'required|numeric|min:0',
             'price_old' => 'nullable|numeric|min:0',

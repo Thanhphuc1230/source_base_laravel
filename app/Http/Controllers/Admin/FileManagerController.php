@@ -14,9 +14,10 @@ use Intervention\Image\Facades\Image;
 class FileManagerController extends Controller
 {
     protected $basePath = 'public/uploads';
-    protected $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'doc', 'docx', 'xls', 'xlsx'];
+    protected $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'mp4', 'webm', 'mov', 'ogg'];
     protected $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
-    protected $maxFileSize = 10240; // 10MB in KB
+    protected $videoExtensions = ['mp4', 'webm', 'mov', 'ogg'];
+    protected $maxFileSize = 51200; // 50MB in KB
 
     public function __construct()
     {
@@ -206,7 +207,8 @@ class FileManagerController extends Controller
                     'modified' => Storage::lastModified($file),
                     'url' => Storage::url($file),
                     'extension' => $extension,
-                    'is_image' => in_array($extension, $this->imageExtensions)
+                    'is_image' => in_array($extension, $this->imageExtensions),
+                    'is_video' => in_array($extension, $this->videoExtensions)
                 ];
             }
         }

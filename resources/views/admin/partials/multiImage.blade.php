@@ -1,351 +1,221 @@
-<style>
-    .container {
-      margin: 0 auto;
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    #drop-area {
-      border: 2px dashed #ccc;
-      border-radius: 20px;
-      width: 100%;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    #drop-area.highlight {
-      border-color: purple;
-    }
-
-    .my-form {
-      margin-bottom: 10px;
-    }
-
-    #gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .thumbnail {
-      max-width: 150px;
-      max-height: 150px;
-      margin: 10px;
-      padding: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    #fileElem {
-      display: none;
-    }
-
-    .button {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-
-    .button:hover {
-      background-color: #45a049;
-    }
-
-    #upload-progress {
-      margin-top: 20px;
-    }
-
-    .progress-bar {
-      width: 100%;
-      background-color: #e0e0e0;
-      padding: 3px;
-      border-radius: 3px;
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
-    }
-
-    .progress-bar-fill {
-      display: block;
-      height: 22px;
-      background-color: #659cef;
-      border-radius: 3px;
-      transition: width 500ms ease-in-out;
-    }
-
-    .thumbnail-container {
-      position: relative;
-      display: inline-block;
-      margin: 10px;
-    }
-
-    .delete-btn {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background-color: rgba(255, 0, 0, 0.7);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .delete-btn:hover {
-      background-color: rgba(255, 0, 0, 1);
-    }
-
-    #preview-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: flex-start;
-    }
-
-    .preview-item {
-      width: calc(25% - 7.5px); /* 25% width minus gap */
-      max-width: 150px;
-      position: relative;
-    }
-
-    .preview-image {
-      width: 100%;
-      height: 150px;
-      object-fit: contain;
-    }
-
-    .remove-btn {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background-color: rgba(255, 0, 0, 0.7);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 20px;
-      height: 20px;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .remove-btn:hover {
-      background-color: rgba(255, 0, 0, 1);
-    }
-  </style>
-</head>
-
-<body>
-  <div class="container">
-    <div id="drop-area">
-      <form class="my-form">
-        <p>Kéo thả file vào đây hoặc click để chọn file</p>
-        <input type="file" id="fileElem" name="image_detail[]" multiple accept="image/*" onchange="handleFiles(this.files)">
-        <label class="button" for="fileElem">Chọn file</label>
-      </form>
+<div class="media-detail-uploader">
+    <div id="multi-image-drop-area" class="border border-2 border-dashed p-4 text-center bg-light transition-all" style="cursor: pointer; border-color: #cbd5e1 !important; border-radius: 6px;">
+        <input type="file" id="imageDetailFileInput" name="image_detail[]" multiple accept="image/*,video/mp4,video/webm,video/quicktime" class="d-none">
+        <div class="py-2">
+            <div class="mb-2">
+                <i class="ri-folder-upload-line text-primary" style="font-size: 2.2rem;"></i>
+            </div>
+            <h6 class="fw-semibold text-dark mb-1">Kéo & thả hình ảnh và video clip vào đây hoặc nhấp để chọn</h6>
+            <p class="text-muted small mb-3">Hỗ trợ JPG, PNG, WEBP, GIF, MP4, WebM (chọn nhiều file cùng lúc, tối đa 50MB/video, 10MB/ảnh).</p>
+            <button type="button" class="btn btn-sm btn-dark rounded-1 px-3 shadow-xs" onclick="document.getElementById('imageDetailFileInput').click();">
+                <i class="ri-add-line me-1"></i> Chọn hình ảnh / video
+            </button>
+        </div>
     </div>
-    <div id="preview-container"></div>
-    <div id="upload-status"></div>
-  </div>
 
-  <script>
-    let dropArea = document.getElementById('drop-area');
+    <!-- Container for freshly selected files preview -->
+    <div id="new-images-preview-grid" class="row g-2 mt-3" style="display: none;"></div>
+</div>
 
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      dropArea.addEventListener(eventName, preventDefaults, false);
+<style>
+#multi-image-drop-area.dragover {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+}
+.detail-preview-card {
+    position: relative;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.detail-preview-card .preview-media {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    background-color: #f8fafc;
+    border-radius: 4px 4px 0 0;
+    display: block;
+}
+.detail-preview-card .media-badge {
+    position: absolute;
+    bottom: 26px;
+    left: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.detail-preview-card .btn-remove-new {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    line-height: 22px;
+    font-size: 13px;
+    border-radius: 3px;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    z-index: 2;
+}
+.detail-preview-card .btn-remove-new:hover {
+    background: #b91c1c;
+    transform: scale(1.05);
+}
+.detail-preview-card .file-info {
+    font-size: 11px;
+    padding: 4px 6px;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #fff;
+    border-top: 1px solid #f1f5f9;
+}
+</style>
+
+@push('scripts')
+<script>
+(function() {
+    const dropArea = document.getElementById('multi-image-drop-area');
+    const fileInput = document.getElementById('imageDetailFileInput');
+    const previewGrid = document.getElementById('new-images-preview-grid');
+    
+    // Manage staged files via DataTransfer
+    let dt = new DataTransfer();
+
+    if (!dropArea || !fileInput || !previewGrid) return;
+
+    // Trigger file picker
+    dropArea.addEventListener('click', function(e) {
+        if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
+            fileInput.click();
+        }
     });
 
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
+    // Drag and drop event handlers
     ['dragenter', 'dragover'].forEach(eventName => {
-      dropArea.addEventListener(eventName, highlight, false);
+        dropArea.addEventListener(eventName, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.classList.add('dragover');
+        }, false);
     });
 
     ['dragleave', 'drop'].forEach(eventName => {
-      dropArea.addEventListener(eventName, unhighlight, false);
+        dropArea.addEventListener(eventName, function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.classList.remove('dragover');
+        }, false);
     });
 
-    function highlight(e) {
-      dropArea.classList.add('highlight');
-    }
+    dropArea.addEventListener('drop', function(e) {
+        const droppedFiles = e.dataTransfer.files;
+        handleFiles(droppedFiles);
+    });
 
-    function unhighlight(e) {
-      dropArea.classList.remove('highlight');
-    }
-
-    dropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-      let dt = e.dataTransfer;
-      let files = dt.files;
-      handleFiles(files);
-    }
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
 
     function handleFiles(files) {
-      // Xóa preview cũ trước khi thêm mới
-      document.getElementById('preview-container').innerHTML = '';
-      
-      // Thêm hình ảnh mới
-      files = [...files];
-      files.forEach(previewFile);
-    }
-
-    function previewFile(file) {
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = function() {
-        let container = document.createElement('div');
-        container.className = 'preview-item';
-
-        let img = document.createElement('img');
-        img.src = reader.result;
-        img.className = 'preview-image';
-
-        let deleteBtn = document.createElement('button');
-        deleteBtn.className = 'remove-btn';
-        deleteBtn.innerHTML = '×';
-        deleteBtn.onclick = function() {
-          container.remove();
-        };
-
-        container.appendChild(img);
-        container.appendChild(deleteBtn);
-        document.getElementById('preview-container').appendChild(container);
-      }
-    }
-
-    // ===== XỬ LÝ HÌNH ẢNH CHI TIẾT HIỆN TẠI =====
-    
-    // Xử lý xóa hình ảnh hiện tại (chỉ ẩn, không xóa thật)
-    function initializeExistingImageHandling() {
-      // Xử lý xóa hình ảnh hiện tại
-      document.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-existing-image')) {
-          const button = e.target.closest('.remove-existing-image');
-          const imageItem = button.closest('.existing-image-item');
-          const imageName = imageItem.getAttribute('data-image');
-          
-          if (confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')) {
-            // Ẩn hình ảnh
-            imageItem.style.display = 'none';
-            
-            // Cập nhật danh sách hình ảnh được giữ lại
-            updateKeptImages();
-          }
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const isImg = file.type.startsWith('image/');
+            const isVid = file.type.startsWith('video/') || /\.(mp4|webm|mov|ogg)$/i.test(file.name);
+            if (!isImg && !isVid) continue;
+            dt.items.add(file);
         }
-      });
-      
-      // Xử lý xóa hình ảnh preview mới
-      document.addEventListener('click', function(e) {
-        if (e.target.closest('.remove-btn')) {
-          const button = e.target.closest('.remove-btn');
-          const previewItem = button.closest('.preview-item');
-          
-          if (confirm('Bạn có chắc chắn muốn xóa hình ảnh này?')) {
-            previewItem.remove();
-          }
+        fileInput.files = dt.files;
+        renderPreview();
+    }
+
+    function renderPreview() {
+        previewGrid.innerHTML = '';
+        if (dt.files.length === 0) {
+            previewGrid.style.display = 'none';
+            return;
         }
-      });
-    }
-    
-    // Cập nhật danh sách hình ảnh được giữ lại
-    function updateKeptImages() {
-      const keptImagesInput = document.getElementById('kept-images-input');
-      if (!keptImagesInput) return;
-      
-      const visibleImages = [];
-      
-      document.querySelectorAll('.existing-image-item:not([style*="display: none"])').forEach(item => {
-        const imageName = item.getAttribute('data-image');
-        visibleImages.push(imageName);
-      });
-      
-      keptImagesInput.value = JSON.stringify(visibleImages);
-    }
-    
-    // Cập nhật khi form submit
-    function initializeFormSubmitHandling() {
-      const form = document.querySelector('form');
-      if (form) {
-        form.addEventListener('submit', function() {
-          updateKeptImages();
+
+        previewGrid.style.display = 'flex';
+
+        Array.from(dt.files).forEach((file, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-6 col-sm-4 col-md-3 col-lg-2';
+
+            const card = document.createElement('div');
+            card.className = 'detail-preview-card';
+
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov|ogg)$/i.test(file.name);
+
+            if (isVideo) {
+                const vid = document.createElement('video');
+                vid.src = URL.createObjectURL(file);
+                vid.className = 'preview-media';
+                vid.muted = true;
+                vid.playsInline = true;
+                vid.preload = 'metadata';
+                vid.onloadeddata = function() {
+                    try { vid.currentTime = 0.5; } catch (e) {}
+                };
+                card.appendChild(vid);
+
+                const badge = document.createElement('span');
+                badge.className = 'media-badge bg-danger text-white';
+                badge.innerHTML = '<i class="ri-video-fill me-0.5"></i> Video';
+                card.appendChild(badge);
+            } else {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.alt = file.name;
+                img.className = 'preview-media';
+                card.appendChild(img);
+            }
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn-remove-new';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.title = 'Bỏ file này';
+            removeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                removeFile(index);
+            });
+
+            const info = document.createElement('div');
+            info.className = 'file-info text-truncate';
+            info.innerText = file.name;
+
+            card.appendChild(removeBtn);
+            card.appendChild(info);
+            col.appendChild(card);
+            previewGrid.appendChild(col);
         });
-      }
     }
-    
-    // Khởi tạo khi DOM ready
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeExistingImageHandling();
-      initializeFormSubmitHandling();
-    });
 
-    // Hàm hiển thị hình ảnh cũ
-    function displayExistingImages(existingImages) {
-      existingImages.forEach(image => {
-        let container = document.createElement('div');
-        container.className = 'preview-item';
-
-        let img = document.createElement('img');
-        img.src = '{{ asset('uploads/products/') }}/' + image; // Đường dẫn đến hình ảnh cũ
-        img.className = 'preview-image';
-
-        let deleteBtn = document.createElement('button');
-        deleteBtn.className = 'remove-btn';
-        deleteBtn.innerHTML = '×';
-        deleteBtn.onclick = function() {
-          container.remove();
-        };
-
-        container.appendChild(img);
-        container.appendChild(deleteBtn);
-        document.getElementById('preview-container').appendChild(container);
-      });
+    function removeFile(index) {
+        const newDt = new DataTransfer();
+        for (let i = 0; i < dt.files.length; i++) {
+            if (i !== index) {
+                newDt.items.add(dt.files[i]);
+            }
+        }
+        dt = newDt;
+        fileInput.files = dt.files;
+        renderPreview();
     }
-  </script>
-
-     {{-- upload file images --}}
-     <script type="text/javascript">
-      $(document).ready(function() {
-          $(".btn-add-image").click(function() {
-              $('#file_upload').trigger('click');
-          });
-
-          $('.list-input-hidden-upload').on('change', '#file_upload', function(event) {
-              let today = new Date();
-              let time = today.getTime();
-              let image = event.target.files[0];
-              let file_name = event.target.files[0].name;
-              let box_image = $('<div class="box-image"></div>');
-              box_image.append('<img src="' + URL.createObjectURL(image) +
-                  '" class="picture-box" width="200px">');
-              box_image.append('<div class="wrap-btn-delete"><span data-id=' + time +
-                  ' class="btn-delete-image">x</span></div>');
-              $(".list-images").append(box_image);
-
-              $(this).removeAttr('id');
-              $(this).attr('id', time);
-              let input_type_file =
-                  '<input type="file" name="image_detail[]" id="file_upload" class="myfrm form-control hidden">';
-              $('.list-input-hidden-upload').append(input_type_file);
-          });
-
-          $(".list-images").on('click', '.btn-delete-image', function() {
-              let id = $(this).data('id');
-              $('#' + id).remove();
-              $(this).parents('.box-image').remove();
-          });
-      });
-  </script>
+})();
+</script>
+@endpush

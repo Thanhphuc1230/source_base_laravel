@@ -30,6 +30,7 @@ class Product extends Model
         'image_vn',
         'image_en',
         'image_detail',
+        'video',
         'stt',
         'keyword_vn',
         'keyword_en',
@@ -55,6 +56,17 @@ class Product extends Model
     {
         $locale = app()->getLocale();
         return $this->{'image_' . $locale} ?: ($this->image_vn ?: $this->image_en);
+    }
+
+    public function getVideoUrlAttribute()
+    {
+        if (empty($this->video)) {
+            return null;
+        }
+        if (filter_var($this->video, FILTER_VALIDATE_URL)) {
+            return $this->video;
+        }
+        return asset($this->video);
     }
 
     public function getKeywordAttribute()

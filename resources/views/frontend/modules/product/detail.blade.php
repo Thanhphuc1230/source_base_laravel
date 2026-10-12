@@ -44,9 +44,74 @@
                         {{ lang($product_detail, 'name') }}
                     </h1>
                     
-                    <!-- Main image container (aspect-square with subtle light bg and contain fit) -->
-                    <div class="relative rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 p-6 flex items-center justify-center shadow-xs h-[320px] sm:h-[480px]">
-                        <img src="{{ asset($product_detail->image_vn) }}" alt="{{ lang($product_detail, 'name') }}" class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-500">
+                    <!-- Media Gallery Stage -->
+                    <div id="product-media-gallery" class="space-y-3">
+                        <!-- Main Stage (Image or Video Player) -->
+                        <div class="relative rounded-xl overflow-hidden bg-slate-50 border border-slate-100 p-4 sm:p-6 flex items-center justify-center shadow-xs h-[320px] sm:h-[480px]">
+                            <!-- Main Image Display -->
+                            <img id="main-gallery-image" 
+                                 src="{{ asset($product_detail->image_vn) }}" 
+                                 alt="{{ lang($product_detail, 'name') }}" 
+                                 class="max-h-full max-w-full object-contain transition-all duration-300">
+
+                            <!-- Video Player Display (Dynamic for any video in gallery) -->
+                            <div id="main-gallery-video" class="w-full h-full flex items-center justify-center hidden">
+                                <video id="product-video-player" controls playsinline loop class="w-full h-full object-contain rounded-md bg-black">
+                                    <source src="" type="video/mp4">
+                                    Trình duyệt của bạn không hỗ trợ phát video.
+                                </video>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnails Row (Main Image + Interleaved Detail Images & Videos) -->
+                        @php
+                            $detailItems = !empty($product_detail->image_detail) ? (is_array($product_detail->image_detail) ? $product_detail->image_detail : json_decode($product_detail->image_detail, true)) : [];
+                            if (!empty($product_detail->video) && !in_array($product_detail->video, $detailItems)) {
+                                $detailItems[] = $product_detail->video;
+                            }
+                            $hasMultiMedia = !empty($detailItems);
+                        @endphp
+
+                        @if($hasMultiMedia)
+                            <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-2 pt-1">
+                                <!-- Main Image Thumbnail -->
+                                <button type="button" 
+                                        onclick="switchGalleryMedia('image', '{{ asset($product_detail->image_vn) }}', this)" 
+                                        class="gallery-thumb-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden bg-slate-50 border-2 border-gold-600 p-1 flex items-center justify-center transition-all duration-200 shadow-2xs"
+                                        title="Ảnh chính">
+                                    <img src="{{ asset($product_detail->image_vn) }}" alt="Main photo" class="max-w-full max-h-full object-contain">
+                                </button>
+
+                                <!-- Gallery Detail Items (Images & Videos in Exact Sequence) -->
+                                @foreach($detailItems as $idx => $mediaItem)
+                                    @php
+                                        $isVideo = preg_match('/\.(mp4|webm|mov|ogg)$/i', $mediaItem);
+                                        $mediaSrc = str_starts_with($mediaItem, 'uploads/') ? asset($mediaItem) : asset('uploads/product/' . $mediaItem);
+                                    @endphp
+                                    @if($isVideo)
+                                        <button type="button" 
+                                                onclick="switchGalleryMedia('video', '{{ $mediaSrc }}', this)" 
+                                                class="gallery-thumb-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden bg-black border-2 border-slate-200 transition-all duration-200 shadow-2xs relative group flex items-center justify-center p-0"
+                                                title="Video clip {{ $idx + 1 }}">
+                                            <video src="{{ $mediaSrc }}#t=0.5" preload="metadata" muted playsinline class="w-full h-full object-cover pointer-events-none"></video>
+                                            <div class="absolute inset-0 bg-black/25 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gold-500 text-slate-900 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                                                    <i class="fa-solid fa-play text-2xs sm:text-xs ml-0.5"></i>
+                                                </div>
+                                            </div>
+                                            <span class="absolute bottom-1 right-1 bg-black/75 text-white text-[9px] font-bold px-1 rounded uppercase tracking-wider leading-tight">Video</span>
+                                        </button>
+                                    @else
+                                        <button type="button" 
+                                                onclick="switchGalleryMedia('image', '{{ $mediaSrc }}', this)" 
+                                                class="gallery-thumb-btn flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-md overflow-hidden bg-slate-50 border-2 border-slate-200 p-1 flex items-center justify-center transition-all duration-200 shadow-2xs hover:border-gold-400"
+                                                title="Ảnh {{ $idx + 1 }}">
+                                            <img src="{{ $mediaSrc }}" alt="Photo {{ $idx + 1 }}" class="max-w-full max-h-full object-contain">
+                                        </button>
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -151,10 +216,10 @@
 
             </div>
 
-            <!-- Right Column: Sticky Booking / CTA box & Related products -->
+            <!-- Right Column: Booking / CTA box & Related products -->
             <div class="space-y-6">
-                <!-- Sticky Booking Box -->
-                <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-lg space-y-5 sticky top-24">
+                <!-- Booking Box -->
+                <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-lg space-y-5">
                     <div class="text-center space-y-1">
                         <span class="text-slate-400 text-3xs uppercase tracking-wider block font-bold">Giá niêm yết chính hãng</span>
                         @if($product_detail->price_old > $product_detail->price)
@@ -232,4 +297,46 @@
 
         </div>
     </div>
+
+@push('scripts')
+<script>
+function switchGalleryMedia(type, src, btn) {
+    const mainImg = document.getElementById('main-gallery-image');
+    const mainVideo = document.getElementById('main-gallery-video');
+    const videoPlayer = document.getElementById('product-video-player');
+
+    // Update thumbnail highlights
+    document.querySelectorAll('.gallery-thumb-btn').forEach(el => {
+        el.classList.remove('border-gold-600', 'ring-2', 'ring-gold-500/30');
+        el.classList.add('border-slate-200');
+    });
+    if (btn) {
+        btn.classList.remove('border-slate-200');
+        btn.classList.add('border-gold-600', 'ring-2', 'ring-gold-500/30');
+    }
+
+    if (type === 'video') {
+        if (mainImg) mainImg.classList.add('hidden');
+        if (mainVideo && videoPlayer) {
+            mainVideo.classList.remove('hidden');
+            if (src && videoPlayer.src !== src) {
+                videoPlayer.src = src;
+                videoPlayer.load();
+            }
+            videoPlayer.currentTime = 0;
+            videoPlayer.play().catch(function() {});
+        }
+    } else {
+        if (videoPlayer) {
+            videoPlayer.pause();
+        }
+        if (mainVideo) mainVideo.classList.add('hidden');
+        if (mainImg) {
+            mainImg.classList.remove('hidden');
+            mainImg.src = src;
+        }
+    }
+}
+</script>
+@endpush
 @endsection

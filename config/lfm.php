@@ -50,7 +50,7 @@ return [
         'file' => [
             'folder_name' => 'photos',
             'startup_view' => 'list',
-            'max_size' => 50000,
+            'max_size' => 100000,
             'valid_mime' => [
                 'image/jpeg',
                 'image/pjpeg',
@@ -59,6 +59,10 @@ return [
                 'image/webp',
                 'application/pdf',
                 'text/plain',
+                'video/mp4',
+                'video/webm',
+                'video/quicktime',
+                'video/ogg',
                 'audio/mpeg',
                 'audio/mp3',
                 'audio/wav',
@@ -75,6 +79,17 @@ return [
                 'image/png',
                 'image/gif',
                 'image/webp',
+            ],
+        ],
+        'video' => [
+            'folder_name' => 'videos',
+            'startup_view' => 'grid',
+            'max_size' => 100000,
+            'valid_mime' => [
+                'video/mp4',
+                'video/webm',
+                'video/quicktime',
+                'video/ogg',
             ],
         ],
         'audio' => [

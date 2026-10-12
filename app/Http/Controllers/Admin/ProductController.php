@@ -68,6 +68,7 @@ class ProductController extends BaseController
         $data['image_vn'] = $this->saveImage($request, null, 'image_vn');
         $data['image_en'] = $this->saveImage($request, null, 'image_en');
         $data['image_detail'] = $this->saveMultipleImages($request);
+        $data['video'] = $this->saveVideo($request);
 
         $product = $this->productRepository->createWithAutoSlug($data);
         toast('Thêm '.$this->nameItem.' thành công', 'success');
@@ -107,6 +108,7 @@ class ProductController extends BaseController
         $data['image_vn'] = $this->updateImage($request, $current, null, 'image_vn');
         $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
         $data['image_detail'] = $this->updateMultipleImages($request, $current);
+        $data['video'] = $this->updateVideo($request, $current);
 
         $this->productRepository->update($data, $uuid);
         toast('Cập nhật '.$this->nameItem.' thành công', 'success');

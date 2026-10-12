@@ -340,7 +340,36 @@ class ImageService
         return $savedFileName;
     }
 
-    // xử lý hình ảnh chi tiết
+    /**
+     * Process individual media file in detail gallery (supports both images and short videos)
+     */
+    private function processDetailMediaFile($file, string $subPath, array $options = []): ?string
+    {
+        $videoExtensions = ['mp4', 'webm', 'mov', 'ogg'];
+        $ext = strtolower($file->getClientOriginalExtension());
+
+        if (in_array($ext, $videoExtensions)) {
+            $this->ensureDirectoryExists($subPath);
+            $videoName = 'video_' . \Illuminate\Support\Str::random(10) . '_' . time() . '.' . $ext;
+            $file->move(public_path("uploads/{$subPath}"), $videoName);
+            return "uploads/{$subPath}/{$videoName}";
+        }
+
+        $fileName = $this->generateFileName($file, $options);
+        $this->ensureDirectoryExists($subPath);
+
+        if (isset($options['convertToWebp']) && $options['convertToWebp']) {
+            $fileName = $this->handleWebpConversion($file, $subPath, $fileName, $options);
+        } else {
+            $file->move(public_path("uploads/{$subPath}"), $fileName);
+        }
+
+        return "uploads/{$subPath}/{$fileName}";
+    }
+
+    /**
+     * Handle multiple media detail files for create/store operations
+     */
     public function handleDetailImages($request, $imageFolder, array $options = [])
     {
         $files = [];
@@ -348,21 +377,10 @@ class ImageService
             $subPath = $this->getSubPath($imageFolder);
             foreach ($request->file('image_detail') as $file) {
                 try {
-                    // Tạo tên file duy nhất
-                    $fileName = $this->generateFileName($file, $options);
-
-                    // Đảm bảo thư mục tồn tại
-                    $this->ensureDirectoryExists($subPath);
-
-                    // Xử lý chuyển đổi WebP nếu được yêu cầu
-                    if (isset($options['convertToWebp']) && $options['convertToWebp']) {
-                        $fileName = $this->handleWebpConversion($file, $subPath, $fileName, $options);
-                    } else {
-                        $file->move(public_path("uploads/{$subPath}"), $fileName);
+                    $savedPath = $this->processDetailMediaFile($file, $subPath, $options);
+                    if ($savedPath) {
+                        $files[] = $savedPath;
                     }
-
-                    // Lưu đường dẫn tương đối bắt đầu bằng uploads/
-                    $files[] = "uploads/{$subPath}/{$fileName}";
                 } catch (Exception $e) {
                     continue;
                 }
@@ -373,48 +391,40 @@ class ImageService
     }
 
     /**
-     * Xử lý hình ảnh chi tiết lúc update với logic xóa và thêm mới
+     * Handle multiple media detail files for edit/update operations
      */
     public function updateDetailImages($request, $model, string $imageFolder, string $fieldName = 'image_detail', array $options = [])
     {
         $existingImages = json_decode($model->$fieldName, true) ?: [];
 
-        // Lấy danh sách hình ảnh được giữ lại từ request
         $keptImages = $request->input('kept_images', []);
+        if (is_string($keptImages)) {
+            $keptImages = json_decode($keptImages, true) ?: [];
+        }
 
-        // Filter chỉ giữ lại những hình ảnh thực sự tồn tại trong model cũ
-        $filteredExistingImages = array_intersect($existingImages, $keptImages);
+        $filteredExistingImages = [];
+        foreach ($keptImages as $item) {
+            if (in_array($item, $existingImages)) {
+                $filteredExistingImages[] = $item;
+            }
+        }
 
         $newImages = [];
         if ($request->hasFile('image_detail')) {
             $subPath = $this->getSubPath($imageFolder);
             foreach ($request->file('image_detail') as $file) {
                 try {
-                    // Tạo tên file duy nhất
-                    $fileName = $this->generateFileName($file, $options);
-
-                    // Đảm bảo thư mục tồn tại
-                    $this->ensureDirectoryExists($subPath);
-
-                    // Xử lý chuyển đổi WebP nếu được yêu cầu
-                    if (isset($options['convertToWebp']) && $options['convertToWebp']) {
-                        $fileName = $this->handleWebpConversion($file, $subPath, $fileName, $options);
-                    } else {
-                        $file->move(public_path("uploads/{$subPath}"), $fileName);
+                    $savedPath = $this->processDetailMediaFile($file, $subPath, $options);
+                    if ($savedPath) {
+                        $newImages[] = $savedPath;
                     }
-
-                    // Lưu đường dẫn tương đối bắt đầu bằng uploads/
-                    $newImages[] = "uploads/{$subPath}/{$fileName}";
                 } catch (Exception $e) {
                     continue;
                 }
             }
         }
 
-        // Kết hợp hình ảnh được giữ lại và hình ảnh mới
         $allImages = array_merge($filteredExistingImages, $newImages);
-
-        // Xóa những hình ảnh cũ không được giữ lại
         $this->cleanupUnusedImages($existingImages, $filteredExistingImages, $imageFolder);
 
         return json_encode($allImages);

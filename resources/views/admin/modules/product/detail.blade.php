@@ -111,8 +111,7 @@
                                 </div>
                                 <div class="col-md-12 mt-3">
                                     <div class="mb-3">
-                                        <label for="compnayNameinput" class="form-label">Hình ảnh chi tiết
-                                            (280x280)</label>
+                                        <label for="compnayNameinput" class="form-label fw-bold">Bộ sưu tập Media chi tiết (Hình ảnh & Video clip xen kẽ)</label>
                                         @error('image_detail')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
@@ -120,19 +119,35 @@
 
                                         @if (!empty($page->image_detail))
                                             <div class="mt-3">
-                                                <label class="form-label">Hình ảnh chi tiết hiện tại:</label>
+                                                <label class="form-label fw-semibold text-dark">Danh sách Media hiện tại:</label>
 
-                                                <div class="row" id="existing-images-container">
+                                                <div class="row g-2" id="existing-images-container">
                                                     @foreach (json_decode($page->image_detail) as $index => $img_detail)
-                                                        <div class="col-md-3 mb-2 existing-image-item" data-image="{{ $img_detail }}">
-                                                            <div class="position-relative">
-                                                                <img src="{{ str_starts_with($img_detail, 'uploads/') ? asset($img_detail) : asset('uploads/' . $imageFolder . '/' . $img_detail) }}"
-                                                                    alt="Product detail"
-                                                                    style="width: 200px; height: 200px;object-fit: contain"
-                                                                    class="img-fluid rounded">
+                                                        @php
+                                                            $isVideo = preg_match('/\.(mp4|webm|mov|ogg)$/i', $img_detail);
+                                                            $mediaSrc = str_starts_with($img_detail, 'uploads/') ? asset($img_detail) : asset('uploads/' . $imageFolder . '/' . $img_detail);
+                                                        @endphp
+                                                        <div class="col-6 col-sm-4 col-md-3 existing-image-item" data-image="{{ $img_detail }}">
+                                                            <div class="position-relative border p-1 bg-white shadow-2xs text-center" style="border-radius: 4px;">
+                                                                @if($isVideo)
+                                                                    <video src="{{ $mediaSrc }}#t=0.5"
+                                                                        class="rounded-1"
+                                                                        style="width: 100%; height: 110px; object-fit: cover; background: #000;"
+                                                                        preload="metadata"
+                                                                        muted playsinline></video>
+                                                                    <span class="badge bg-danger text-white position-absolute" style="bottom: 8px; left: 8px; font-size: 9px; padding: 2px 5px; border-radius: 2px;">
+                                                                        <i class="ri-video-fill me-0.5"></i> Video
+                                                                    </span>
+                                                                @else
+                                                                    <img src="{{ $mediaSrc }}"
+                                                                        alt="Product detail"
+                                                                        style="width: 100%; height: 110px; object-fit: contain;"
+                                                                        class="rounded-1">
+                                                                @endif
                                                                 <button type="button"
                                                                     class="btn btn-danger btn-sm remove-existing-image"
-                                                                    style="position: absolute; top: 5px; right: 5px;">
+                                                                    title="Xóa mục này"
+                                                                    style="position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; padding: 0; line-height: 22px; font-size: 13px; border-radius: 3px;">
                                                                     <i class="ri-delete-bin-line"></i>
                                                                 </button>
                                                             </div>
@@ -140,7 +155,7 @@
                                                     @endforeach
                                                 </div>
                                                 
-                                                <!-- Hidden input để lưu danh sách hình ảnh được giữ lại -->
+                                                <!-- Hidden input to track retained images -->
                                                 <input type="hidden" name="kept_images" id="kept-images-input" 
                                                        value="{{ json_encode(json_decode($page->image_detail)) }}">
                                             </div>
@@ -264,6 +279,39 @@
         <!-- container-fluid -->
     </div>
 
-    {{-- Logic xử lý hình ảnh chi tiết đã được di chuyển vào multiImage.blade.php --}}
     @include('admin.partials.ckeditor')
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle removing existing detail images
+    const existingContainer = document.getElementById('existing-images-container');
+    const keptInput = document.getElementById('kept-images-input');
+
+    if (existingContainer && keptInput) {
+        existingContainer.addEventListener('click', function(e) {
+            const btn = e.target.closest('.remove-existing-image');
+            if (!btn) return;
+
+            const item = btn.closest('.existing-image-item');
+            if (!item) return;
+
+            if (confirm('Bạn có chắc muốn xóa ảnh này khỏi sản phẩm?')) {
+                item.remove();
+                updateKeptImages();
+            }
+        });
+
+        function updateKeptImages() {
+            const remaining = [];
+            document.querySelectorAll('.existing-image-item').forEach(el => {
+                const img = el.getAttribute('data-image');
+                if (img) remaining.push(img);
+            });
+            keptInput.value = JSON.stringify(remaining);
+        }
+    }
+});
+</script>
+@endpush
 @endsection

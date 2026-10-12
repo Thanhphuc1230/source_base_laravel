@@ -39,6 +39,8 @@
                                         @else
                                             @if($file['is_image'])
                                                 <img src="{{ $file['url'] }}" class="img-thumbnail" style="max-height: 80px;" alt="{{ $file['name'] }}">
+                                            @elseif(!empty($file['is_video']))
+                                                <i class="fas fa-file-video fa-3x text-info"></i>
                                             @else
                                                 <i class="fas fa-file fa-3x text-secondary"></i>
                                             @endif
@@ -87,7 +89,7 @@
                     <div class="form-group">
                         <label for="fileInput">Chọn file</label>
                         <input type="file" class="form-control-file" id="fileInput" name="files[]" multiple required>
-                        <small class="form-text text-muted">Cho phép: JPG, PNG, GIF, WebP, SVG, PDF, DOC, DOCX, XLS, XLSX. Tối đa 10MB mỗi file.</small>
+                        <small class="form-text text-muted">Cho phép: JPG, PNG, GIF, WebP, SVG, MP4, WebM, MOV, PDF, DOC, DOCX, XLS, XLSX. Tối đa 50MB mỗi file.</small>
                     </div>
                 </div>
                 <div class="modal-footer">

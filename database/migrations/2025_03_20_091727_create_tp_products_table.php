@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('image_vn')->nullable();
             $table->string('image_en')->nullable();
             $table->longText('image_detail')->nullable();
+            $table->string('video')->nullable();
             $table->boolean('status')->default(true);
             $table->boolean('hot')->default(false);
             $table->boolean('home')->default(false);
