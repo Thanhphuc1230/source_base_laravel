@@ -21,6 +21,8 @@
 ## 2. Quy tắc Bất di bất dịch (Strict Constraints)
 - **QUY TẮC 2 (LAYERED ARCHITECTURE):** Không bao giờ bypass Service/Repository để query trực tiếp trong Controller.
 - **QUY TẮC 9 (TOPIC REBUILD):** Khi thay đổi ngành hàng, cập nhật hoặc tạo Seeder tương ứng và tích hợp chuẩn vào Artisan Command `site:rebuild`.
+- **QUY TẮC 12 (UNIFIED MEDIA STORAGE):** Toàn bộ file ảnh và video tải lên từ Admin đều lưu trực tiếp trong `public/uploads/{module}/` (hoặc theo ngày tháng `uploads/{module}/{Y}/{m}/`). Không tạo thêm thư mục con như `videos/`.
+- **QUY TẮC 14 (REDIS CACHE & REPOSITORY OPTIMIZATION):** Tối ưu query lọc danh mục phân cấp (`whereIn`), chọn lọc cột cần thiết và tận dụng Redis Cache (`CACHE_DRIVER=redis`).
 - **AN TOÀN DỮ LIỆU & MEDIA:**
   - Mọi thao tác xóa bản ghi phải xóa sạch media vật lý đi kèm bằng `ImageService` hoặc `DataRemovalService`.
   - Khi seed data, download ảnh WebP chất lượng cao lưu vào `public/uploads/` và cập nhật chính xác đường dẫn tương đối vào database.

@@ -138,6 +138,39 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
 
 ---
 
+## QUY TẮC SỐ 12 – QUY CHUẨN LƯU TRỮ MEDIA & UPLOAD ĐỒNG NHẤT (UNIFIED MEDIA STORAGE)
+
+- **Đồng nhất thư mục lưu trữ:** Mọi hình ảnh và video tải lên từ Admin (`ImageService`, `ImageHandlerTrait`, `multiImage`) đều được lưu trữ trực tiếp trong thư mục module `public/uploads/{module}/` (hoặc theo ngày tháng `uploads/{module}/{Y}/{m}/`). Tuyệt đối KHÔNG tự ý tách riêng thư mục con như `videos/`.
+- **Hỗ trợ Media đa phương tiện xen kẽ:** Thư viện ảnh chi tiết (`image_detail`) hỗ trợ upload cả ảnh (tự động chuyển WebP) và video (MP4, WebM, MOV), bảo toàn đúng thứ tự sắp xếp xen kẽ do người dùng chọn.
+- **Khung hình Preview Video:** Mọi thẻ video preview ở cả Admin và Frontend bắt buộc dùng cú pháp `<video src="...#t=0.5" preload="metadata" muted playsinline>` để lấy khung hình tại giây 0.5 làm ảnh đại diện, tránh khung đen tĩnh.
+
+---
+
+## QUY TẮC SỐ 13 – QUY CHUẨN UI/UX ADMIN & BẢNG QUẢN LÝ (MODERN ADMIN LIST STANDARD)
+
+- **Header Controls (Bộ lọc & Ô tìm kiếm):**
+  - **Đồng bộ Height:** Tất cả nút Thêm mới, Xóa đã chọn, Select danh mục và Search Input phải đồng bộ chiều cao chuẩn `38px` (`rounded-2`).
+  - **Search Box:** Tích hợp icon kính lúp chìm bên trái ô input, không dùng nút "Search" màu xanh lá rời rạc bị tràn viền. Hỗ trợ Enter và debounce typing tự động search.
+- **Cột Danh mục (Chip / Badge Tag):** Chuyển văn bản thành dạng Badge thanh lịch (`#f1f5f9`, chữ `#334155` font đứng), không dùng chữ in nghiêng màu xanh.
+- **Đồng bộ Status Switches:** Mọi switch khi bật (ON) đồng nhất dùng 1 màu Primary Accent duy nhất (`#2563eb`), khi tắt (OFF) là màu xám nhạt (`#cbd5e1`). Không dùng nhiều màu xanh/cam/xanh lơ gây rối mắt.
+- **Cột Thứ tự (STT Reorder):** Ô input số thu nhỏ vừa vặn `52px`, căn giữa `text-center`, ẩn nút mũi tên spinner của number input.
+- **Cột Hành động (Icon-only Ghost Buttons):**
+  - 100% nút dạng icon vuông `32x32px`, bo góc nhẹ `5px`, nền soft ghost nhạt (`#f1f5f9`), icon `#64748b`:
+    * Xem ngoài web: Hover nền `#e0f2fe`, icon `#0284c7` (`ri-eye-line`).
+    * Sửa: Hover nền `#e0e7ff`, icon `#4338ca` (`ri-pencil-line`).
+    * Xóa: Hover nền `#fee2e2`, icon `#ef4444` (`ri-delete-bin-line`).
+  - Khoảng cách giữa các nút luôn dùng `d-inline-flex` với `gap: 6px;`, căn giữa cột.
+- **Table Alignment & Spacing:** Checkbox/STT/Hình ảnh/Switches/STT/Ngày/Action căn giữa (`text-center`); Tiêu đề và Danh mục căn trái (`text-start`). Hiệu ứng hover hàng nền nhạt `#f8fafc`.
+
+---
+
+## QUY TẮC SỐ 14 – BỘ NHỚ ĐỆM REDIS & TỐI ƯU TRUY VẤN DỮ LIỆU (REDIS CACHE & OPTIMIZED QUERIES)
+
+- **Redis Cache Driver:** Hệ thống kích hoạt Redis Cache (`CACHE_DRIVER=redis`) để tăng tốc độ phản hồi và giảm tải MySQL.
+- **Truy vấn danh mục phân cấp (Hierarchy Category Query):** Khi lọc theo danh mục trong Repository, bắt buộc truy vấn gồm cả danh mục con (`whereIn`), chỉ `select` các cột cần thiết cho quan hệ, và loại bỏ mệnh đề `orderBy` dư thừa.
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |

@@ -86,4 +86,25 @@
   * `hardcode-scanner`: Kịch bản & regex quét mã nguồn tìm dữ liệu tĩnh vi phạm Rule 1.
   * `asset-optimizer`: Kịch bản đối chiếu CSDL và thanh lọc thư mục media uploads.
 
+---
+
+## 📸 QUY CHUẨN MEDIA UPLOAD & ADMIN UI/UX (Chốt T10/2026)
+- **Thống nhất lưu trữ Media (`public/uploads/{module}/`):**
+  * Tất cả hình ảnh và video từ Admin tải lên đều lưu trữ trực tiếp trong thư mục module (`uploads/{module}/` hoặc `uploads/{module}/{Y}/{m}/`). Không phân mảnh thêm thư mục con riêng như `videos/`.
+  * Xử lý file video và hình ảnh đồng bộ qua `ImageService` và `ImageHandlerTrait`.
+- **Media Hub Đa phương tiện xen kẽ (Interleaved Media Hub):**
+  * Thư viện ảnh chi tiết (`image_detail`) hỗ trợ upload linh hoạt cả ảnh (tự động nén WebP) lẫn video ngắn (MP4, WebM, MOV) trong cùng 1 lần chọn. Thứ tự hiển thị ngoài Frontend phản ánh chính xác trình tự sắp xếp do người dùng đưa vào.
+- **Tránh màn hình đen Video Preview (Real Video Frame Thumbnail):**
+  * Thẻ video preview trong cả Admin và Frontend bắt buộc nạp khung hình đại diện qua cú pháp `<video src="...#t=0.5" preload="metadata" muted playsinline>` để hiển thị khung hình tại giây 0.5 thay vì khung đen tĩnh.
+- **Quy chuẩn Action Buttons & Table Controls Admin (Chốt T10/2026):**
+  * Controls: Nút Thêm mới, Xóa hết, Select danh mục và Search Input đồng bộ height `38px` (`rounded-2`). Kính lúp chìm trong input, hỗ trợ debounce search, bỏ nút Search rời bị tràn viền.
+  * Danh mục: Chip UI / Badge tag nền xám nhạt `#f1f5f9`, chữ xám đứng `#334155`.
+  * Switches: 1 màu duy nhất `#2563eb` khi ON, `#cbd5e1` khi OFF.
+  * STT Input: Thu nhỏ `52px`, căn giữa, ẩn mũi tên spinner.
+  * Action Buttons (Icon-only Ghost): 32x32px, bo góc `5px`, nền `#f1f5f9` (Xem: hover `#e0f2fe`/`#0284c7`, Sửa: hover `#e0e7ff`/`#4338ca`, Xóa: hover `#fee2e2`/`#ef4444`), `gap: 6px;`.
+  * Table: Checkbox/STT/Hình/Switch/STT/Ngày/Action căn giữa, Tiêu đề/Danh mục căn trái, hover hàng `#f8fafc`.
+- **Bộ nhớ đệm Redis & Tối ưu Repository Query:**
+  * Cache driver mặc định chuyển sang Redis (`CACHE_DRIVER=redis`).
+  * Bộ lọc danh mục trong Repository dùng `whereIn` lấy cả danh mục con, chọn lọc đúng các cột quan hệ (`select`), không lặp `orderBy`.
+
 

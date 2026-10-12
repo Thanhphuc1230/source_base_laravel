@@ -19,4 +19,6 @@
 - **QUY TẮC 6 (ZERO CDN):** Tuyệt đối KHÔNG dùng link CDN bên ngoài (Google Fonts, cdnjs, unpkg). 100% assets phải nằm trong `public/frontend/`.
 - **QUY TẮC 7 (TÁCH BIỆT CODE):** Tuyệt đối KHÔNG viết thẻ `<style>` hay `<script>` tĩnh trong Blade views. Không dùng style inline trừ dữ liệu động cấu hình từ DB.
 - **QUY TẮC 10 (ASSET CONCENTRATION):** Tuyệt đối KHÔNG tạo thêm các file css/js rác lẻ tẻ.
+- **QUY TẮC 12 (UNIFIED MEDIA & VIDEO PREVIEW):** Mọi thẻ video preview ở Frontend & Admin bắt buộc dùng `<video src="...#t=0.5" preload="metadata" muted playsinline>` để hiển thị ảnh thumbnail frame sống động, không dùng khung đen tĩnh.
+- **QUY TẮC 13 (ADMIN ACTION UI & PREVIEW):** Cột thao tác Admin đồng nhất thiết kế 3 nút: Xem ngoài web (ice-blue 30x30px), Sửa (indigo 30px có chữ "Sửa"), Xóa (coral 30x30px), khoảng cách an toàn `gap: 6px;`, bo góc preview nhẹ 4px-6px.
 - **RANH GIỚI KIẾN TRÚC:** Không can thiệp hoặc viết query SQL trong Controller hay Views. Chỉ nhận dữ liệu từ Controller/Service chuyển sang.
