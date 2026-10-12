@@ -16,3 +16,184 @@
     height: auto !important;
     opacity: 1 !important;
 }
+
+/* ========================================================
+   MODERN ADMIN LIST STANDARD (RULE 13)
+   ======================================================== */
+
+/* Table layout & Spacing */
+.table-card table th, .table-card table td {
+    padding: 0.65rem 0.75rem !important;
+    vertical-align: middle !important;
+}
+.table-hover tbody tr {
+    transition: background-color 0.15s ease-in-out;
+}
+.table-hover tbody tr:hover {
+    background-color: #f8fafc !important;
+}
+.hover-primary:hover {
+    color: #2563eb !important;
+}
+
+/* Category Chip / Badge Tag */
+.category-badge {
+    background-color: #f1f5f9 !important;
+    color: #334155 !important;
+    border: 1px solid #e2e8f0 !important;
+    font-size: 11.5px !important;
+    font-weight: 500 !important;
+    padding: 3px 8px !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+    max-width: 170px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+}
+.category-badge-empty {
+    background-color: #fafafa !important;
+    color: #94a3b8 !important;
+    border: 1px dashed #cbd5e1 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    padding: 3px 7px !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+}
+
+/* Unified Status Switches (Single Modern Brand Accent Color) */
+.form-check.form-switch .form-check-input {
+    width: 2.2em !important;
+    height: 1.2em !important;
+    background-color: #cbd5e1 !important;
+    border-color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out !important;
+}
+.form-check.form-switch .form-check-input:checked {
+    background-color: #2563eb !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Compact STT Reorder Input */
+.stt-input {
+    width: 52px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
+    padding: 2px 4px !important;
+    background-color: #ffffff !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+.stt-input:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15) !important;
+    outline: none !important;
+}
+.stt-input::-webkit-outer-spin-button,
+.stt-input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+}
+.stt-input[type=number] {
+    -moz-appearance: textfield !important;
+}
+
+/* Search Box Container & Aligned Search Icon */
+.admin-search-box {
+    position: relative !important;
+    width: 220px !important;
+    max-width: 220px !important;
+}
+.admin-search-box .form-control {
+    height: 38px !important;
+    padding-left: 36px !important;
+    padding-right: 30px !important;
+    font-size: 13px !important;
+    border-radius: 6px !important;
+}
+.admin-search-box .search-icon {
+    font-size: 15px !important;
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #94a3b8 !important;
+    pointer-events: none !important;
+    line-height: 1 !important;
+    z-index: 4 !important;
+}
+.admin-search-box .clear-btn {
+    position: absolute !important;
+    right: 10px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #94a3b8 !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    z-index: 5 !important;
+    text-decoration: none !important;
+}
+.admin-search-box .clear-btn:hover {
+    color: #ef4444 !important;
+}
+
+/* Modern Colored Action Buttons */
+.action-btn-ghost {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    font-size: 15px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-decoration: none !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+}
+/* View: Ice blue */
+.action-btn-ghost.action-view {
+    background-color: #e0f2fe !important;
+    color: #0284c7 !important;
+    border: 1px solid #bae6fd !important;
+}
+.action-btn-ghost.action-view:hover {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(2, 132, 199, 0.25) !important;
+}
+/* Edit: Royal Indigo */
+.action-btn-ghost.action-edit {
+    background-color: #e0e7ff !important;
+    color: #4338ca !important;
+    border: 1px solid #c7d2fe !important;
+}
+.action-btn-ghost.action-edit:hover {
+    background-color: #4338ca !important;
+    color: #ffffff !important;
+    border-color: #4338ca !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(67, 56, 202, 0.25) !important;
+}
+/* Delete: Coral Red */
+.action-btn-ghost.action-delete {
+    background-color: #fee2e2 !important;
+    color: #ef4444 !important;
+    border: 1px solid #fecaca !important;
+}
+.action-btn-ghost.action-delete:hover {
+    background-color: #ef4444 !important;
+    color: #ffffff !important;
+    border-color: #ef4444 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(239, 68, 68, 0.25) !important;
+}

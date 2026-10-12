@@ -48,4 +48,6 @@
 
     {{-- Select2 (local) --}}
     <link href="{{ asset('admin/libs/select2/select2.min.css') }}" rel="stylesheet" />
+
+    @stack('styles')
 </head>
