@@ -37,7 +37,8 @@
             "app/Helpers/CateHelper.php",
             "app/Helpers/MenuHelper.php",
             "app/Helpers/CartHelper.php",
-            "app/Helpers/Language.php"
+            "app/Helpers/Language.php",
+            "app/Helpers/ProductHelper.php"
         ]
     },
     "autoload-dev": {
