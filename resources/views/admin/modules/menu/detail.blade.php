@@ -30,8 +30,8 @@
 
                         <div class="card-body">
                             <div class="live-preview">
-                                <div class="row justify-content-evenly mb-4">
-                                    <div class="col-lg-4">
+                                <div class="row g-4 mb-4">
+                                    <div class="col-lg-5 col-xl-4">
                                         <div class="mt-3">
                                             <div class="d-flex align-items-center mb-2">
                                                 <div class="flex-shrink-0 me-1">
@@ -367,34 +367,46 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-7 col-xl-8">
                                         <div class="mt-3">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <div class="flex-shrink-0 me-1">
-                                                    <i class="ri-file-list-line fs-24 align-middle text-success me-1"></i>
+                                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class="ri-node-tree fs-22 align-middle text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5 class="fs-16 mb-0 fw-semibold">Cấu trúc Menu</h5>
+                                                        <p class="text-muted small mb-0">Kéo thả để sắp xếp thứ tự hoặc kéo lùi sang phải để làm menu con</p>
+                                                    </div>
                                                 </div>
-                                                <div class="flex-grow-1">
-                                                    <h5 class="fs-16 mb-0 fw-semibold">Menu chính</h5>
+                                                <div id="menu-save-indicator" class="menu-save-indicator" style="display: none;">
+                                                    <i class="ri-checkbox-circle-line"></i>
+                                                    <span class="indicator-text">Đã lưu vị trí</span>
                                                 </div>
                                             </div>
-                                            <div class="list-group col nested-list nested-sortable">
-                                                @foreach ($menus as $item)
-                                                    @include('admin.modules.menu.menu-item', [
-                                                        'item' => $item,
-                                                        'level' => 1,
-                                                        'pageContent' => $page_content,
-                                                        'cateNew' => $cate_new,
-                                                        'cateProduct' => $cate_product,
-                                                        'brands' => $brands ?? null,
-                                                    ])
-                                                @endforeach
+
+                                            <div class="card border shadow-none bg-light-subtle">
+                                                <div class="card-body p-3">
+                                                    <div id="root-menu-list" class="list-group nested-list nested-sortable">
+                                                        @forelse ($menus as $item)
+                                                            @include('admin.modules.menu.menu-item', [
+                                                                'item' => $item,
+                                                                'level' => 1,
+                                                                'pageContent' => $page_content,
+                                                                'cateNew' => $cate_new,
+                                                                'cateProduct' => $cate_product,
+                                                                'brands' => $brands ?? null,
+                                                            ])
+                                                        @empty
+                                                            <div class="text-center py-4 text-muted">
+                                                                <i class="ri-menu-line fs-32 mb-2 d-block"></i>
+                                                                Chưa có menu nào. Hãy chọn mục bên trái để thêm vào menu.
+                                                            </div>
+                                                        @endforelse
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <!--end accordion-->
                                         </div>
-                                    </div>
-
-                                    <div class="col-lg-2">
-
                                     </div>
                                 </div>
                             </div>
@@ -404,5 +416,136 @@
             </div>
         </div>
     </div>
-
 @endsection
+
+@push('scripts')
+<script src="{{ asset('admin/libs/sortablejs/Sortable.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const rootContainer = document.getElementById('root-menu-list');
+        const indicator = document.getElementById('menu-save-indicator');
+        const indicatorText = indicator ? indicator.querySelector('.indicator-text') : null;
+        let isSaving = false;
+
+        function setIndicator(state, message) {
+            if (!indicator) return;
+            indicator.style.display = 'inline-flex';
+            indicator.className = 'menu-save-indicator ' + state;
+            if (indicatorText) indicatorText.textContent = message;
+
+            if (state === 'saved') {
+                setTimeout(function () {
+                    indicator.style.display = 'none';
+                }, 2500);
+            }
+        }
+
+        function serializeTree(container) {
+            const items = [];
+            const directNodes = Array.from(container.children).filter(function (el) {
+                return el.classList.contains('menu-item-node');
+            });
+
+            directNodes.forEach(function (node, index) {
+                const id = node.dataset.id;
+                const subContainer = node.querySelector(':scope > .menu-children-container');
+                const children = subContainer ? serializeTree(subContainer) : [];
+
+                items.push({
+                    id: parseInt(id, 10),
+                    stt: index + 1,
+                    children: children
+                });
+            });
+
+            return items;
+        }
+
+        function saveMenuStructure() {
+            if (!rootContainer || isSaving) return;
+
+            const hierarchy = serializeTree(rootContainer);
+            isSaving = true;
+            setIndicator('saving', 'Đang lưu vị trí...');
+
+            fetch('{{ route("admin.menu.reorder") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ hierarchy: hierarchy })
+            })
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Network error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function (data) {
+                isSaving = false;
+                if (data.status) {
+                    setIndicator('saved', data.message || 'Đã lưu vị trí');
+                } else {
+                    setIndicator('error', data.message || 'Lỗi khi lưu vị trí');
+                }
+            })
+            .catch(function (error) {
+                isSaving = false;
+                console.error('Menu reorder error:', error);
+                setIndicator('error', 'Lỗi kết nối khi lưu');
+            });
+        }
+
+        function initNestedSortables() {
+            const sortables = document.querySelectorAll('.nested-sortable');
+            sortables.forEach(function (el) {
+                new Sortable(el, {
+                    group: 'nested-menu',
+                    handle: '.drag-handle',
+                    animation: 150,
+                    fallbackOnBody: true,
+                    swapThreshold: 0.65,
+                    emptyInsertThreshold: 10,
+                    ghostClass: 'menu-sortable-ghost',
+                    chosenClass: 'menu-sortable-chosen',
+                    dragClass: 'menu-sortable-drag',
+                    onStart: function () {
+                        if (rootContainer) rootContainer.classList.add('is-dragging');
+                    },
+                    onMove: function (evt) {
+                        let depth = 1;
+                        let parent = evt.to.closest('.menu-item-node');
+                        while (parent) {
+                            depth++;
+                            parent = parent.parentElement ? parent.parentElement.closest('.menu-item-node') : null;
+                        }
+
+                        function getSubtreeDepth(node) {
+                            const sub = node.querySelector(':scope > .menu-children-container');
+                            if (!sub) return 0;
+                            const children = Array.from(sub.children).filter(function (c) {
+                                return c.classList.contains('menu-item-node');
+                            });
+                            if (children.length === 0) return 0;
+                            return 1 + Math.max.apply(null, children.map(getSubtreeDepth));
+                        }
+
+                        const draggedDepth = getSubtreeDepth(evt.dragged);
+                        if (depth + draggedDepth > 3) {
+                            return false;
+                        }
+                    },
+                    onEnd: function () {
+                        if (rootContainer) rootContainer.classList.remove('is-dragging');
+                        saveMenuStructure();
+                    }
+                });
+            });
+        }
+
+        initNestedSortables();
+    });
+</script>
+@endpush

@@ -11,6 +11,7 @@ Route::controller(MenuController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:menu.create');
         Route::get('/status/{uuid}/{status}', 'status')->name('status')->middleware('permission:menu.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:menu.create');
+        Route::post('/reorder', 'reorder')->name('reorder')->middleware('permission:menu.edit');
         Route::get('/edit/{uuid}', 'edit')->name('edit')->middleware('permission:menu.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:menu.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:menu.delete');

@@ -11,10 +11,13 @@ use App\Repositories\Interfaces\CateNewRepositoryInterface;
 use App\Repositories\Interfaces\CateProductRepositoryInterface;
 use App\Repositories\Interfaces\CateServiceRepositoryInterface;
 use App\Repositories\Interfaces\CateProjectRepositoryInterface;
-use App\Models\Menu; // Importing Menu model
+use App\Models\Menu;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class MenuController extends BaseController
@@ -112,7 +115,9 @@ class MenuController extends BaseController
             $objectIds[0] = 0;
         }
         if ($objectIds) {
-            foreach ($objectIds as $objectId) {
+            $baseStt = $this->menuRepository->getMaxStt((int) $request->parent_id);
+
+            foreach ($objectIds as $index => $objectId) {
                 $nameChild = $this->getNameVn($request->type, $objectId);
                 if ($nameChild == null && $request->name_vn == null) {
                     return back()->with('error', 'Vui lòng chọn chính xác chủ đề và vị trí');
@@ -123,7 +128,7 @@ class MenuController extends BaseController
                     'slug' => $nameChild['slug'] ?? Str::slug($request->name_vn),
                     'object_id' => $objectId,
                     'parent_id' => $request->parent_id,
-                    'stt' => 1,
+                    'stt' => $baseStt + $index + 1,
                     'uuid' => Str::uuid(),
                     'created_at' => now(),
                     'link' => $request->link ?? null,
@@ -132,7 +137,7 @@ class MenuController extends BaseController
 
                 $menu = $this->menuRepository->create($data);
 
-                // Dispatch event sau khi tạo menu
+                // Dispatch event after creating menu
                 MenuChanged::dispatch($menu, 'created');
             }
 
@@ -142,6 +147,49 @@ class MenuController extends BaseController
         }
 
         return $this->route_admin('index');
+    }
+
+    public function reorder(Request $request)
+    {
+        $hierarchy = $request->input('hierarchy', []);
+
+        if (empty($hierarchy) || !is_array($hierarchy)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid hierarchy data provided.'
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $this->menuRepository->updateHierarchy($hierarchy, 0);
+
+            DB::commit();
+
+            CacheService::forget('menu', 'frontend_menu_data');
+            CacheService::forgetTags(['menu', 'frontend']);
+            Cache::forget('frontend_menu_data');
+
+            if (method_exists(Menu::class, 'flushQueryCache')) {
+                Menu::flushQueryCache();
+            }
+
+            MenuChanged::dispatch(null, 'reordered');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Cập nhật vị trí menu thành công.'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Menu reorder error: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Lỗi khi cập nhật vị trí: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

@@ -40,7 +40,11 @@ class FrontendComposer
 
             // 2. Dữ liệu Menu (Tag: menu)
             'menu' => \App\Services\CacheService::remember('menu', 'frontend_menu_data', $cacheTtl, function() {
-                return Menu::with('children')->where('parent_id', 0)->orderBy('stt', 'asc')->get();
+                return Menu::with(['children' => function($query) {
+                    $query->where('status', 1)->with(['children' => function($subQuery) {
+                        $subQuery->where('status', 1)->orderBy('stt', 'asc');
+                    }])->orderBy('stt', 'asc');
+                }])->where('parent_id', 0)->where('status', 1)->orderBy('stt', 'asc')->get();
             }),
 
             // 3. Slider/Ads (Tag: sliders)

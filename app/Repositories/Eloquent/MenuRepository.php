@@ -37,4 +37,32 @@ class MenuRepository extends BaseRepository implements MenuRepositoryInterface
     {
         return $this->model->with('children')->where('parent_id', 0)->orderBy('stt', 'asc')->get();
     }
+
+    public function getMaxStt(int $parentId): int
+    {
+        return (int) $this->model->where('parent_id', $parentId)->max('stt');
+    }
+
+    public function updateHierarchy(array $nodes, int $parentId = 0, int $depth = 1): void
+    {
+        if ($depth > 3) {
+            return;
+        }
+
+        foreach ($nodes as $index => $node) {
+            if (empty($node['id'])) {
+                continue;
+            }
+
+            $this->model->where('id_menu', $node['id'])->update([
+                'parent_id' => $parentId,
+                'stt' => $index + 1,
+                'updated_at' => now(),
+            ]);
+
+            if (!empty($node['children']) && is_array($node['children'])) {
+                $this->updateHierarchy($node['children'], (int) $node['id'], $depth + 1);
+            }
+        }
+    }
 }

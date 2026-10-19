@@ -25,7 +25,7 @@ class MenuRequest extends BaseAdminRequest
     public function rules(): array
     {
         return [
-            'type' => 'required|in:page,cate_new,cate_product,link,brand',
+            'type' => 'required|in:page,cate_new,cate_product,link,brand,cate_service,cate_project',
             'parent_id' => 'required|integer',
             'object_ids' => 'nullable|array',
             'name_vn' => 'required_if:type,link',
