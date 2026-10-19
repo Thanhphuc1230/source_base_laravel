@@ -171,6 +171,25 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
 
 ---
 
+## QUY TẮC SỐ 15 – THAM KHẢO CHỨC NĂNG CŨ, TUYỆT ĐỐI ZERO-HARDCODE & KIỂM THỬ XÁC MINH TRƯỚC KHI BÁO HOÀN THÀNH (FEATURE REFERENCE, ZERO-HARDCODE & RIGOROUS TESTING)
+
+1. **Tham khảo chức năng cũ tương tự (Pattern Reference & Consistency):**
+   - Khi tạo hoặc nâng cấp bất kỳ chức năng mới nào, AI BẮT BUỘC phải đọc và tham chiếu các module/chức năng tương tự đã chạy ổn định trong codebase (Controllers, Services, Repositories, Models, Requests, Blade components, UI/UX conventions, Traits).
+   - Bảo đảm tái sử dụng đúng chuẩn kiến trúc hiện hành (`Controller → Service → Repository → Model`), không tự sáng tạo cấu trúc lạ làm phân mảnh hệ thống.
+2. **Tuyệt đối không Hardcode (Zero-Hardcode Mandatory):**
+   - Mọi chức năng mới BẮT BUỘC dùng biến động từ CSDL, helper, `$web`, route name, lang helper.
+   - Tuyệt đối KHÔNG hardcode chuỗi hiển thị, link tĩnh, email, hotline, hoặc magic number.
+3. **Kiểm thử thực tế, debug triệt để trước khi báo hoàn thành (Rigorous Verification & Debugging):**
+   - AI KHÔNG ĐƯỢC báo hoàn thành task khi chưa kiểm tra và debug thực tế.
+   - BẮT BUỘC thực hiện các bước xác thực:
+     - Kiểm tra cú pháp (Syntax check, Blade compile `php artisan view:cache` rồi `php artisan view:clear`).
+     - Kiểm tra Routes (`php artisan route:list`).
+     - Xóa cache hệ thống (`php artisan optimize:clear`).
+     - Rà soát các trường hợp ngoại lệ (Edge cases, validation rules, permissions, DB transactions).
+   - Chỉ khi đã xác minh chức năng chạy đúng 100% và không còn bất kỳ lỗi nào, AI mới được thông báo hoàn thành task cho người dùng.
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |
