@@ -41,12 +41,12 @@
                                                     style="width: 200px; max-width: 200px; height: 38px; font-size: 13px;">
                                                     <option value="0">Tất cả chủ đề</option>
                                                     @foreach ($category as $item)
-                                                        <option value="{{ $item->id_category_new }}" {{ request('category') == $item->id_category_new ? 'selected' : '' }}>
+                                                        <option value="{{ $item->id_cate_new }}" {{ request('category') == $item->id_cate_new ? 'selected' : '' }}>
                                                             {{ $item->name_vn }}
                                                         </option>
                                                         @if ($item->children)
                                                             @foreach ($item->children as $child)
-                                                                <option value="{{ $child->id_category_new }}" {{ request('category') == $child->id_category_new ? 'selected' : '' }}>
+                                                                <option value="{{ $child->id_cate_new }}" {{ request('category') == $child->id_cate_new ? 'selected' : '' }}>
                                                                     |---{{ $child->name_vn }}
                                                                 </option>
                                                             @endforeach

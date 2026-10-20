@@ -109,4 +109,26 @@ interface RepositoryInterface
      * @return Model
      */
     public function getModelInstance();
+
+    /**
+     * Generate unique slug for a model
+     *
+     * @param string $name The name to generate slug from
+     * @param string|null $uuid UUID of existing record (for updates)
+     * @param string|null $tableName Table name for slug uniqueness check
+     * @param string $slugField Field name for slug (default 'slug_vn')
+     * @param string|null $primaryKey Primary key field name
+     * @return string
+     */
+    public function generateUniqueSlug(string $name, ?string $uuid = null, ?string $tableName = null, string $slugField = 'slug_vn', ?string $primaryKey = null);
+
+    /**
+     * Create record with automatic slug generation
+     *
+     * @param array $data
+     * @param string $nameField Field name to generate slug from (default 'name_vn')
+     * @param string $slugField Field name for slug (default 'slug_vn')
+     * @return Model
+     */
+    public function createWithAutoSlug(array $data, string $nameField = 'name_vn', string $slugField = 'slug_vn');
 }

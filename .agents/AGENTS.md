@@ -201,6 +201,36 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
 
 ---
 
+## QUY TẮC SỐ 17 – QUY TRÌNH TẠO CHỨC NĂNG MỚI & VÒNG LẶP KIỂM THỬ TỰ THÂN (AUTONOMOUS SELF-TESTING LOOP & ZERO-USER-DEBUGGING PROTOCOL)
+
+### 1. Quy trình chuẩn khi tạo chức năng mới (Layered Feature Pipeline)
+Khi xây dựng chức năng/module mới, bắt buộc triển khai tuần tự theo 6 tầng kiến trúc, không nhảy cóc:
+1. **Database Schema:** Cập nhật file migration gốc trong `database/migrations/` và đồng thời ghi câu lệnh `ALTER TABLE` vào `database/patch_schema.sql` (Rule 12).
+2. **Model & Traits:** Khai báo `$fillable`, `$casts`, gán `AutoImagePathsTrait`, quan hệ Eloquent (`belongsTo`, `hasMany`).
+3. **Repository Layer:** Khai báo contract trong `app/Repositories/Interfaces/` trước, sau đó implement trong `app/Repositories/Eloquent/`.
+4. **Service Layer:** Viết business logic, transaction, dọn cache bằng tags trong `app/Services/`.
+5. **Controller & Form Request:** Viết Form Request xác thực input (`app/Http/Requests/`), Controller chỉ điều hướng và gọi Service/Repository, trả về View hoặc JSON.
+6. **Blade Views & Assets:** Dùng Blade Components Admin (`<x-admin.table-wrapper>`), áp dụng chuẩn UI 38px controls, ghost action buttons, CSS viết vào `theme-style.css`, JS gom vào `main.js`.
+
+### 2. Vòng lặp kiểm thử tự thân bắt buộc (The Autonomous 4-Step Test Loop)
+> ⛔ **CẤM TUYỆT ĐỐI**: AI không được báo "hoàn thành" khi chưa tự mình chạy vòng lặp kiểm thử thực tế. Tuyệt đối không để người dùng phải làm "tester" phát hiện lỗi cú pháp, thiếu method, filter không chạy hay submit rỗng.
+
+Trước khi bàn giao task, AI **BẮT BUỘC** tự động chạy tuần tự vòng lặp 4 bước sau:
+* **Loop Step 1 (Syntax & Compile Check):**
+  - Kiểm tra cú pháp PHP: `php -l <file_path>` cho mọi file mới tạo/sửa.
+  - Compile Blade Views kiểm tra lỗi tag/cú pháp: `php artisan view:cache` rồi `php artisan view:clear`.
+* **Loop Step 2 (Contract & Route Integrity Check):**
+  - Kiểm tra Route: `php artisan route:list` xác nhận route đã được đăng ký và controller action tồn tại.
+  - Kiểm tra Interface Contract: Xác nhận mọi method gọi từ Controller đã được khai báo đầy đủ trong Interface tương ứng để tránh lỗi Intelephense / Fatal Error `Call to undefined method`.
+* **Loop Step 3 (Runtime Execution Test qua Tinker / CLI):**
+  - Chạy thử logic thực tế bằng CLI: Dùng `php artisan tinker --execute="..."` để test gọi hàm Model/Repository/Service với dữ liệu mẫu (mock data).
+  - Kiểm tra các trường hợp biên (Edge cases): Dữ liệu rỗng (`empty`), mảng rỗng `[]`, ID không tồn tại, ký tự đặc biệt trong slug.
+* **Loop Step 4 (Self-Correction & Loop Retry):**
+  - **NẾU GẶP BẤT KỲ LỖI NÀO:** AI phải tự phân tích log lỗi, tự sửa code ngay lập tức và **QUAY LẠI LOOP STEP 1** để chạy lại toàn bộ quy trình kiểm thử từ đầu.
+  - Chỉ khi **TẤT CẢ 4 BƯỚC ĐỀU PASS 100%**, AI mới được xóa cache (`php artisan optimize:clear`) và thông báo hoàn thành cho người dùng.
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |

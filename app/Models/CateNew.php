@@ -73,7 +73,7 @@ class CateNew extends Model
 
     public function children()
     {
-        return $this->hasMany(CateNew::class, 'parent_id', 'id_cate_news');
+        return $this->hasMany(CateNew::class, 'parent_id', 'id_cate_new');
     }
 
     public function news()

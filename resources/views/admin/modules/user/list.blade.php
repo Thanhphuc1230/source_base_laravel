@@ -205,8 +205,17 @@ $(document).ready(function() {
             return;
         }
 
-        if (confirm('Bạn có chắc chắn muốn xóa các người dùng đã chọn?')) {
-            $('#delete-form-all').submit();
+        if (confirm('Bạn có chắc chắn muốn xóa ' + selectedItems.length + ' người dùng đã chọn?')) {
+            const form = $('#delete-form-all');
+            form.find('input[name="uuids[]"]').remove();
+            selectedItems.each(function() {
+                form.append($('<input>').attr({
+                    type: 'hidden',
+                    name: 'uuids[]',
+                    value: $(this).val()
+                }));
+            });
+            form.submit();
         }
     });
 

@@ -193,33 +193,53 @@ class MenuController extends BaseController
     }
 
     /**
-     * Get Vietnamese name and slug based on type and ID
+     * Get Vietnamese name and slug based on type and ID (pure clean slug, no ID prefix/suffix)
      */
     private function getNameVn(string $type, int $id): ?array
     {
         switch ($type) {
             case self::TYPE_PAGE:
                 $page = $this->pageRepository->find($id);
-                return $page ? ['name_vn' => $page->name_vn, 'slug' => $this->pageRepository->generateUniqueSlug($page->name_vn, $page->uuid)] : null;
+                return $page ? [
+                    'name_vn' => $page->name_vn,
+                    'name_en' => $page->name_en ?? $page->name_vn,
+                    'slug' => $page->slug_vn ?: ($page->slug ?: $this->pageRepository->generateUniqueSlug($page->name_vn, $page->uuid))
+                ] : null;
             case self::TYPE_CATE_NEW:
                 $cateNew = $this->cateNewRepository->find($id);
-                return $cateNew ? ['name_vn' => $cateNew->name_vn, 'slug' => $this->cateNewRepository->generateUniqueSlug($cateNew->name_vn, $cateNew->uuid)] : null;
+                return $cateNew ? [
+                    'name_vn' => $cateNew->name_vn,
+                    'name_en' => $cateNew->name_en ?? $cateNew->name_vn,
+                    'slug' => $cateNew->slug_vn ?: ($cateNew->slug ?: $this->cateNewRepository->generateUniqueSlug($cateNew->name_vn, $cateNew->uuid))
+                ] : null;
             case self::TYPE_CATE_PRODUCT:
                 $cateProduct = $this->cateProductRepository->find($id);
-                return $cateProduct ? ['name_vn' => $cateProduct->name_vn, 'slug' => $this->cateProductRepository->generateUniqueSlug($cateProduct->name_vn, $cateProduct->uuid)] : null;
+                return $cateProduct ? [
+                    'name_vn' => $cateProduct->name_vn,
+                    'name_en' => $cateProduct->name_en ?? $cateProduct->name_vn,
+                    'slug' => $cateProduct->slug_vn ?: ($cateProduct->slug ?: $this->cateProductRepository->generateUniqueSlug($cateProduct->name_vn, $cateProduct->uuid))
+                ] : null;
             case self::TYPE_BRAND:
                 $brand = $this->brandRepository->find($id);
                 return $brand ? [
                     'name_vn' => $brand->name_vn,
                     'name_en' => $brand->name_en ?? $brand->name_vn,
-                    'slug' => $brand->slug ?? Str::slug($brand->name_vn)
+                    'slug' => $brand->slug ?: ($brand->slug_vn ?: Str::slug($brand->name_vn))
                 ] : null;
             case self::TYPE_CATE_SERVICE:
                 $cateService = $this->cateServiceRepository->find($id);
-                return $cateService ? ['name_vn' => $cateService->name_vn, 'slug' => $this->cateServiceRepository->generateUniqueSlug($cateService->name_vn, $cateService->uuid)] : null;
+                return $cateService ? [
+                    'name_vn' => $cateService->name_vn,
+                    'name_en' => $cateService->name_en ?? $cateService->name_vn,
+                    'slug' => $cateService->slug_vn ?: ($cateService->slug ?: $this->cateServiceRepository->generateUniqueSlug($cateService->name_vn, $cateService->uuid))
+                ] : null;
             case self::TYPE_CATE_PROJECT:
                 $cateProject = $this->cateProjectRepository->find($id);
-                return $cateProject ? ['name_vn' => $cateProject->name_vn, 'slug' => $this->cateProjectRepository->generateUniqueSlug($cateProject->name_vn, $cateProject->uuid)] : null;
+                return $cateProject ? [
+                    'name_vn' => $cateProject->name_vn,
+                    'name_en' => $cateProject->name_en ?? $cateProject->name_vn,
+                    'slug' => $cateProject->slug_vn ?: ($cateProject->slug ?: $this->cateProjectRepository->generateUniqueSlug($cateProject->name_vn, $cateProject->uuid))
+                ] : null;
             default:
                 return null;
         }

@@ -20,7 +20,7 @@ HTTP Request ──► Controller ──► Service ──► Repository ──�
 
 ---
 
-## 📌 2. 16 Quy Tắc Cốt Lõi Dự Án
+## 📌 2. 17 Quy Tắc Cốt Lõi Dự Án
 
 | STT | Quy tắc | Tóm tắt yêu cầu |
 |:---:|---|---|
@@ -40,6 +40,7 @@ HTTP Request ──► Controller ──► Service ──► Repository ──�
 | **14** | **Redis & Query Optimize**| Kích hoạt Redis cache; lọc danh mục phân cấp tối ưu `whereIn`, bỏ `orderBy` thừa. |
 | **15** | **Strict Verification** | Tham khảo pattern cũ; kiểm thử cú pháp và route thực tế trước khi báo hoàn thành. |
 | **16** | **Instant Routing Map** | Tra cứu ngay [`.agents/codebase-matrix.md`](./.agents/codebase-matrix.md); cấm quét tìm file mò mẫm. |
+| **17** | **Self-Testing Loop** | Tự động chạy Test Loop 4 bước (Syntax, Contract, Runtime, Cache). Cấm để user debug. |
 
 ---
 
@@ -51,10 +52,12 @@ HTTP Request ──► Controller ──► Service ──► Repository ──�
 ```
 
 ### 📋 Mẫu lệnh thực chiến có sẵn
+* **Tạo chức năng mới kèm Vòng lặp Kiểm thử Tự thân (Rule 17 - Đề xuất số 1):**
+  > *"Xây dựng module/tính năng `[Tên tính năng]` theo kiến trúc Layered 6 tầng. Bắt buộc kích hoạt Rule 17 (Autonomous Self-Testing Loop): Tự chạy kiểm thử cú pháp, interface contract, test runtime qua tinker CLI với mock data; nếu gặp lỗi phải tự động sửa và lặp lại kiểm thử cho đến khi pass 100% mới được báo hoàn thành, tuyệt đối không để user debug."*
 * **Frontend Theme (Trang chủ/Blade):**
   > *"Trên trang chủ (module `home`): Tùy biến lại khối Sản phẩm Nổi bật theo chuẩn Modern Premium UI. Bo góc card `rounded-2xl`, shadow nhẹ, hover scale 1.03. Đảm bảo mobile 2 cột (`grid-cols-2`), dùng biến động `$web`, không inline CSS."*
 * **Thêm trường CSDL & Admin Form:**
-  > *"Module `product`: Bổ sung trường `shopee_url` (nullable). Cập nhật migration gốc, file `database/patch_schema.sql`, Model Product, Form Request và hiển thị trong tab thông tin chung của view edit Admin."*
+  > *"Module `product`: Bổ sung trường `shopee_url` (nullable). Cập nhật migration gốc, file `database/patch_schema.sql`, Model Product, Form Request và hiển thị trong tab thông tin chung của view edit Admin. Chạy test loop xác nhận trước khi bàn giao."*
 * **Đổi ngành hàng mới:**
   > *"Chuyển website sang chủ đề Đồng hồ (`watches`). Kích hoạt skill theme-rebuild và đồng bộ lại màu sắc trong `theme-style.css`."*
 * **Sửa Logic Backend / Service:**

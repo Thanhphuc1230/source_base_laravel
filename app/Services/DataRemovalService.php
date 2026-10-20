@@ -40,18 +40,20 @@ class DataRemovalService
             return redirect()->back();
         }
 
+        $modelClass = is_object($model) ? get_class($model) : $model;
+
         // Lấy các bản ghi cần xóa
-        $items = $model::whereIn('uuid', $uuids)->get();
+        $items = $modelClass::whereIn('uuid', $uuids)->get();
 
         // Xóa ảnh trước khi xóa records
         foreach ($items as $item) {
             $this->deleteAllImages($item, $imageFolder);
             // Dispatch event per item before deletion for cache invalidation
-            $this->dispatchModelEvent($model, $item, 'deleted');
+            $this->dispatchModelEvent($modelClass, $item, 'deleted');
         }
 
         // Xóa tất cả records
-        $deletedCount = $model::whereIn('uuid', $uuids)->delete();
+        $deletedCount = $modelClass::whereIn('uuid', $uuids)->delete();
 
         if ($deletedCount > 0) {
             toast('Xóa '.$deletedCount.' mục thành công.', 'success');
@@ -64,7 +66,8 @@ class DataRemovalService
 
     public function destroyData($model, $uuid, $imageFolder)
     {
-        $item = $model::where('uuid', $uuid)->first();
+        $modelClass = is_object($model) ? get_class($model) : $model;
+        $item = $modelClass::where('uuid', $uuid)->first();
 
         if (! $item) {
             toast('Không tìm thấy mục để xóa.', 'error');
@@ -79,7 +82,7 @@ class DataRemovalService
         $item->delete();
 
         // Dispatch event nếu có thể
-        $this->dispatchModelEvent($model, $item, 'deleted');
+        $this->dispatchModelEvent($modelClass, $item, 'deleted');
 
         toast('Xóa mục thành công.', 'success');
 

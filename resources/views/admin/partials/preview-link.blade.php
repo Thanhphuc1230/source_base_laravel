@@ -12,7 +12,7 @@
         <label class="form-label">Xem trang</label>
         <div>
             <a href="{{ route('web.resolve', ['slug' => $slugVal]) }}" target="_blank" class="text-decoration-none">
-                <span>{{ request()->getSchemeAndHttpHost() }}/{{ $slugVal }}.html</span>
+                <span>{{ request()->getSchemeAndHttpHost() }}/{{ $slugVal }}</span>
                 <i class="ri-eye-line ms-1"></i>
             </a>
         </div>

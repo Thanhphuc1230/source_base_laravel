@@ -39,10 +39,12 @@ class ProjectRepository extends BaseRepository implements ProjectRepositoryInter
             });
         }
 
-        // Category filter
-        if (isset($filters['category']) && $filters['category'] != 0) {
-            $categoryId = $filters['category'];
-            $query->where('category_id', $categoryId);
+        // Category filter (support hierarchy parent & children)
+        if (!empty($filters['category']) && $filters['category'] != 0) {
+            $categoryId = (int) $filters['category'];
+            $childCategoryIds = CateProject::where('parent_id', $categoryId)->pluck('id_cate_project')->toArray();
+            $categoryIds = array_merge([$categoryId], $childCategoryIds);
+            $query->whereIn('category_id', $categoryIds);
         }
 
         // Sorting

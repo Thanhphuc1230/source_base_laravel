@@ -32,18 +32,20 @@ class NewsRepository extends BaseRepository implements NewsRepositoryInterface
         $query = $this->model->query();
 
         // Search filter
-        if (isset($filters['search'])) {
-            $searchTerm = $filters['search'];
+        if (!empty($filters['search'])) {
+            $searchTerm = trim($filters['search']);
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
+                    ->orWhere('name_en', 'LIKE', "%{$searchTerm}%");
             });
         }
 
-        // Category filter
-        if (isset($filters['category']) && $filters['category'] != 0) {
-            $categoryId = $filters['category'];
-            $query->where('category_id', $categoryId);
+        // Category filter (support hierarchy parent & children)
+        if (!empty($filters['category']) && $filters['category'] != 0) {
+            $categoryId = (int) $filters['category'];
+            $childCategoryIds = CateNew::where('parent_id', $categoryId)->pluck('id_cate_new')->toArray();
+            $categoryIds = array_merge([$categoryId], $childCategoryIds);
+            $query->whereIn('category_id', $categoryIds);
         }
 
         // Sorting
@@ -51,7 +53,7 @@ class NewsRepository extends BaseRepository implements NewsRepositoryInterface
         $sortDirection = $filters['sort_direction'] ?? 'desc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->with(['cate:id_cate_news,name_vn,name_en,slug_vn,slug_en'])
+        return $query->with(['cate:id_cate_new,name_vn,name_en,slug_vn,slug_en'])
             ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_new')
             ->paginate($perPage);
     }

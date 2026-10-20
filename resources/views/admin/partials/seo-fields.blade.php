@@ -35,7 +35,7 @@
                 <div>
                     <span class="fw-bold d-block text-dark" style="font-size: 14px; line-height: 1.2;">{{ $sysBrand }}</span>
                     <span class="text-muted small font-monospace d-block text-truncate" style="font-size: 12px; max-width: 450px;">
-                        {{ url('/') }}/<span id="serp-preview-slug" class="text-success">{{ $currentSlug }}</span>.html
+                        {{ url('/') }}/<span id="serp-preview-slug" class="text-success">{{ $currentSlug }}</span>
                     </span>
                 </div>
             </div>

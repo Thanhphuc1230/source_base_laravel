@@ -47,7 +47,8 @@ function initCheckboxHandler() {
     
     // Xử lý nút xóa nhiều
     if (deleteSelectedBtn) {
-        deleteSelectedBtn.addEventListener('click', function() {
+        deleteSelectedBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             const checkedBoxes = document.querySelectorAll('.form-check-all input[type="checkbox"][name="uuids[]"]:checked');
             
             if (checkedBoxes.length === 0) {
@@ -56,9 +57,49 @@ function initCheckboxHandler() {
             }
             
             if (confirm('Bạn có chắc chắn muốn xóa ' + checkedBoxes.length + ' mục đã chọn?')) {
-                const form = document.getElementById('delete-form-all');
-                if (form) {
-                    form.submit();
+                const existingForm = document.getElementById('delete-form-all');
+                const actionUrl = existingForm ? existingForm.getAttribute('action') : null;
+                const tokenInput = existingForm ? existingForm.querySelector('input[name="_token"]') : document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = tokenInput ? (tokenInput.value || tokenInput.getAttribute('content')) : '';
+
+                if (existingForm) {
+                    // Xóa các input uuids cũ nếu có
+                    existingForm.querySelectorAll('input[name="uuids[]"]').forEach(el => el.remove());
+
+                    // Append các UUIDs được chọn vào form
+                    checkedBoxes.forEach(function(cb) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'uuids[]';
+                        input.value = cb.value;
+                        existingForm.appendChild(input);
+                    });
+
+                    existingForm.submit();
+                } else if (actionUrl) {
+                    // Fallback tạo form động nếu form không tìm thấy trong DOM
+                    const dynamicForm = document.createElement('form');
+                    dynamicForm.method = 'POST';
+                    dynamicForm.action = actionUrl;
+
+                    const tokenField = document.createElement('input');
+                    tokenField.type = 'hidden';
+                    tokenField.name = '_token';
+                    tokenField.value = csrfToken;
+                    dynamicForm.appendChild(tokenField);
+
+                    checkedBoxes.forEach(function(cb) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'uuids[]';
+                        input.value = cb.value;
+                        dynamicForm.appendChild(input);
+                    });
+
+                    document.body.appendChild(dynamicForm);
+                    dynamicForm.submit();
+                } else {
+                    alert('Không tìm thấy đường dẫn xử lý xóa!');
                 }
             }
         });

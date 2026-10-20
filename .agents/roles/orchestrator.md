@@ -53,6 +53,6 @@
 
 ## 3. Quy tắc Bắt buộc của Lead Orchestrator
 1. **Tuân thủ Rule 16:** Bắt buộc mở `codebase-matrix.md` để trích xuất danh sách file mục tiêu trước khi chuyển giao công việc, loại bỏ hoàn toàn hành vi scan lần lượt.
-2. Luôn bảo toàn tính toàn vẹn của dự án: không để sót file rác, không tạo file css/js lẻ tẻ.
-3. Không cho phép chuyển giao task nếu `qa-inspector` chưa chạy bộ kiểm thử thành công.
+2. **Tuân thủ Rule 17 (Zero-User-Debugging Mandate):** Tuyệt đối KHÔNG bàn giao công việc cho người dùng nếu `qa-inspector` chưa hoàn thành trọn vẹn Vòng lặp Kiểm thử Tự thân (Test Loop 4 bước: Syntax, Contract, Runtime, Cache). Nếu có lỗi, yêu cầu chuyên viên tự fix và loop lại đến khi pass 100%.
+3. Luôn bảo toàn tính toàn vẹn của dự án: không để sót file rác, không tạo file css/js lẻ tẻ.
 4. Khi người dùng yêu cầu đổi ngành hàng: lập tức kích hoạt skill `theme-rebuild`.
