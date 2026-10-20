@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yamadashy/repomix/main/repomix.schema.json",
+  "output": {
+    "filePath": "repomix-output.xml",
+    "style": "xml",
+    "parsableStyle": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "removeComments": false,
+    "removeEmptyLines": true,
+    "showLineNumbers": false,
+    "copyToClipboard": false
+  },
+  "include": [
+    ".agents/**",
+    "app/**",
+    "routes/**",
+    "config/app.php",
+    "config/database.php",
+    "database/migrations/**",
+    "database/seeders/**",
+    "resources/views/frontend/**",
+    "public/frontend/css/theme-style.css",
+    "public/frontend/js/main.js",
+    "README.md"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "vendor/**",
+      "node_modules/**",
+      "storage/**",
+      "public/uploads/**",
+      "public/admin/**",
+      "public/ckeditor/**",
+      "public/images/**",
+      "database/dumps/**",
+      "database/patch_schema.sql",
+      "tests/**",
+      "*.log",
+      "repomix-output.*"
+    ]
+  }
+}
