@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\ContactRequest;
 use App\Models\Contact;
+use App\Repositories\Interfaces\ContactRepositoryInterface;
+use App\Services\SiteSettingService;
 use App\Services\RateLimitService;
 use App\Services\MailTemplateService;
 use App\Services\MailConfigService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -20,10 +21,15 @@ class ContactController extends Controller
     private RateLimitService $rateLimitService;
     private MailTemplateService $mailTemplateService;
     private MailConfigService $mailConfigService;
+    private ContactRepositoryInterface $contactRepository;
+    private SiteSettingService $siteSettingService;
 
-    public function __construct()
-    {
-        // Use factory method for contact-specific rate limiting
+    public function __construct(
+        ContactRepositoryInterface $contactRepository,
+        SiteSettingService $siteSettingService
+    ) {
+        $this->contactRepository = $contactRepository;
+        $this->siteSettingService = $siteSettingService;
         $this->rateLimitService = RateLimitService::forContact(
             maxAttempts: config('auth.contact_rate_limit.max_attempts', 3),
             decayMinutes: config('auth.contact_rate_limit.decay_minutes', 5)
@@ -72,7 +78,7 @@ class ContactController extends Controller
         $data['created_at'] = new \DateTime;
         $data['status'] = 0;
 
-        return Contact::create($data);
+        return $this->contactRepository->create($data);
     }
 
     /**
@@ -81,7 +87,8 @@ class ContactController extends Controller
     private function sendContactNotification(Contact $contact): void
     {
         try {
-            $email = DB::table('tp_systems')->value('email_alert');
+            $system = $this->siteSettingService->getSetting();
+            $email = $system->email_alert ?? null;
             Log::info('Email alert from system: ' . $email);
 
             if ($email) {

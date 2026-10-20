@@ -65,11 +65,10 @@ class HomeService
             ->limit(6)
             ->get();
 
-        $data['about_section'] = About::where('uuid', '8037faa4-c262-41d7-aed5-60a479531b4f')->first()
-            ?? About::where('status', 1)
-                ->orderBy('stt', 'asc')
-                ->orderBy('created_at', 'desc')
-                ->first();
+        $data['about_section'] = About::where('status', 1)
+            ->orderBy('stt', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->first();
 
         $data['features'] = Feature::where('status', 1)
             ->orderBy('stt', 'asc')

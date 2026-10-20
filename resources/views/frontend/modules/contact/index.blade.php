@@ -36,7 +36,7 @@
                             </div>
                             <div>
                                 <strong class="text-emerald-950 block">Địa chỉ trụ sở</strong>
-                                <span class="text-gray-500 leading-normal block">{{ $web->address ?? 'Lầu 5, Tòa nhà Travel, TP. Hồ Chí Minh' }}</span>
+                                <span class="text-gray-500 leading-normal block">{{ $web->address ?? '' }}</span>
                             </div>
                         </div>
 
@@ -46,7 +46,7 @@
                             </div>
                             <div>
                                 <strong class="text-emerald-950 block">Tổng đài hỗ trợ</strong>
-                                <span class="text-gray-500 block">Hotline: {{ $web->phone ?? '1800 6700' }}</span>
+                                <span class="text-gray-500 block">Hotline: {{ $web->phone ?? '' }}</span>
                             </div>
                         </div>
 
@@ -56,16 +56,22 @@
                             </div>
                             <div>
                                 <strong class="text-emerald-950 block">Hộp thư điện tử</strong>
-                                <span class="text-gray-500 block">{{ $web->email ?? 'info@haothientravel.com' }}</span>
+                                <span class="text-gray-500 block">{{ $web->email ?? '' }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Google Map Iframe Placeholder -->
+                <!-- Google Map Iframe Placeholder / Dynamic Map -->
+                @if(!empty($web->map))
                 <div class="rounded-2xl border border-gray-100 overflow-hidden shadow-sm h-64 bg-gray-100">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4602324317666!2d106.6653066147489!3d10.77601939232187!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752eddcf0510eb%3A0xe54d9c4c7c88c7f0!2zTMOqIEjhu5NuZyBQGhvbmcsIFF14bqtbiAxMCwgVGjDoG5oIHBo4buRIEjhu5MgQ2jDrSBNaW5oLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1655000000000!5m2!1svi!2s" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    @if(Str::startsWith(trim($web->map), '<iframe'))
+                        {!! $web->map !!}
+                    @else
+                        <iframe src="{{ $web->map }}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                    @endif
                 </div>
+                @endif
             </div>
 
             <!-- Contact Message Form (Right, col-span-2) -->

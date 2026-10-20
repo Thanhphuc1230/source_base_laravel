@@ -22,8 +22,10 @@ class HomeController extends Controller
 
     public function factory()
     {
-        $about_factory = \App\Models\About::where('uuid', '8037faa4-c262-41d7-aed5-60a479531b4f')->first()
-            ?? \App\Models\About::where('status', 1)->first();
+        $about_factory = \App\Models\About::where('status', 1)
+            ->orderBy('stt', 'asc')
+            ->orderBy('created_at', 'desc')
+            ->first();
 
         return view('frontend.modules.factory.index', compact('about_factory'));
     }

@@ -10,7 +10,11 @@
     </a>
 
     <!-- Zalo Chat Button -->
-    <a href="{{ $web->zalo ?? 'https://zalo.me' }}" target="_blank" class="group relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#0084FF] text-white shadow-xl hover:scale-110 transition-transform duration-300">
+    @php
+        $zaloPhone = preg_replace('/[^0-9]/', '', $web->zalo ?? $web->phone ?? '');
+        $zaloUrl = !empty($zaloPhone) ? 'https://zalo.me/' . $zaloPhone : ($web->zalo ?? '#');
+    @endphp
+    <a href="{{ $zaloUrl }}" target="_blank" rel="noopener noreferrer" class="group relative flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-full bg-[#0084FF] text-white shadow-xl hover:scale-110 transition-transform duration-300">
         <i class="fas fa-comment-dots text-lg md:text-xl"></i>
         <span class="absolute right-16 bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-md whitespace-nowrap pointer-events-none">
             Chat Zalo tư vấn
