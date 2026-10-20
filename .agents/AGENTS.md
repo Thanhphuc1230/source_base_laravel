@@ -190,10 +190,22 @@ Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới
 
 ---
 
+## QUY TẮC SỐ 16 – ĐỊNH VỊ MÃ NGUỒN SIÊU TỐC QUA AGENTS (INSTANT CODEBASE ROUTING PROTOCOL)
+
+- **Cấm quét thư mục mù mờ (No Blind Recursive Scanning):**
+  - Khi nhận câu lệnh/task từ người dùng, AI TUYỆT ĐỐI KHÔNG ĐƯỢC chạy các lệnh tìm kiếm mò mẫm (`find`, `dir -r`, `Get-ChildItem -Recurse`) hoặc đọc lần lượt từng thư mục dự án để tìm file.
+- **Quy trình định vị 3 bước tức thì:**
+  1. **Bước 1 (Tra cứu Ma Trận):** Đọc ngay bảng ánh xạ [`.agents/codebase-matrix.md`](./codebase-matrix.md) và [`.agents/frontend-data-map.md`](./frontend-data-map.md).
+  2. **Bước 2 (Mở thẳng File đích):** Xác định chính xác danh sách file mục tiêu (Controller, Service, Repository, Blade View, CSS/JS) tương ứng với nghiệp vụ được yêu cầu và mở trực tiếp các file này.
+  3. **Bước 3 (Thực thi đúng Phân vai):** Chuyển giao đúng chuyên trách (`backend-architect` nếu dính logic DB/Controller, `frontend-specialist` nếu là Blade/CSS/JS, `qa-inspector` để kiểm thử).
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |
 |---|---|
+| [`.agents/codebase-matrix.md`](./codebase-matrix.md) | **Bản đồ ma trận định vị siêu tốc: Nghiệp vụ → Controller → Service → View** |
 | [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) | Ranh giới kiến trúc & quy tắc Zero-Hardcode khi làm Theme |
 | [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) | Quy trình 3 bước chuẩn hóa khởi tạo & tùy biến Theme |
 | [`.agents/frontend-design.md`](./frontend-design.md) | Quy chuẩn thiết kế Frontend (Font, Tailwind, Scroll Animation, UI/UX) |

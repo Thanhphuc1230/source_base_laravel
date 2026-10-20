@@ -104,18 +104,76 @@ source_laravel/
 
 ---
 
-## 📌 10 Quy tắc Cốt lõi của Dự án
+## 📌 16 Quy tắc Cốt lõi của Dự án
 
 1. **Tuyệt đối KHÔNG Hardcode**: Trong Blade View bắt buộc dùng biến động `$web` (`$web->name_vn`, `$web->phone`, `$web->email`, `$web->logo`, `$web->map`, `$web->zalo`).
 2. **Kiến trúc Layered**: `Controller → Service → Repository → Model`. Không viết SQL query trực tiếp trong Controller.
 3. **Blade Components Admin**: Dùng 100% Blade Components cho giao diện Admin (`<x-admin.table-wrapper>`, `<x-admin.table-switch>`,...).
 4. **Cache & Performance**: Sau mọi thay đổi code/config chạy `php artisan optimize:clear` hoặc bấm nút **"Xoá cache"** trong Admin.
-5. **Thẩm mỹ Giao diện Premium**: Thiết kế theo chuẩn *Light Luxury & Modern Retail*, card sản phẩm tỷ lệ 1:1, hiệu ứng hover transition mượt mà, hiển thị sản phẩm/tin tức 2 cột trên di động.
+5. **Thẩm mỹ Giao diện Premium**: Thiết kế theo chuẩn *Modern Premium Web*, card bo góc `rounded-xl`/`rounded-2xl`, shadow nhẹ, hover mượt mà, padding section giới hạn `py-[15px]`, hiển thị sản phẩm/tin tức 2 cột trên di động.
 6. **Không Dùng CDN (Local Assets)**: Tải toàn bộ thư viện JS/CSS, Font, Icon về lưu trữ cục bộ tại `public/admin/` và `public/frontend/`.
 7. **Tách biệt Code CSS & JS**: Không viết CSS inline hay thẻ `<style>`/`<script>` tĩnh trong file Blade.
 8. **Quy trình Git & Commit có Kiểm soát**: Không tự ý commit hay push; commit theo yêu cầu đơn lẻ và luôn hỏi lại ở task tiếp theo.
 9. **Quy trình Chuyển đổi Chủ đề (Topic Rebuild)**: Khi đổi ngành hàng website, bắt buộc chạy Artisan command `php artisan site:rebuild --topic="<tên_topic>"` đầu tiên để dọn sạch media rác và nạp bộ dữ liệu mẫu chuẩn.
 10. **Quy tắc Tập trung Asset (Không tạo file rác)**: Cấm tạo file `.js`/`.css` lẻ cho từng component nhỏ. Gom tương tác UI/UX về file chuẩn (`main.js`, `theme-style.css`), gom các nút UI nổi vào `contact_buttons.blade.php`.
+11. **Quy chuẩn Comment & Commit**: 100% bằng tiếng Anh theo chuẩn Conventional Commits. Không viết tiếng Việt trong comment code và commit message. Giữ comment tối giản, sạch sẽ.
+12. **Quy chuẩn Lưu trữ Media & Upload Đồng nhất**: Lưu trữ trực tiếp trong `public/uploads/{module}/`, hỗ trợ xen kẽ ảnh và video, preview video lấy khung hình tại `#t=0.5`.
+13. **Quy chuẩn UI/UX Admin & Bảng Quản lý**: Đồng bộ chiều cao controls 38px, ô tìm kiếm chìm tinh tế, icon buttons vuông 32x32px ghost hover, status switch màu Primary đồng nhất.
+14. **Bộ nhớ đệm Redis & Tối ưu Truy vấn**: Kích hoạt Redis cache driver, truy vấn danh mục phân cấp tối ưu hóa `whereIn` và lược bỏ `orderBy` dư thừa.
+15. **Tham khảo chức năng cũ, Zero-Hardcode & Kiểm thử thực tế**: Tham khảo pattern cũ, không tự sáng tạo cấu trúc lạ; kiểm thử thực tế và xóa cache trước khi thông báo hoàn thành.
+16. **Định vị Mã nguồn Siêu tốc (Instant Codebase Routing Protocol)**: Cấm quét thư mục mò mẫm. Tra cứu trực tiếp bảng ma trận [`.agents/codebase-matrix.md`](./.agents/codebase-matrix.md) để mở thẳng file mục tiêu.
+
+---
+
+## 💡 Hướng Dẫn Ra Lệnh Hiệu Quả Cho AI (AI Prompting Guide)
+
+> Hệ thống được tích hợp **Ma trận Định vị Siêu tốc** (`.agents/codebase-matrix.md`) và **Quy tắc số 16 (Rule 16)**. Để AI phản hồi và thực thi nhanh nhất mà không phải quét (scan) file lần lượt, hãy áp dụng công thức ra lệnh dưới đây:
+
+### 🎯 1. Công Thức Ra Lệnh Chuẩn (The 3-Element Formula)
+
+```text
+[Tên Module / Phạm vi] + [Hành động / Yêu cầu cụ thể] + [Quy chuẩn mong muốn]
+```
+
+* **Module / Phạm vi**: Ghi rõ tên module theo ma trận (ví dụ: `home`, `product`, `cart`, `checkout`, `system`, `news`, `menu`...).
+* **Hành động cụ thể**: Nêu rõ thêm cột DB, sửa class Tailwind, đổi layout, sửa logic query...
+* **Quy chuẩn mong muốn**: Nhắc ngắn gọn các ràng buộc như *Zero-Hardcode*, *Layered Architecture*, *Mobile 2 cột*, *Không inline CSS*.
+
+---
+
+### 📋 2. Các Mẫu Lệnh (Prompt Templates) Thực Chiến
+
+#### Mẫu 1: Tùy biến Giao diện Frontend (Theme & Blade Views)
+```text
+Trên trang chủ (module `home`): Tùy biến lại khối Sản phẩm Nổi bật theo chuẩn Modern Premium UI. Bo góc card `rounded-2xl`, shadow nhẹ, hover scale 1.03. Đảm bảo hiển thị mobile 2 cột (`grid-cols-2`), dùng biến động $web, không inline CSS.
+```
+
+#### Mẫu 2: Bổ sung trường CSDL & Cập nhật Form Admin
+```text
+Module `product`: Bổ sung trường `shopee_url` (nullable). Hãy cập nhật migration gốc, file database/patch_schema.sql, Model Product, Form Request và hiển thị ô nhập trong tab thông tin chung của view edit Admin.
+```
+
+#### Mẫu 3: Đổi ngành hàng website mới (Theme Rebuild)
+```text
+Chuyển đổi website sang chủ đề Đồng hồ thời trang (`watches`). Kích hoạt skill theme-rebuild và đồng bộ lại màu sắc trong theme-style.css.
+```
+
+#### Mẫu 4: Sửa Logic Backend hoặc Tối ưu Cache / Query
+```text
+Module `cart`: Cập nhật logic tính phí ship trong CartService theo chính sách miễn phí cho đơn trên 1.000.000đ. Đảm bảo tuân thủ Layered Architecture, không viết logic trong Controller.
+```
+
+#### Mẫu 5: Rà soát & Kiểm thử chất lượng (QA Inspection)
+```text
+Đóng vai QA Inspector: Quét Zero-Hardcode toàn bộ view trong `resources/views/frontend/` và kiểm tra route `php artisan route:list`.
+```
+
+---
+
+### ⚡ 3. Mẹo Tối Ưu Tốc Độ Thực Thi Cho AI
+1. **Dùng lệnh `/compact` khi chat lâu:** Khi phiên trò chuyện dài, gõ `/compact` để dọn sạch ngữ cảnh đệm (context window), AI sẽ phản hồi nhanh hơn gấp 2-3 lần.
+2. **Nêu tên file đích nếu đã biết:** Nếu bạn biết chính xác file cần sửa, hãy tag trực tiếp (ví dụ: `@[resources/views/frontend/modules/home/index.blade.php]`) để AI bỏ qua hoàn toàn khâu tìm kiếm.
+3. **Commit có kiểm soát (Rule 8):** AI sẽ không tự ý commit. Khi hoàn thành task, bạn chỉ cần gõ *"Commit code giúp tôi"* để AI tạo commit tiếng Anh theo chuẩn Conventional Commits.
 
 ---
 
