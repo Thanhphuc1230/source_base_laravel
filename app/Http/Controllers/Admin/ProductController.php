@@ -58,6 +58,7 @@ class ProductController extends BaseController
         $data['action'] = 'create';
         $data['nameItem'] = $this->nameItem;
         $data['imageFolder'] = $this->imageFolder;
+        $data['nameClass'] = $this->imageFolder;
 
         return $this->view_admin('detail', $data);
     }
@@ -94,6 +95,7 @@ class ProductController extends BaseController
             'nameItem' => $this->nameItem,
             'currentPage' => $currentPage,
             'imageFolder' => $this->imageFolder,
+            'nameClass' => $this->imageFolder,
         ];
 
         return $this->view_admin('detail', $data);

@@ -23,7 +23,7 @@
             </div>
             <!-- end page title -->
             <form
-                action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
+                action="{{ route('admin.' . ($nameClass ?? $imageFolder ?? 'product') . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -117,12 +117,24 @@
                                         @enderror
                                         @include('admin.partials.multiImage')
 
-                                        @if (!empty($page->image_detail))
+                                        @php
+                                            $detailMediaList = [];
+                                            if (!empty($page->image_detail)) {
+                                                if (is_array($page->image_detail)) {
+                                                    $detailMediaList = $page->image_detail;
+                                                } elseif (is_string($page->image_detail)) {
+                                                    $decoded = json_decode($page->image_detail, true);
+                                                    $detailMediaList = is_array($decoded) ? $decoded : [];
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if (!empty($detailMediaList))
                                             <div class="mt-3">
                                                 <label class="form-label fw-semibold text-dark">Danh sách Media hiện tại:</label>
 
                                                 <div class="row g-2" id="existing-images-container">
-                                                    @foreach (json_decode($page->image_detail) as $index => $img_detail)
+                                                    @foreach ($detailMediaList as $index => $img_detail)
                                                         @php
                                                             $isVideo = preg_match('/\.(mp4|webm|mov|ogg)$/i', $img_detail);
                                                             $mediaSrc = str_starts_with($img_detail, 'uploads/') ? asset($img_detail) : asset('uploads/' . $imageFolder . '/' . $img_detail);
@@ -157,7 +169,7 @@
                                                 
                                                 <!-- Hidden input to track retained images -->
                                                 <input type="hidden" name="kept_images" id="kept-images-input" 
-                                                       value="{{ json_encode(json_decode($page->image_detail)) }}">
+                                                       value="{{ json_encode(array_values($detailMediaList)) }}">
                                             </div>
                                         @endif
                                     </div>
