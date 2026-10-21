@@ -142,7 +142,7 @@
                                                 <button type="button" class="btn-close position-absolute top-0 end-0 m-2 remove-stat-btn" aria-label="Close" style="font-size: 0.8rem;"></button>
                                                 <div class="row g-2">
                                                     <div class="col-md-6">
-                                                        <label class="form-label text-xs mb-1">Ảnh Icon (PNG, SVG, JPG)</label>
+                                                        <label class="form-label text-xs mb-1">Ảnh Icon (PNG, SVG, JPG) <span class="text-muted font-weight-normal">(Khuyến nghị: 48x48 px - 64x64 px)</span></label>
                                                         <input type="file" name="stats_files[{{ $index }}][icon]" class="form-control form-control-sm stats-file-input">
                                                         <input type="hidden" name="stats[{{ $index }}][icon]" class="stats-icon-hidden" value="{{ $stat['icon'] ?? '' }}">
                                                         @if(!empty($stat['icon']))
@@ -221,7 +221,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Tệp ảnh</label>
+                                    <label for="image" class="form-label">Tệp ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 800x600 px - Tỉ lệ 4:3)</span></label>
                                     <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror">
                                     @error('image')
                                         <span class="text-danger">{{ $message }}</span>
@@ -293,7 +293,7 @@
                                 <button type="button" class="btn-close position-absolute top-0 end-0 m-2 remove-stat-btn" aria-label="Close" style="font-size: 0.8rem;"></button>
                                 <div class="row g-2">
                                     <div class="col-md-6">
-                                        <label class="form-label text-xs mb-1">Ảnh Icon (PNG, SVG, JPG) <span class="text-danger">*</span></label>
+                                        <label class="form-label text-xs mb-1">Ảnh Icon (PNG, SVG, JPG) <span class="text-muted font-weight-normal">(Khuyến nghị: 48x48 px - 64x64 px)</span> <span class="text-danger">*</span></label>
                                         <input type="file" name="stats_files[${statIndex}][icon]" class="form-control form-control-sm stats-file-input" required>
                                         <input type="hidden" name="stats[${statIndex}][icon]" class="stats-icon-hidden" value="">
                                     </div>

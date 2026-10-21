@@ -53,6 +53,7 @@
                                             'locale' => $locale,
                                             'imageFolder' => $imageFolder,
                                             'model' => $page ?? null,
+                                            'dimensions' => '800x600 px (Tỉ lệ 4:3)',
                                         ])
                                     @endforeach
                                 </div>

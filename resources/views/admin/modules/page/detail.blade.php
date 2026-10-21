@@ -49,6 +49,7 @@
                                             'locale' => $locale,
                                             'imageFolder' => $imageFolder,
                                             'model' => $page ?? null,
+                                            'dimensions' => '1200x500 px (Banner trang)',
                                         ])
                                     @endforeach
                                 </div>

@@ -78,7 +78,7 @@
                                         
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="firstNameinput" class="form-label">Hình ảnh</label>
+                                                <label for="firstNameinput" class="form-label font-weight-semibold">Hình ảnh Avatar <span class="text-muted font-weight-normal">(Khuyến nghị: 200x200 px - Tỉ lệ 1:1)</span></label>
                                                 <input type="file" name="image"
                                                     class="form-control @error('image') is-invalid @enderror">
                                                 @error('image')

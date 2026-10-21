@@ -107,9 +107,9 @@
                             <div class="card-body">
                                 <div class="row">
                                     @foreach([
-                                        'logo' => ['label' => 'Logo (200x100)', 'width' => '150px'],
-                                        'favicon' => ['label' => 'Favicon (48x48)', 'width' => '48px'],
-                                        'share_image' => ['label' => 'Ảnh chia sẻ MXH / OG Image (1200x630px)', 'width' => '180px']
+                                        'logo' => ['label' => 'Logo website (Khuyên dùng: 300x80 px - 400x100 px, PNG/SVG)', 'width' => '150px'],
+                                        'favicon' => ['label' => 'Favicon (Khuyên dùng: 48x48 px - 64x64 px, ICO/PNG)', 'width' => '48px'],
+                                        'share_image' => ['label' => 'Ảnh chia sẻ MXH / OG Image (Khuyên dùng: 1200x630 px)', 'width' => '180px']
                                     ] as $key => $config)
                                         <div class="col-md-4 mb-3">
                                             <label for="{{ $key }}" class="form-label font-weight-semibold">{{ $config['label'] }}</label>

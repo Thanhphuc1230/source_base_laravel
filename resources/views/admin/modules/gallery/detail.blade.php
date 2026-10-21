@@ -47,7 +47,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
-                                                <label for="firstNameinput" class="form-label">Hình ảnh</label>
+                                                <label for="firstNameinput" class="form-label font-weight-semibold">Hình ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 800x600 px hoặc 1200x800 px)</span></label>
                                                 <input type="file" name="image"
                                                     class="form-control @error('image') is-invalid @enderror">
                                                 @error('image')

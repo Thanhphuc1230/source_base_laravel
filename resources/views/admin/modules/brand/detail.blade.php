@@ -48,7 +48,7 @@
                                             'model' => $page ?? null,
                                             'base' => 'image',
                                             'label' => 'Logo đối tác',
-                                            'dimensions' => '200x80'
+                                            'dimensions' => '300x120 px (PNG/SVG tách nền)'
                                         ])
                                     @endforeach
                                 </div>

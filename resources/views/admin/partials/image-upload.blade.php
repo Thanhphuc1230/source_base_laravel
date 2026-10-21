@@ -4,7 +4,7 @@
     'imageFolder' => '',
     'base' => 'image',
     'label' => 'Hình ảnh',
-    'dimensions' => '400x600'
+    'dimensions' => '800x800 px'
 ])
 
 @php
@@ -30,7 +30,7 @@
 
 <div class="col-md-6">
     <div class="mb-3">
-        <label for="{{ $inputUuid }}" class="form-label">{{ $label }} {{ strtoupper($locale) }} ({{ $dimensions }})</label>
+        <label for="{{ $inputUuid }}" class="form-label font-weight-semibold">{{ $label }} {{ strtoupper($locale) }} <span class="text-muted font-weight-normal">({{ $dimensions }})</span></label>
         <input type="file" id="{{ $inputUuid }}" name="{{ $fieldName }}" 
                class="form-control @error($fieldName) is-invalid @enderror">
         <div id="{{ $containerUuid }}"></div>

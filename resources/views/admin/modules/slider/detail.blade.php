@@ -48,7 +48,7 @@
                                             'model' => $page ?? null,
                                             'base' => 'image_desktop',
                                             'label' => 'Banner Desktop',
-                                            'dimensions' => '1920x800'
+                                            'dimensions' => '1920x800 px (hoặc 1920x1080 px)'
                                         ])
                                     @endforeach
                                 </div>
@@ -68,7 +68,7 @@
                                             'model' => $page ?? null,
                                             'base' => 'image_mobile',
                                             'label' => 'Banner Mobile',
-                                            'dimensions' => '600x600'
+                                            'dimensions' => '800x800 px (hoặc 600x600 px)'
                                         ])
                                     @endforeach
                                 </div>

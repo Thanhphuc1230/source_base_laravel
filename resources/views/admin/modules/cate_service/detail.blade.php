@@ -40,6 +40,7 @@
                                                 'locale' => $locale,
                                                 'imageFolder' => $imageFolder,
                                                 'model' => $page ?? null,
+                                                'dimensions' => '800x500 px (Tỉ lệ 16:10)',
                                             ])
                                         @endforeach
 

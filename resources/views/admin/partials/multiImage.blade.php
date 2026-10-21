@@ -6,7 +6,7 @@
                 <i class="ri-folder-upload-line text-primary" style="font-size: 2.2rem;"></i>
             </div>
             <h6 class="fw-semibold text-dark mb-1">Kéo & thả hình ảnh và video clip vào đây hoặc nhấp để chọn</h6>
-            <p class="text-muted small mb-3">Hỗ trợ JPG, PNG, WEBP, GIF, MP4, WebM (chọn nhiều file cùng lúc, tối đa 50MB/video, 10MB/ảnh).</p>
+            <p class="text-muted small mb-3">Hỗ trợ JPG, PNG, WEBP, GIF, MP4, WebM (chọn nhiều file cùng lúc, khuyến nghị ảnh: 800x800 px - 1200x1200 px tỉ lệ 1:1; tối đa 50MB/video, 10MB/ảnh).</p>
             <button type="button" class="btn btn-sm btn-dark rounded-1 px-3 shadow-xs" onclick="document.getElementById('imageDetailFileInput').click();">
                 <i class="ri-add-line me-1"></i> Chọn hình ảnh / video
             </button>

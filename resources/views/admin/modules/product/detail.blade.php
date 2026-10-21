@@ -106,12 +106,13 @@
                                             'locale' => $locale,
                                             'imageFolder' => $imageFolder,
                                             'model' => $page ?? null,
+                                            'dimensions' => '800x800 px (Tỉ lệ 1:1)',
                                         ])
                                     @endforeach
                                 </div>
                                 <div class="col-md-12 mt-3">
                                     <div class="mb-3">
-                                        <label for="compnayNameinput" class="form-label fw-bold">Bộ sưu tập Media chi tiết (Hình ảnh & Video clip xen kẽ)</label>
+                                        <label for="compnayNameinput" class="form-label fw-bold">Bộ sưu tập Media chi tiết (Hình ảnh & Video clip xen kẽ) <span class="text-muted fw-normal">(Khuyến nghị: 800x800 px - 1200x1200 px tỉ lệ 1:1)</span></label>
                                         @error('image_detail')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror

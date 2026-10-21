@@ -64,6 +64,7 @@
                                                 'locale' => $locale,
                                                 'imageFolder' => $imageFolder,
                                                 'model' => $page ?? null,
+                                                'dimensions' => '600x600 px (Icon/Vuông) hoặc 1200x400 px (Banner)',
                                             ])
                                         @endforeach
 

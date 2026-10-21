@@ -43,7 +43,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="image" class="form-label">Chọn hình ảnh</label>
+                                        <label for="image" class="form-label font-weight-semibold">Chọn hình ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 120x120 px hoặc SVG)</span></label>
                                         <input type="file" id="image" name="image" class="form-control mb-2 @error('image') is-invalid @enderror">
                                         @error('image')<span class="text-danger">{{ $message }}</span>@enderror
                                     </div>
