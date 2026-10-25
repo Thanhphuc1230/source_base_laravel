@@ -21,10 +21,8 @@ class ProjectRequest extends BaseAdminRequest
             'slug_en' => 'nullable|string|max:255',
             'status' => 'required|in:0,1',
             'stt' => 'required|integer|min:0',
-            'image_vn' => request()->route('uuid')
-                ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-                : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'image_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image_vn' => $this->imageRule(!request()->route('uuid')),
+            'image_en' => $this->imageRule(false),
             'keyword_vn' => 'required|string|max:255',
             'keyword_en' => 'nullable|string|max:255',
             'description_vn' => 'required|string|max:255',

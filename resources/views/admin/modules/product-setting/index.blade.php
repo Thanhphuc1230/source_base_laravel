@@ -130,21 +130,32 @@
                                         <label class="form-label font-weight-semibold" for="file_products_banner_category">
                                             Banner Danh mục sản phẩm (Khuyên dùng: 1920x400px)
                                         </label>
-                                        <input type="file" id="file_products_banner_category" name="products_banner_category" class="form-control" accept="image/*">
+                                        <div class="d-flex align-items-center gap-1.5 mb-2">
+                                            <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'product-setting', onSelect: function(item) { document.getElementById('products_banner_category_selected').value = item.path; document.getElementById('preview_img_products_banner_category').src = item.url; document.getElementById('preview_box_products_banner_category').classList.remove('d-none'); } })">
+                                                <i class="ri-folder-image-line fs-15"></i>
+                                                <span class="fw-semibold">Chọn từ Thư viện</span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('file_products_banner_category').click();">
+                                                <i class="ri-upload-2-line fs-15"></i>
+                                                <span>Tải từ máy tính</span>
+                                            </button>
+                                        </div>
+                                        <input type="file" id="file_products_banner_category" name="products_banner_category" class="d-none" accept="image/*">
+                                        <input type="hidden" id="products_banner_category_selected" name="products_banner_category_selected" value="">
                                         <div id="container_products_banner_category" class="mt-2"></div>
 
-                                        @if (!empty($settings['banner_category']))
-                                            <div class="mt-3 p-2 border rounded bg-light">
-                                                <small class="text-muted d-block mb-1">Banner danh mục hiện tại:</small>
-                                                <img src="{{ asset($settings['banner_category']) }}" alt="Banner Danh mục sản phẩm" class="img-fluid rounded shadow-xs" style="max-height: 140px; object-fit: cover;">
+                                        <div id="preview_box_products_banner_category" class="mt-3 p-2 border rounded bg-light {{ empty($settings['banner_category']) ? 'd-none' : '' }}">
+                                            <small class="text-muted d-block mb-1">Banner danh mục:</small>
+                                            <img id="preview_img_products_banner_category" src="{{ !empty($settings['banner_category']) ? asset($settings['banner_category']) : '' }}" alt="Banner Danh mục sản phẩm" class="img-fluid rounded shadow-xs" style="max-height: 140px; object-fit: cover;">
+                                            @if (!empty($settings['banner_category']))
                                                 <div class="form-check mt-2">
                                                     <input class="form-check-input" type="checkbox" name="delete_products_banner_category" value="1" id="delete_products_banner_category">
                                                     <label class="form-check-label text-danger font-weight-semibold" for="delete_products_banner_category">
                                                         Xóa banner danh mục hiện tại
                                                     </label>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
 
                                     <!-- Banner Chi tiết sản phẩm -->
@@ -152,21 +163,32 @@
                                         <label class="form-label font-weight-semibold" for="file_products_banner_detail">
                                             Banner Chi tiết sản phẩm (Khuyên dùng: 1920x400px)
                                         </label>
-                                        <input type="file" id="file_products_banner_detail" name="products_banner_detail" class="form-control" accept="image/*">
+                                        <div class="d-flex align-items-center gap-1.5 mb-2">
+                                            <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'product-setting', onSelect: function(item) { document.getElementById('products_banner_detail_selected').value = item.path; document.getElementById('preview_img_products_banner_detail').src = item.url; document.getElementById('preview_box_products_banner_detail').classList.remove('d-none'); } })">
+                                                <i class="ri-folder-image-line fs-15"></i>
+                                                <span class="fw-semibold">Chọn từ Thư viện</span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('file_products_banner_detail').click();">
+                                                <i class="ri-upload-2-line fs-15"></i>
+                                                <span>Tải từ máy tính</span>
+                                            </button>
+                                        </div>
+                                        <input type="file" id="file_products_banner_detail" name="products_banner_detail" class="d-none" accept="image/*">
+                                        <input type="hidden" id="products_banner_detail_selected" name="products_banner_detail_selected" value="">
                                         <div id="container_products_banner_detail" class="mt-2"></div>
 
-                                        @if (!empty($settings['banner_detail']))
-                                            <div class="mt-3 p-2 border rounded bg-light">
-                                                <small class="text-muted d-block mb-1">Banner chi tiết hiện tại:</small>
-                                                <img src="{{ asset($settings['banner_detail']) }}" alt="Banner Chi tiết sản phẩm" class="img-fluid rounded shadow-xs" style="max-height: 140px; object-fit: cover;">
+                                        <div id="preview_box_products_banner_detail" class="mt-3 p-2 border rounded bg-light {{ empty($settings['banner_detail']) ? 'd-none' : '' }}">
+                                            <small class="text-muted d-block mb-1">Banner chi tiết:</small>
+                                            <img id="preview_img_products_banner_detail" src="{{ !empty($settings['banner_detail']) ? asset($settings['banner_detail']) : '' }}" alt="Banner Chi tiết sản phẩm" class="img-fluid rounded shadow-xs" style="max-height: 140px; object-fit: cover;">
+                                            @if (!empty($settings['banner_detail']))
                                                 <div class="form-check mt-2">
                                                     <input class="form-check-input" type="checkbox" name="delete_products_banner_detail" value="1" id="delete_products_banner_detail">
                                                     <label class="form-check-label text-danger font-weight-semibold" for="delete_products_banner_detail">
                                                         Xóa banner chi tiết hiện tại
                                                     </label>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

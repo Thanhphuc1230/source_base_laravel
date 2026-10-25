@@ -18,7 +18,7 @@ class AboutRequest extends BaseAdminRequest
             'content_en' => 'nullable',
             'intro_vn' => 'nullable',
             'intro_en' => 'nullable',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => $this->imageRule(false),
             'link' => 'nullable|string|max:255',
             'status' => 'nullable|integer',
             'stt' => 'nullable|integer',

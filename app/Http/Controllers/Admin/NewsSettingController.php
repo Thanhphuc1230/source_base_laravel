@@ -67,11 +67,7 @@ class NewsSettingController extends BaseController
                 $this->imageService->deleteImage($oldPath, 'news-setting');
             }
             NewsSetting::set('news_banner_category', '', 'text', 'banner');
-        } elseif ($request->hasFile('news_banner_category')) {
-            $oldPath = NewsSetting::get('news_banner_category');
-            if ($oldPath) {
-                $this->imageService->deleteImage($oldPath, 'news-setting');
-            }
+        } elseif ($request->hasFile('news_banner_category') || $request->filled('news_banner_category_selected')) {
             $newPath = $this->imageService->saveImage($request, 'news-setting', 'news_banner_category', $this->defaultImageConfig);
             if ($newPath) {
                 NewsSetting::set('news_banner_category', $newPath, 'text', 'banner');
@@ -85,11 +81,7 @@ class NewsSettingController extends BaseController
                 $this->imageService->deleteImage($oldPath, 'news-setting');
             }
             NewsSetting::set('news_banner_detail', '', 'text', 'banner');
-        } elseif ($request->hasFile('news_banner_detail')) {
-            $oldPath = NewsSetting::get('news_banner_detail');
-            if ($oldPath) {
-                $this->imageService->deleteImage($oldPath, 'news-setting');
-            }
+        } elseif ($request->hasFile('news_banner_detail') || $request->filled('news_banner_detail_selected')) {
             $newPath = $this->imageService->saveImage($request, 'news-setting', 'news_banner_detail', $this->defaultImageConfig);
             if ($newPath) {
                 NewsSetting::set('news_banner_detail', $newPath, 'text', 'banner');

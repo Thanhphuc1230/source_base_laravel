@@ -113,13 +113,22 @@
                                     ] as $key => $config)
                                         <div class="col-md-4 mb-3">
                                             <label for="{{ $key }}" class="form-label font-weight-semibold">{{ $config['label'] }}</label>
-                                            <input type="file" id="{{ $key }}" name="{{ $key }}" class="form-control mb-2">
-                                            @if($system->$key)
-                                                <div class="mt-2 p-2 border rounded bg-light d-inline-block">
-                                                    <img src="{{ $system->$key }}" alt="{{ $key }}" style="max-height: 80px; max-width: {{ $config['width'] }}; object-fit: contain;">
-                                                </div>
-                                            @endif
-                                            @error($key)<span class="text-danger">{{ $message }}</span>@enderror
+                                            <div class="d-flex align-items-center gap-1.5 mb-2">
+                                                <button type="button" class="btn btn-sm btn-primary rounded-2 px-2.5 shadow-xs d-inline-flex align-items-center gap-1" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'system', onSelect: function(item) { document.getElementById('{{ $key }}_hidden').value = item.path; document.getElementById('{{ $key }}_preview').src = item.url; document.getElementById('{{ $key }}_box').classList.remove('d-none'); } })">
+                                                    <i class="ri-folder-image-line fs-14"></i>
+                                                    <span class="text-xs fw-semibold">Chọn Thư viện</span>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-2.5 bg-white d-inline-flex align-items-center gap-1" style="height: 38px;" onclick="document.getElementById('{{ $key }}').click();">
+                                                    <i class="ri-upload-2-line fs-14"></i>
+                                                    <span class="text-xs">Tải từ máy</span>
+                                                </button>
+                                            </div>
+                                            <input type="file" id="{{ $key }}" name="{{ $key }}" class="d-none" onchange="if(this.files[0]){ document.getElementById('{{ $key }}_preview').src = URL.createObjectURL(this.files[0]); document.getElementById('{{ $key }}_box').classList.remove('d-none'); }">
+                                            <input type="hidden" id="{{ $key }}_hidden" name="{{ $key }}" value="{{ $system->$key ?? '' }}">
+                                            <div id="{{ $key }}_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($system->$key) ? 'd-none' : '' }}">
+                                                <img id="{{ $key }}_preview" src="{{ !empty($system->$key) ? asset($system->$key) : '' }}" alt="{{ $key }}" style="max-height: 80px; max-width: {{ $config['width'] }}; object-fit: contain;">
+                                            </div>
+                                            @error($key)<span class="text-danger small d-block">{{ $message }}</span>@enderror
                                         </div>
                                     @endforeach
                                 </div>

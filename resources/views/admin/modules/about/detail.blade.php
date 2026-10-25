@@ -221,18 +221,25 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="image" class="form-label">Tệp ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 800x600 px - Tỉ lệ 4:3)</span></label>
-                                    <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror">
+                                    <label for="image" class="form-label font-weight-semibold">Tệp ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 800x600 px - Tỉ lệ 4:3)</span></label>
+                                    <div class="d-flex align-items-center gap-1.5 mb-2">
+                                        <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'about', onSelect: function(item) { document.getElementById('image_hidden').value = item.path; document.getElementById('about_preview_img').src = item.url; document.getElementById('about_preview_box').classList.remove('d-none'); } })">
+                                            <i class="ri-folder-image-line fs-15"></i>
+                                            <span class="fw-semibold">Chọn từ Thư viện</span>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('image').click();">
+                                            <i class="ri-upload-2-line fs-15"></i>
+                                            <span>Tải từ máy tính</span>
+                                        </button>
+                                    </div>
+                                    <input type="file" id="image" name="image" class="d-none @error('image') is-invalid @enderror" accept="image/*" onchange="if(this.files[0]){ document.getElementById('about_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('about_preview_box').classList.remove('d-none'); }">
+                                    <input type="hidden" id="image_hidden" name="image" value="{{ $page->image ?? '' }}">
                                     @error('image')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <span class="text-danger small d-block mb-2">{{ $message }}</span>
                                     @enderror
-                                </div>
-                                <div class="mb-3" id="image_preview">
-                                    @if (!empty($page->image))
-                                        <label class="form-label d-block">Ảnh hiện tại</label>
-                                        <img src="{{ $page->image }}" alt="Preview" 
-                                             style="max-width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px; object-fit: contain;">
-                                    @endif
+                                    <div id="about_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}" style="max-width: 280px;">
+                                        <img id="about_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="Preview" style="max-height: 180px; object-fit: contain;" class="img-fluid rounded-1">
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="link" class="form-label">Liên kết khi click vào ảnh (Link)</label>

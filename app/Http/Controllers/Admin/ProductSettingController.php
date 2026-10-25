@@ -67,11 +67,8 @@ class ProductSettingController extends BaseController
                 $this->imageService->deleteImage($oldPath, 'product-setting');
             }
             ProductSetting::set('products_banner_category', '', 'text', 'banner');
-        } elseif ($request->hasFile('products_banner_category')) {
+        } elseif ($request->hasFile('products_banner_category') || $request->filled('products_banner_category_selected')) {
             $oldPath = ProductSetting::get('products_banner_category');
-            if ($oldPath) {
-                $this->imageService->deleteImage($oldPath, 'product-setting');
-            }
             $newPath = $this->imageService->saveImage($request, 'product-setting', 'products_banner_category', $this->defaultImageConfig);
             if ($newPath) {
                 ProductSetting::set('products_banner_category', $newPath, 'text', 'banner');
@@ -85,11 +82,8 @@ class ProductSettingController extends BaseController
                 $this->imageService->deleteImage($oldPath, 'product-setting');
             }
             ProductSetting::set('products_banner_detail', '', 'text', 'banner');
-        } elseif ($request->hasFile('products_banner_detail')) {
+        } elseif ($request->hasFile('products_banner_detail') || $request->filled('products_banner_detail_selected')) {
             $oldPath = ProductSetting::get('products_banner_detail');
-            if ($oldPath) {
-                $this->imageService->deleteImage($oldPath, 'product-setting');
-            }
             $newPath = $this->imageService->saveImage($request, 'product-setting', 'products_banner_detail', $this->defaultImageConfig);
             if ($newPath) {
                 ProductSetting::set('products_banner_detail', $newPath, 'text', 'banner');

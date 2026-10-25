@@ -13,17 +13,13 @@ class FeatureRequest extends BaseAdminRequest
      */
     public function rules(): array
     {
-        $imageRule = request()->route('uuid')
-            ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240'
-            : 'required|image|mimes:jpeg,png,jpg,gif,webp,svg|max:10240';
-
         return [
             'title_vn' => 'required|max:255',
             'title_en' => 'nullable|max:255',
             'content_vn' => 'required',
             'content_en' => 'nullable',
             'stt' => 'required|integer',
-            'image' => $imageRule,
+            'image' => $this->imageRule(!request()->route('uuid')),
         ];
     }
 

@@ -69,4 +69,31 @@ abstract class BaseAdminRequest extends FormRequest
             'description' => 'Mô tả',
         ];
     }
+
+    /**
+     * Rule that accepts either an UploadedFile or a valid media library path string
+     */
+    public function imageRule(bool $required = false): array
+    {
+        return [
+            $required ? 'required' : 'nullable',
+            function ($attribute, $value, $fail) {
+                if (empty($value)) return;
+                if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    $ext = strtolower($value->getClientOriginalExtension() ?: $value->guessExtension());
+                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'ico'])) {
+                        $fail($attribute . ' phải là định dạng hình ảnh hợp lệ (jpg, png, webp, svg).');
+                    }
+                    if ($value->getSize() > 10485760) {
+                        $fail($attribute . ' không được vượt quá 10MB.');
+                    }
+                } elseif (is_string($value)) {
+                    $clean = ltrim(parse_url($value, PHP_URL_PATH) ?: $value, '/');
+                    if (!str_starts_with($clean, 'uploads/')) {
+                        $fail($attribute . ' phải là file tải lên hoặc đường dẫn ảnh hợp lệ từ thư viện.');
+                    }
+                }
+            }
+        ];
+    }
 }

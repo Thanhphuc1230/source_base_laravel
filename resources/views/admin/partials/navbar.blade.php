@@ -179,6 +179,12 @@
                     </a>
                 </li>
                 @endhasAnyPermission
+
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('admin.media.index') }}">
+                        <i class="ri-folder-image-line"></i> <span data-key="t-media">Thư viện Media</span>
+                    </a>
+                </li>
                 @hasAnyPermission(['contact.view', 'comment.view'])
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#Contact" data-bs-toggle="collapse" role="button"

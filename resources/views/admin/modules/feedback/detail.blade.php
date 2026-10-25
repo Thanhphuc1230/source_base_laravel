@@ -79,23 +79,28 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="firstNameinput" class="form-label font-weight-semibold">Hình ảnh Avatar <span class="text-muted font-weight-normal">(Khuyến nghị: 200x200 px - Tỉ lệ 1:1)</span></label>
-                                                <input type="file" name="image"
-                                                    class="form-control @error('image') is-invalid @enderror">
+                                                <div class="d-flex align-items-center gap-1.5 mb-2">
+                                                    <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'feedback', onSelect: function(item) { document.getElementById('feedback_image_hidden').value = item.path; document.getElementById('feedback_preview_img').src = item.url; document.getElementById('feedback_preview_box').classList.remove('d-none'); } })">
+                                                        <i class="ri-folder-image-line fs-15"></i>
+                                                        <span class="fw-semibold">Chọn từ Thư viện</span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('feedback_image_input').click();">
+                                                        <i class="ri-upload-2-line fs-15"></i>
+                                                        <span>Tải từ máy tính</span>
+                                                    </button>
+                                                </div>
+                                                <input type="file" id="feedback_image_input" name="image" class="d-none @error('image') is-invalid @enderror" accept="image/*" onchange="if(this.files[0]){ document.getElementById('feedback_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('feedback_preview_box').classList.remove('d-none'); }">
+                                                <input type="hidden" id="feedback_image_hidden" name="image" value="{{ $page->image ?? '' }}">
                                                 @error('image')
-                                                    <span class="text-danger">{{ $message }}</span>
+                                                    <span class="text-danger small d-block mb-2">{{ $message }}</span>
                                                 @enderror
+                                                <div id="feedback_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}" style="max-width: 200px;">
+                                                    <img id="feedback_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="" class="img-fluid rounded-1" style="max-height: 160px; object-fit: contain;">
+                                                </div>
                                             </div>
                                         </div>
 
-                                        @if (!empty($page->image))
-                                            <div class="col-md-6">
-                                                <div class="mb-3" style="display:flex;flex-direction: column;">
-                                                    <label for="firstNameinput" class="form-label">Hình ảnh hiện tại</label>
-                                                     <img src="{{ $page->image }}" alt=""
-                                                         width="200px" height="auto">
-                                                </div>
-                                            </div>
-                                        @endif
+
                                         <!--end col-->
                                         @if ($action == 'create')
                                             <div class="col-lg-12">

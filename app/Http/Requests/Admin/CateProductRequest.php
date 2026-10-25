@@ -22,8 +22,8 @@ class CateProductRequest extends BaseAdminRequest
             'keyword_en' => 'nullable|max:255',
             'description_vn' => 'required',
             'description_en' => 'nullable',
-            'image_vn' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
-            'image_en' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
+            'image_vn' => $this->imageRule(false),
+            'image_en' => $this->imageRule(false),
         ];
     }
 

@@ -44,17 +44,24 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="image" class="form-label font-weight-semibold">Chọn hình ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 120x120 px hoặc SVG)</span></label>
-                                        <input type="file" id="image" name="image" class="form-control mb-2 @error('image') is-invalid @enderror">
-                                        @error('image')<span class="text-danger">{{ $message }}</span>@enderror
-                                    </div>
-                                    @if (!empty($page->image))
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">Hình ảnh hiện tại</label>
-                                            <div class="p-2 border rounded bg-light d-inline-block">
-                                                <img src="{{ $page->image }}" alt="current image" style="max-height: 80px; max-width: 120px; object-fit: contain;">
-                                            </div>
+                                        <div class="d-flex align-items-center gap-1.5 mb-2">
+                                            <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'feature', onSelect: function(item) { document.getElementById('feature_image_hidden').value = item.path; document.getElementById('feature_preview_img').src = item.url; document.getElementById('feature_preview_box').classList.remove('d-none'); } })">
+                                                <i class="ri-folder-image-line fs-15"></i>
+                                                <span class="fw-semibold">Chọn từ Thư viện</span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('image').click();">
+                                                <i class="ri-upload-2-line fs-15"></i>
+                                                <span>Tải từ máy tính</span>
+                                            </button>
                                         </div>
-                                    @endif
+                                        <input type="file" id="image" name="image" class="d-none @error('image') is-invalid @enderror" onchange="if(this.files[0]){ document.getElementById('feature_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('feature_preview_box').classList.remove('d-none'); }">
+                                        <input type="hidden" id="feature_image_hidden" name="image" value="{{ $page->image ?? '' }}">
+                                        @error('image')<span class="text-danger small d-block mb-2">{{ $message }}</span>@enderror
+                                        <div id="feature_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}">
+                                            <img id="feature_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="preview" style="max-height: 80px; max-width: 120px; object-fit: contain;">
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

@@ -19,11 +19,7 @@ trait ImageHandlerTrait
     {
         $folder = $folder ?? $this->imageFolder;
 
-        if ($request->hasFile($field)) {
-            return $this->imageService->saveImage($request, $folder, $field, $this->defaultImageConfig);
-        }
-
-        return null;
+        return $this->imageService->saveImage($request, $folder, $field, $this->defaultImageConfig);
     }
 
     /**
@@ -43,7 +39,7 @@ trait ImageHandlerTrait
     {
         $folder = $folder ?? $this->imageFolder;
 
-        if ($request->hasFile($field)) {
+        if ($request->hasFile($field) || $request->filled('selected_detail_images')) {
             return $this->imageService->handleDetailImages($request, $folder, $this->defaultImageConfig);
         }
 

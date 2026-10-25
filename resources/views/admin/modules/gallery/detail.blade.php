@@ -49,7 +49,21 @@
                                             <div class="mb-3">
                                                 <label for="firstNameinput" class="form-label font-weight-semibold">Hình ảnh <span class="text-muted font-weight-normal">(Khuyến nghị: 800x600 px hoặc 1200x800 px)</span></label>
                                                 <input type="file" name="image"
-                                                    class="form-control @error('image') is-invalid @enderror">
+                                                    class="d-none @error('image') is-invalid @enderror" id="gallery_image_input" accept="image/*" onchange="if(this.files[0]){ document.getElementById('gallery_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('gallery_preview_box').classList.remove('d-none'); }">
+                                                <input type="hidden" id="gallery_image_hidden" name="image" value="{{ $page->image ?? '' }}">
+                                                <div class="d-flex align-items-center gap-1.5 mb-2">
+                                                    <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="window.openMediaPicker({ mode: 'single', module: 'gallery', onSelect: function(item) { document.getElementById('gallery_image_hidden').value = item.path; document.getElementById('gallery_preview_img').src = item.url; document.getElementById('gallery_preview_box').classList.remove('d-none'); } })">
+                                                        <i class="ri-folder-image-line fs-15"></i>
+                                                        <span class="fw-semibold">Chọn từ Thư viện</span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('gallery_image_input').click();">
+                                                        <i class="ri-upload-2-line fs-15"></i>
+                                                        <span>Tải từ máy tính</span>
+                                                    </button>
+                                                </div>
+                                                <div id="gallery_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}" style="max-width: 240px;">
+                                                    <img id="gallery_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="" class="img-fluid rounded-1" style="max-height: 180px; object-fit: contain;">
+                                                </div>
                                                 @error('image')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -58,7 +72,7 @@
 
                                         @if (!empty($page->image))
                                             <div class="col-md-6">
-                                                <div class="mb-3" style="display:flex;flex-direction: column;">
+                                                <div class="mb-3" style="display:none;">
                                                     <label for="firstNameinput" class="form-label">Hình ảnh hiện tại</label>
                                                      <img src="{{ $page->image }}" alt=""
                                                          width="200px" height="auto">

@@ -16,9 +16,7 @@ class FeedBackRequest extends BaseAdminRequest
         return [
             'name' => 'required|string|max:255|regex:/^[a-zA-Z0-9\s\p{L}]+$/u',
             'message' => 'required|string|max:2000', // Reduced from 65535 for security
-            'image' => request()->route('uuid')
-            ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-            : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => $this->imageRule(!request()->route('uuid')),
         ];
     }
 

@@ -25,13 +25,13 @@ class ProductRequest extends BaseAdminRequest
             'description_vn' => 'required|max:255',
             'description_en' => 'nullable|max:255',
 
-            'image_vn' => request()->route('uuid')
-            ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-            : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'image_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image_vn' => $this->imageRule(!request()->route('uuid')),
+            'image_en' => $this->imageRule(false),
 
             'image_detail' => 'nullable|array',
             'image_detail.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,mp4,webm,mov,ogg|max:51200',
+            'selected_detail_images' => 'nullable',
+            'kept_images' => 'nullable',
 
             'video' => 'nullable|file|mimes:mp4,webm,mov,ogg|max:51200',
 

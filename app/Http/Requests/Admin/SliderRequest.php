@@ -13,18 +13,14 @@ class SliderRequest extends BaseAdminRequest
      */
     public function rules(): array
     {
-        $imageRule = request()->route('uuid')
-            ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-            : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240';
-
         return [
             'name_vn' => 'required|max:255',
             'name_en' => 'nullable|max:255',
             'stt' => 'required|integer',
-            'image_desktop_vn' => $imageRule,
-            'image_desktop_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'image_mobile_vn' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            'image_mobile_en' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image_desktop_vn' => $this->imageRule(!request()->route('uuid')),
+            'image_desktop_en' => $this->imageRule(false),
+            'image_mobile_vn' => $this->imageRule(false),
+            'image_mobile_en' => $this->imageRule(false),
         ];
     }
 

@@ -16,9 +16,7 @@ class GalleryRequest extends BaseAdminRequest
         return [
             'name_vn' => 'required|max:255',
             'stt' => 'required|integer',
-            'image' => request()->route('uuid')
-                ? 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240'
-                : 'required|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
+            'image' => $this->imageRule(!request()->route('uuid')),
         ];
     }
 

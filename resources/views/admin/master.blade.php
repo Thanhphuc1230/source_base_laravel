@@ -42,6 +42,7 @@
     </button>
     <!--end back-to-top-->
 
+    @include('admin.partials.media-picker-modal')
     @include('admin.partials.js')
     @stack('scripts')
 

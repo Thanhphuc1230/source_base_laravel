@@ -36,67 +36,120 @@ class ImageService
 
     public function saveImage($request, string $imageFolder, string $fieldName, array $options = [])
     {
-        if (! $request->hasFile($fieldName)) {
-            return null;
-        }
-        try {
-            $file = $request->file($fieldName);
+        // 1. Check if a new file is uploaded
+        if ($request->hasFile($fieldName)) {
+            try {
+                $file = $request->file($fieldName);
 
-            // Kiểm tra mime type nếu cần
-            if (isset($options['mimeTypes']) && ! in_array($file->getMimeType(), $options['mimeTypes'])) {
-                throw new Exception('File không đúng định dạng cho phép');
+                // Verify mime types if configured
+                if (isset($options['mimeTypes']) && ! in_array($file->getMimeType(), $options['mimeTypes'])) {
+                    throw new Exception('File format is not allowed');
+                }
+
+                // Subpath: {module}/{YYYY}/{MM}
+                $subPath = $this->getSubPath($imageFolder);
+
+                // Unique filename
+                $fileName = $this->generateFileName($file, $options);
+
+                // Ensure directory exists
+                $this->ensureDirectoryExists($subPath);
+
+                // Handle WebP conversion (default true unless disabled)
+                $convertToWebp = $options['convertToWebp'] ?? true;
+                if ($convertToWebp) {
+                    $fileName = $this->handleWebpConversion($file, $subPath, $fileName, $options);
+                } else {
+                    $file->move(public_path("uploads/{$subPath}"), $fileName);
+                }
+
+                $relativePath = "uploads/{$subPath}/{$fileName}";
+
+                // Auto register into Media table
+                try {
+                    $fullPath = public_path($relativePath);
+                    $dimensions = null;
+                    if (File::exists($fullPath)) {
+                        $imgSize = @getimagesize($fullPath);
+                        if ($imgSize && isset($imgSize[0]) && isset($imgSize[1])) {
+                            $dimensions = "{$imgSize[0]}x{$imgSize[1]}";
+                        }
+                        \App\Models\Media::firstOrCreate(
+                            ['path' => $relativePath],
+                            [
+                                'uuid' => (string) Str::uuid(),
+                                'name' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
+                                'file_name' => $fileName,
+                                'module' => Str::slug($imageFolder ?: 'general'),
+                                'mime_type' => File::mimeType($fullPath) ?: 'image/webp',
+                                'extension' => strtolower(pathinfo($fileName, PATHINFO_EXTENSION)),
+                                'size' => File::size($fullPath),
+                                'dimensions' => $dimensions,
+                                'created_by' => auth()->id(),
+                            ]
+                        );
+                    }
+                } catch (\Throwable $mediaEx) {
+                    // Suppress media logging failure
+                }
+
+                return $relativePath;
+            } catch (Exception $e) {
+                throw $e;
             }
-
-            // Tạo subpath dạng: module/YYYY/MM
-            $subPath = $this->getSubPath($imageFolder);
-
-            // Tạo tên file duy nhất (đã băm tên)
-            $fileName = $this->generateFileName($file, $options);
-
-            // Đảm bảo thư mục tồn tại
-            $this->ensureDirectoryExists($subPath);
-
-            // Xử lý chuyển đổi WebP nếu được yêu cầu
-            if (isset($options['convertToWebp']) && $options['convertToWebp']) {
-                $fileName = $this->handleWebpConversion($file, $subPath, $fileName, $options);
-            } else {
-                // Lưu file gốc nếu không chuyển WebP
-                $file->move(public_path("uploads/{$subPath}"), $fileName);
-            }
-
-            return "uploads/{$subPath}/{$fileName}";
-        } catch (Exception $e) {
-            throw $e;
         }
+
+        // 2. Check if an existing media path was selected from Media Library
+        $selectedPath = $request->input($fieldName . '_selected') ?: $request->input($fieldName);
+        if (is_string($selectedPath) && !empty($selectedPath)) {
+            $parsed = parse_url($selectedPath, PHP_URL_PATH) ?: $selectedPath;
+            $cleanPath = ltrim($parsed, '/');
+            if (str_starts_with($cleanPath, 'uploads/')) {
+                return $cleanPath;
+            }
+        }
+
+        return null;
     }
 
     /**
-     * Cập nhật hình ảnh, xóa ảnh cũ nếu có
+     * Cập nhật hình ảnh, hỗ trợ cả upload file mới và chọn từ Thư viện Media
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  object  $model  Model chứa ảnh hiện tại
      * @param  string  $imageFolder  Tên thư mục lưu ảnh
      * @param  string  $fieldName  Tên field chứa ảnh trong request và model
      * @param  array  $options  Các tùy chọn thêm
-     * @return string Tên file ảnh mới hoặc file ảnh hiện tại
+     * @return string|null Tên file ảnh mới hoặc file ảnh hiện tại
      *
      * @throws \Exception
      */
     public function updateImage($request, $model, string $imageFolder, string $fieldName, array $options = [])
     {
-        if (! $request->hasFile($fieldName)) {
-            return method_exists($model, 'getRawOriginal') ? $model->getRawOriginal($fieldName) : $model->$fieldName;
+        // 1. Explicit clear request
+        if ($request->input($fieldName . '_clear') == '1' || $request->input($fieldName) === '') {
+            if (!$request->hasFile($fieldName) && empty($request->input($fieldName . '_selected'))) {
+                return null;
+            }
         }
 
-        try {
-            // Xóa file cũ nếu có
-            $this->deleteImage($model->$fieldName, $imageFolder);
-
-            // Lưu file mới
+        // 2. If new file uploaded from PC
+        if ($request->hasFile($fieldName)) {
             return $this->saveImage($request, $imageFolder, $fieldName, $options);
-        } catch (Exception $e) {
-            throw $e;
         }
+
+        // 3. If selected from Media Library
+        $selectedPath = $request->input($fieldName . '_selected') ?: $request->input($fieldName);
+        if (is_string($selectedPath) && !empty($selectedPath)) {
+            $parsed = parse_url($selectedPath, PHP_URL_PATH) ?: $selectedPath;
+            $cleanPath = ltrim($parsed, '/');
+            if (str_starts_with($cleanPath, 'uploads/')) {
+                return $cleanPath;
+            }
+        }
+
+        // 4. Retain existing model value
+        return method_exists($model, 'getRawOriginal') ? $model->getRawOriginal($fieldName) : ($model->$fieldName ?? null);
     }
 
     /**
@@ -373,6 +426,20 @@ class ImageService
     public function handleDetailImages($request, $imageFolder, array $options = [])
     {
         $files = [];
+
+        // Support pre-selected media paths from media library
+        $selected = $request->input('selected_detail_images', []);
+        if (is_string($selected)) {
+            $selected = json_decode($selected, true) ?: [];
+        }
+        if (is_array($selected)) {
+            foreach ($selected as $path) {
+                if (is_string($path) && str_starts_with($path, 'uploads/')) {
+                    $files[] = $path;
+                }
+            }
+        }
+
         if ($request->hasFile('image_detail')) {
             $subPath = $this->getSubPath($imageFolder);
             foreach ($request->file('image_detail') as $file) {
@@ -409,6 +476,19 @@ class ImageService
             }
         }
 
+        // Support newly added media paths from media library
+        $selected = $request->input('selected_detail_images', []);
+        if (is_string($selected)) {
+            $selected = json_decode($selected, true) ?: [];
+        }
+        if (is_array($selected)) {
+            foreach ($selected as $path) {
+                if (is_string($path) && str_starts_with($path, 'uploads/') && !in_array($path, $filteredExistingImages)) {
+                    $filteredExistingImages[] = $path;
+                }
+            }
+        }
+
         $newImages = [];
         if ($request->hasFile('image_detail')) {
             $subPath = $this->getSubPath($imageFolder);
@@ -425,7 +505,6 @@ class ImageService
         }
 
         $allImages = array_merge($filteredExistingImages, $newImages);
-        $this->cleanupUnusedImages($existingImages, $filteredExistingImages, $imageFolder);
 
         return json_encode($allImages);
     }
