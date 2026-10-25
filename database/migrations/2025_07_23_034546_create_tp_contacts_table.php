@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_contacts', function (Blueprint $table) {
             $table->id('id_contact');
-            $table->uuid();
+            $table->uuid()->unique();
             $table->string('fullname');
             $table->string('email');
             $table->string('phone');
@@ -21,6 +21,9 @@ return new class extends Migration
             $table->string('message');
             $table->boolean('status')->default(false);
             $table->timestamps();
+
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tp_order_status', function (Blueprint $table) {
             $table->id('id_order_status');
-            $table->uuid('uuid_order_status');
+            $table->uuid('uuid_order_status')->unique();
             $table->unsignedBigInteger('shipping_id'); // connect with order_shipping
             $table->string('payment_method');
             $table->string('total');
@@ -24,6 +24,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('shipping_id')->references('id_order_shipping')->on('tp_order_shipping');
+
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

@@ -38,18 +38,18 @@ return new class extends Migration
             // Foreign key constraint
             $table->foreign('category_id')->references('id_cate_service')->on('tp_cate_services')->onDelete('cascade');
 
-            // Essential indexes only
-            $table->index('slug_vn');              // Required for route resolution
-            $table->index('slug_en');              // Required for route resolution
-            $table->index('uuid');                 // Required for lookups
+            // Query & sorting indexes
+            $table->index('created_at');
+            $table->index(['category_id', 'created_at']);
+            $table->index(['category_id', 'status', 'created_at']);
 
-            // Composite indexes (cover single column usage too)
-            $table->index(['status', 'slug_vn']);   // Route resolution optimization
-            $table->index(['status', 'slug_en']);   // Route resolution optimization
-            $table->index(['status', 'stt']);       // Covers: status filtering + ordering
-            $table->index(['status', 'category_id']); // Covers: status + category filtering
-            $table->index(['views', 'status']);     // Covers: popular content + status
-            $table->index(['created_at', 'status']); // Covers: latest services + status
+            // Composite indexes
+            $table->index(['status', 'slug_vn']);
+            $table->index(['status', 'slug_en']);
+            $table->index(['status', 'stt']);
+            $table->index(['status', 'category_id']);
+            $table->index(['views', 'status']);
+            $table->index(['created_at', 'status']);
         });
     }
 

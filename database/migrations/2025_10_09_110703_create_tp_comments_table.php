@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_comments', function (Blueprint $table) {
             $table->id('id_comment');
-            $table->uuid();
+            $table->uuid()->unique();
             $table->string('name');
             $table->string('email');
             $table->text('content');
@@ -22,6 +22,10 @@ return new class extends Migration
             $table->boolean('status')->default(false);
             $table->tinyInteger('rating')->nullable()->comment('Đánh giá sao (1-5) chỉ cho sản phẩm');
             $table->timestamps();
+
+            $table->index('created_at');
+            $table->index(['type_post', 'id_post', 'status', 'created_at']);
+            $table->index(['status', 'created_at']);
         });
     }
 

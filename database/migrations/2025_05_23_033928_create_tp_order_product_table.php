@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tp_order_product', function (Blueprint $table) {
             $table->id('id_order_product');
-            $table->uuid('uuid_order_product');
+            $table->uuid('uuid_order_product')->unique();
             $table->unsignedBigInteger('order_status_id');
             $table->unsignedBigInteger('product_id');
             $table->unsignedInteger('quantity');
@@ -24,8 +24,10 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('product_id')->references('id_product')->on('tp_products');
-
             $table->foreign('order_status_id')->references('id_order_status')->on('tp_order_status');
+
+            $table->index('order_status_id');
+            $table->index('product_id');
         });
     }
 

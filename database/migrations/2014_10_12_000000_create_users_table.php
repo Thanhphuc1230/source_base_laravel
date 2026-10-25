@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid');
+            $table->uuid('uuid')->unique();
             $table->string('fullname', 255);
             $table->string('username', 100)->nullable();
             // phone added here to be part of the original users table
@@ -29,6 +29,9 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();
+
+            $table->index(['level', 'status']);
+            $table->index('created_at');
         });
     }
 
