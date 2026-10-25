@@ -38,6 +38,10 @@ class Product extends Model
         'description_en',
         'category_id',
         'brand_id',
+        'status',
+        'hot',
+        'home',
+        'sale',
     ];
 
     public function getSlugAttribute()
@@ -89,6 +93,8 @@ class Product extends Model
     protected $casts = [
         'status' => 'boolean',
         'hot' => 'boolean',
+        'home' => 'boolean',
+        'sale' => 'boolean',
         'price' => 'decimal:2',
         'price_old' => 'decimal:2',
     ];

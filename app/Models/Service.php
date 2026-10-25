@@ -33,6 +33,8 @@ class Service extends Model
         'keyword_en',
         'description_vn',
         'description_en',
+        'status',
+        'home',
     ];
 
     public function getSlugAttribute()
@@ -72,6 +74,8 @@ class Service extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'home' => 'boolean',
+        'views' => 'integer',
     ];
 
     public function cate()

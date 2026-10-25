@@ -74,6 +74,8 @@ class Project extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'home' => 'boolean',
+        'views' => 'integer',
     ];
 
     public function cate()

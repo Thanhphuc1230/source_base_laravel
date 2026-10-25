@@ -13,10 +13,11 @@ class Comment extends Model
 
     protected $table = 'tp_comments';
     protected $primaryKey = 'id_comment';
-    protected $fillable = ['uuid', 'name', 'email', 'content', 'id_post','type_post', 'rating'];
+    protected $fillable = ['uuid', 'name', 'email', 'content', 'id_post', 'type_post', 'rating', 'status'];
 
     protected $casts = [
         'status' => 'boolean',
+        'rating' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

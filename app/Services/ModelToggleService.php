@@ -4,12 +4,29 @@ namespace App\Services;
 
 class ModelToggleService
 {
+    /**
+     * Whitelist of toggleable attributes to prevent arbitrary column alteration
+     */
+    protected array $allowedToggleFields = [
+        'status',
+        'home',
+        'hot',
+        'sale',
+        'active',
+    ];
+
     public function toggleModelStatus($uuid, $status, $fieldName, $model)
     {
-        $updated = $model::where('uuid', $uuid)->update([$fieldName => $status]);
+        // Enforce whitelist check
+        if (!in_array($fieldName, $this->allowedToggleFields, true)) {
+            return response()->json(['message' => 'Trường cập nhật không hợp lệ'], 403);
+        }
+
+        $sanitizedStatus = (int)(bool)$status;
+        $updated = $model::where('uuid', $uuid)->update([$fieldName => $sanitizedStatus]);
 
         if ($updated) {
-            $mess = $status == 1 ? 'Kích hoạt' : 'Tắt';
+            $mess = $sanitizedStatus == 1 ? 'Kích hoạt' : 'Tắt';
             toast($mess.' thành công');
 
             return response()->json(['message' => $mess.' '.$fieldName.' thành công']);
@@ -25,7 +42,7 @@ class ModelToggleService
         $item = $model::where('uuid', $uuid)->first();
 
         if ($item) {
-            $item->stt = $request->input('stt');
+            $item->stt = max(0, (int) $request->input('stt', 1));
             $item->save();
 
             return response()->json(['success' => true]);
