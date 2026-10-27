@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: deploy-laravel
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -16,20 +20,26 @@ jobs:
       - name: Deploy to Server via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT }}
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USERNAME }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          port: ${{ secrets.PROD_PORT || 22 }}
+          script_stop: true
           script: |
-            cd /home/chienthangr/web/chienthangroup.vn/public_html
+            echo "🚀 Đang triển khai mã nguồn lên Server..."
+            cd ${{ secrets.PROD_TARGET_DIR }}
             git fetch origin main
             
-            # Checkout code while strictly excluding images, docs, tests, and dev files
-            git checkout origin/main -- . ':!public/images' ':!.agents' ':!docs' ':!docs_backup' ':!tests' ':!.github' ':!README.md' ':!phpunit.xml' ':!.env.testing' ':!.editorconfig'
+            # Checkout code từ Git nhưng loại trừ .agents, các file .sql, database/sql, .example*, .env.testing, tests, phpunit*, public/images, docs và README
+            git checkout origin/main -- . ':!.agents' ':!*.sql' ':!database/sql' ':!*.example*' ':!*.example' ':!.env.testing' ':!phpunit*' ':!tests' ':!public/images' ':!docs' ':!README*'
             
-            # Clean up any leftover dev, test, doc, and agent files on hosting
-            rm -rf .agents docs docs_backup tests .github README.md phpunit.xml .phpunit.result.cache .env.testing .editorconfig
+            # Đảm bảo dọn dẹp triệt để thư mục nội bộ AI (.agents), docs, tests, README, các file .example, .testing, phpunit và toàn bộ file .sql trên hosting server
+            rm -rf .agents docs README.md README* database/sql tests
+            rm -f .env.example .env.testing phpunit.xml
+            find . -maxdepth 3 -name "*.sql" -type f -delete
+            find . -maxdepth 2 -name "*.example*" -type f -delete
             
+            # Đảm bảo nhận diện môi trường đường dẫn Composer
             export PATH=$PATH:/usr/local/bin:/usr/bin:~/.composer/vendor/bin
             if command -v composer &> /dev/null; then
                 composer install --no-dev --optimize-autoloader --no-interaction
@@ -37,8 +47,10 @@ jobs:
                 /usr/local/bin/composer install --no-dev --optimize-autoloader --no-interaction
             fi
             
-            php artisan migrate --force --no-interaction
+            # Tối ưu bộ nhớ đệm Laravel
+            php artisan optimize:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            php artisan images:optimize --no-interaction
+            
+            echo "✅ Triển khai website thành công!"
