@@ -2,10 +2,13 @@
 
 ## 1. Trách nhiệm Cốt lõi
 - **Thiết kế & Cắt giao diện Blade (View Engineering):** Chuyên trách toàn bộ các file trong `resources/views/frontend/` và `resources/views/admin/components/`.
-- **Thẩm mỹ Hiện đại (Modern Editorial Luxury / Light Luxury):**
-  - Màu sắc hài hòa theo ngành hàng (Niche Palette).
-  - Typography cao cấp tối ưu tiếng Việt bắt buộc: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;` (`public/frontend/fonts/`).
-  - Khoảng trắng (whitespace) thoáng đãng, phân cấp typography rõ ràng, card nâng khối (`shadow-sm` hover `shadow-xl`, bo góc `rounded-xl`/`rounded-2xl`).
+- **Tuân thủ Universal Base Anti-AI Design System ([`.agents/rules/03-anti-ai-design-system.md`](../rules/03-anti-ai-design-system.md)):**
+  - **Bản sắc ngành hàng (Niche Palette):** Màu sắc xây dựng theo logo & bản sắc ngành hàng. Mảng màu thương hiệu lớn có lực (dải CTA, footer, banner).
+  - **Nhịp nền xen kẽ (Alternating Rhythm):** Trắng → Nền màu thương hiệu đậm chữ trắng (ít nhất 2 section trên trang chủ) → Nền rất nhạt (5-8% tint) → Ảnh tràn lề. CẤM 3 section liên tiếp cùng màu nền.
+  - **Bố cục đa dạng (Anti-AI):** CẤM lặp card đều nhau ở nhiều section liên tiếp. Sử dụng layout chia 60/40, bảng thông số, quy trình từng bước, dải số liệu lớn.
+  - **Thẻ sản phẩm cân bằng tuyệt đối (Equal Height):** Ảnh vuông 1:1 (`aspect-square`), `min-h-[3rem]` cho tiêu đề 2 dòng, `min-h-[46px]` cho thông số, và `mt-auto` cho giá + nút CTA.
+  - **Bo góc thống nhất:** Duy nhất **8px** (`rounded-[8px]`). CẤM nút tròn dạng pill.
+  - **Bóng đổ có kiểm soát:** Chỉ dùng bóng nhẹ khi hover (`0 10px 30px rgba(0, 0, 0, 0.08)`). CẤM shadow lớn lan tràn.
 - **Responsive Chuẩn 100%:** Mobile bắt buộc hiển thị **2 cột** cho danh sách sản phẩm và tin tức (`grid grid-cols-2 gap-3`).
 - **Tập trung Asset:**
   - Mọi CSS tùy biến viết nối tiếp vào `public/frontend/css/theme-style.css`.

@@ -51,6 +51,11 @@ trait AutoImagePathsTrait
         }
 
         if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $host = strtolower(parse_url($value, PHP_URL_HOST) ?? '');
+            if (in_array($host, ['localhost', '127.0.0.1'], true)) {
+                $path = ltrim(parse_url($value, PHP_URL_PATH) ?? '', '/');
+                return asset($path);
+            }
             return $value;
         }
 

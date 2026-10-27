@@ -66,20 +66,36 @@ Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
 
 ---
 
-## QUY TẮC SỐ 5 – THẨM MỸ GIAO DIỆN CHUẨN UI/UX HIỆN ĐẠI (MODERN PREMIUM WEB DESIGN)
+## QUY TẮC SỐ 5 – THẨM MỸ GIAO DIỆN CHUẨN BASE: CẤU TRÚC VỮNG CHẮC & TRÁNH "CHẤT AI"
 
-- **Định hướng thẩm mỹ:** Không sử dụng phong cách cũ kỹ. Giao diện phải đạt chuẩn Modern Premium Web: màu sắc hài hòa theo ngành hàng (Niche Palette), Typography cao cấp tối ưu tiếng Việt bắt buộc: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;`, khoảng trắng thoáng đãng, phân cấp typography rõ ràng.
-- **UI/UX & Component Details:** 
-  - Card/Button có shadow nhẹ (`shadow-sm` hover thành `shadow-xl`), bo góc viền chuẩn (`rounded-xl` hoặc `rounded-2xl`).
-  - Mọi button, card phải có hiệu ứng mượt `transition-all duration-300 ease-in-out`.
-  - Floating action buttons đặt bên phải (`fixed bottom-5 right-5 z-50`).
-- **Icon Safety (An toàn Icon):** Dùng FontAwesome v6 chuẩn syntax (bắt buộc prefix `fa-`, ví dụ: `fas fa-shopping-cart`, `fas fa-phone-alt`, `fab fa-facebook`) hoặc SVG Inline để tuyệt đối KHÔNG bị vỡ/ô vuông icon.
-- **Khoảng cách Section (Section Spacing / Padding):** Tuyệt đối KHÔNG dùng padding top/bottom quá lớn (`py-16`, `py-20`, `py-24`) làm rời rạc bố cục. Bắt buộc giới hạn padding top/bottom của các section ở mức tinh tế: **15px** (`py-[15px]`).
-- **Nút/Icon Header (Cart, Language Switcher & Hotline Styling):**
-  - **Không để số điện thoại trên Header:** Giữ Header thanh thoát, không đặt nút gọi/SĐT trên Header chính. Hotline & Zalo tập trung tại floating action button bên phải (`fixed bottom-5 right-5`).
-  - **Icon Giỏ hàng (Cart Icon):** Giữ nguyên bản mộc, KHÔNG bọc hình tròn/vuông nền màu (`no border-radius, no background`), chỉ hiển thị icon giỏ hàng tinh tế cùng badge số lượng nhỏ gọn phía trên.
-  - **Lá cờ Ngôn ngữ (Language Switcher Flags):** KHÔNG dùng border-radius hay background/nền bọc xung quanh. KHÔNG dùng dropdown phức tạp; hiển thị trực tiếp 2 lá cờ (Tiếng Việt & Tiếng Anh) nằm ngang cạnh nhau (`flex items-center gap-2`), mộc, phẳng, không bo góc và không nền.
-- **Scroll Animations:** Tích hợp hiệu ứng xuất hiện khi cuộn trang (Fade/Slide/Zoom in) bằng Intersection Observer API (`.scroll-anim.fade-up`).
+Chi tiết xem tại: [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md)
+
+- **Nguyên tắc gốc (Anti-AI Principles):** 
+  - Thiết kế từ sản phẩm & nghiệp vụ thật của doanh nghiệp. Ưu tiên sự gọn gàng, cụ thể, có lực thị giác.
+  - Mỗi màn hình (viewport) có đúng 1 điểm nhấn thị giác (ảnh lớn, mảng màu thương hiệu lớn, hoặc số liệu năng lực thật).
+  - Đa dạng bố cục section: chia 2 cột lệch (60/40), bảng thông số kỹ thuật (Spec Table), quy trình từng bước, dải CTA. Toàn trang chỉ có tối đa 1 loại card duy nhất (dành cho Danh mục Sản phẩm).
+  - ❌ CẤM khối 4 ô thống kê đều nhau nếu là số liệu ảo; CẤM icon đặt trong ô vuông/tròn nền pastel; CẤM badge pill chữ hoa nhỏ dẫn đường trên tiêu đề section; CẤM pill tên công ty trên Hero; CẤM emoji; CẤM gradient cầu vồng/neon.
+- **Hệ thống màu sắc theo bản sắc ngành hàng (Niche Color System):**
+  - Màu chính thương hiệu (Brand Primary) dùng cho các MẢNG LỚN CÓ LỰC (dải CTA, footer, banner).
+  - Quy tắc nhịp nền xen kẽ: Nền Trắng → Nền màu thương hiệu đậm chữ trắng (ít nhất 2 section trên trang chủ) → Nền rất nhạt (5-8% tint) → Ảnh tràn lề. CẤM 3 section liên tiếp cùng màu nền.
+  - Màu nhấn (Accent): CHỈ dùng cho nút CTA chính và tối đa 1 điểm nhấn mỗi viewport.
+- **Lưới bố cục, Khoảng cách & Bo góc thống nhất:**
+  - Container chuẩn 1200px (`max-w-[1200px]`, `.container-b2b`).
+  - Bo góc thống nhất: Duy nhất **8px** (`rounded-[8px]`). CẤM nút tròn dạng pill (`rounded-full`).
+  - Bóng đổ có kiểm soát: Chỉ dùng bóng nhẹ (`0 10px 30px rgba(0, 0, 0, 0.08)`) khi hover card hoặc header dính. CẤM shadow mềm lớn lan tràn.
+- **Thẻ sản phẩm cân bằng chiều cao tuyệt đối (Equal Height Product Cards):**
+  - Khung ảnh vuông chuẩn 1:1 (`aspect-square`), `<img>` dùng `absolute inset-0 object-cover`.
+  - Cột bọc: `w-full h-full flex flex-col`. Thẻ `<article>`: `h-full flex flex-col justify-between`.
+  - Tiêu đề khóa chiều cao tối thiểu `min-h-[3rem]` (2 dòng chữ); Thông số khóa tối thiểu `min-h-[46px]`.
+  - Hàng giá & Nút CTA đặt `mt-auto`, đảm bảo luôn nằm thẳng tắp trên cùng một đường kẻ ngang đáy thẻ.
+- **Nút/Icon Header & Floating Buttons:**
+  - **Không để SĐT trên Header:** Hotline & Zalo tập trung tại floating action button bên phải (`contact_buttons.blade.php`).
+  - **Icon Giỏ hàng:** Giữ nguyên bản mộc, KHÔNG bọc hình tròn/vuông nền màu (`no border-radius, no background`), icon kèm badge nhỏ.
+  - **Lá cờ Ngôn ngữ:** KHÔNG dùng border-radius hay background/nền, hiển thị trực tiếp 2 lá cờ nằm ngang (`flex items-center gap-2`), mộc, phẳng.
+  - **Floating Action Buttons:** Nằm tập trung trong `contact_buttons.blade.php`: Hotline đỏ chuông rung, Zalo xanh, Back-to-top tối màu.
+- **Chuyển động có kiểm soát (Controlled Transitions):**
+  - Scroll reveal: Trượt 20px + fade 600ms, chỉ chạy 1 lần duy nhất khi cuộn tới (`.scroll-reveal.is-visible`).
+  - Bắt buộc tuân thủ `@media (prefers-reduced-motion: reduce)`: Tắt toàn bộ animation khi người dùng bật chế độ giảm chuyển động.
 - **Responsive:** Chuẩn Responsive 100%. Mobile: tin tức và sản phẩm bắt buộc hiển thị **2 cột** (`grid grid-cols-2 gap-3`).
 
 ---
@@ -235,6 +251,7 @@ Trước khi bàn giao task, AI **BẮT BUỘC** tự động chạy tuần tự
 
 | File | Nội dung |
 |---|---|
+| [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md) | **Bộ Quy Chuẩn Thiết Kế Giao Diện Nền Tảng: Cấu Trúc Vững Chắc & Tránh "Chất AI"** |
 | [`.agents/codebase-matrix.md`](./codebase-matrix.md) | **Bản đồ ma trận định vị siêu tốc: Nghiệp vụ → Controller → Service → View** |
 | [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) | Ranh giới kiến trúc & quy tắc Zero-Hardcode khi làm Theme |
 | [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) | Quy trình 3 bước chuẩn hóa khởi tạo & tùy biến Theme |

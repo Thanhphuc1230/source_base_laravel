@@ -1,18 +1,23 @@
-# Quy Chuẩn Thiết Kế Giao Diện Frontend (WordPress Style + Tailwind CSS)
+# Quy Chuẩn Thiết Kế Giao Diện Frontend (Universal Base Anti-AI Design System)
 
-> Tài liệu này quy định toàn bộ Design System cho Frontend, kết hợp sự thân thiện/đẹp mắt của WordPress và sự tối ưu của Tailwind CSS.
+> Tài liệu này quy định toàn bộ Design System cho Frontend theo chuẩn **Universal Base Anti-AI Design System** (Chi tiết xem thêm tại: [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md)).
 
 ---
 
-## 0. ĐỊNH HƯỚNG PHONG CÁCH "LIGHT LUXURY & MODERN RETAIL" (TIÊU CHUẨN MẶC ĐỊNH)
+## 0. ĐỊNH HƯỚNG PHONG CÁCH & NGUYÊN TẮC TRÁNH "CHẤT AI"
 
-- **Nền chủ đạo:** Sáng thoáng (`bg-[#F9FAFB]` hoặc `bg-white`), điểm xuyết các mảng viền và nền phụ nhẹ nhàng (`bg-slate-50`, `border-slate-100`) tạo chiều sâu tinh tế, sạch sẽ và thoáng đãng.
-- **Tone màu nhấn (Accent/Primary):** Dùng màu Đen Vàng Kim (`#1A1A1A` kết hợp Vàng Gold `#C5A880` / `#D4AF37`) hoặc Đen Xám Luxury (`#1F2937`) nổi bật trên nền trắng/sáng để tạo cảm giác cao cấp, tinh xảo, thanh lịch và dễ quan sát.
+- **Thiết kế từ sản phẩm & nghiệp vụ thật:** Giao diện phản ánh quy cách sản phẩm, thông số kỹ thuật, quy trình đặt hàng/dịch vụ của doanh nghiệp thật. Không dùng layout rỗng vô nghĩa.
+- **Nền chủ đạo & Nhịp nền xen kẽ (Alternating Rhythm):**
+  - Luân chuyển: Nền Trắng tinh khiết (`#FFFFFF`) hoặc Off-white (`#F9FAFB`) → Nền màu thương hiệu đậm chữ trắng (ít nhất 2 section trên trang chủ) → Nền tông rất nhạt (5-8% tint) → Ảnh tràn lề.
+  - CẤM 3 section liên tiếp có cùng màu nền.
+- **Tone màu thương hiệu (Niche Color Palette):** Xây dựng theo logo và đặc trưng ngành hàng (Xanh lá tự nhiên/y tế, Xanh navy công nghệ/logistics, Nâu đồng/Gold nội thất cao cấp, Đen than chì luxury). Dùng cho các mảng lớn có lực: dải CTA, Footer, Banner.
+- **Màu nhấn (Accent Color):** Chỉ dùng cho nút CTA chính và tối đa 1 điểm nhấn mỗi viewport.
+- **Bo góc thống nhất (Unified Radius):** Duy nhất **8px** (`rounded-[8px]`, `rounded-lg`). CẤM nút bo tròn dạng pill (`rounded-full`).
+- **Thẻ sản phẩm cân bằng tuyệt đối (Equal Height):** 100% thẻ sản phẩm dùng khung ảnh vuông 1:1 (`aspect-square`), `min-h-[3rem]` cho tiêu đề 2 dòng, `min-h-[46px]` cho thông số, và `mt-auto` cho giá + CTA để mọi nút bấm nằm thẳng tắp một hàng đáy.
 - **Typography & Phân cấp chữ:**
-  - Tiêu đề (`h1`-`h6`): Dùng font serif sang trọng (như `Playfair Display`) hoặc sans-serif đậm nổi bật (`Montserrat`, `Plus Jakarta Sans`, `Inter`).
-  - Nội dung/Mô tả: Sử dụng màu xám đậm chuẩn mực (`text-slate-700`, `text-slate-600`), đảm bảo độ tương phản cao, dễ đọc.
-- **Card sản phẩm:** Hiệu ứng hover mượt mà (`hover:-translate-y-1 hover:shadow-xl transition-all duration-300 ease-in-out`), nền card trắng tinh tế kết hợp viền mỏng (`border border-slate-100 hover:border-slate-300`).
-- **Ảnh sản phẩm:** Bắt buộc dùng `aspect-square` (tỉ lệ 1:1), `object-cover` hoặc `object-contain` có padding nhẹ (`p-3` hoặc `p-4`) để sản phẩm luôn nằm trọn vẹn, nổi bật và sắc nét trên nền sáng.
+  - Tiêu đề (`h1`-`h6`): Sans-serif đậm hoặc Serif sang trọng theo Niche, tự đứng vững, KHÔNG dùng badge pill chữ hoa nhỏ dẫn đường bên trên.
+  - Nội dung/Mô tả: Sử dụng màu xám đậm chuẩn mực (`text-slate-700`, `text-slate-600`), độ tương phản cao, dễ đọc.
+- **CẤM tuyệt đối "Chất AI":** Không dùng khối 4 số liệu ảo, không dùng icon bọc nền pastel (hồng, tím, xanh lơ), không dùng pill chứa tên công ty trên Hero, không dùng emoji, không dùng gradient cầu vồng/neon.
 
 ---
 
@@ -83,56 +88,71 @@ Sử dụng thư viện Scroll Animation nhẹ lưu tại local (`public/fronten
 
 ---
 
-## 3. THIẾT KẾ COMPONENT CHUẨN WORDPRESS (TAILWIND CLASS)
+## 3. THIẾT KẾ COMPONENT CHUẨN ANTI-AI (EQUAL-HEIGHT & BO GÓC 8PX)
 
-### A. Product Card (Thẻ sản phẩm)
+### A. Product Card (Thẻ sản phẩm cân bằng chiều cao 100%)
 
 ```html
-<div class="group relative bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out border border-slate-100 overflow-hidden scroll-anim fade-up">
-  <div class="aspect-square w-full overflow-hidden bg-slate-100 relative">
-    <img src="{{ $product->image }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
-    @if($product->price_old > $product->price)
-      <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">-{{ round((($product->price_old - $product->price)/$product->price_old)*100) }}%</span>
-    @endif
-  </div>
-  <div class="p-4">
-    <p class="text-xs text-slate-400 mb-1">{{ $product->cate->name }}</p>
-    <h3 class="font-bold text-slate-800 text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors">
-      <a href="{{ route('web.resolve', $product->slug) }}">{{ $product->name }}</a>
-    </h3>
-    <div class="mt-3 flex items-center justify-between">
-      <div>
-        <span class="text-base md:text-lg font-extrabold text-red-600">{{ number_format($product->price) }}đ</span>
-        @if($product->price_old)
-          <span class="text-xs text-slate-400 line-through ml-1">{{ number_format($product->price_old) }}đ</span>
-        @endif
-      </div>
-      <button class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-primary group-hover:text-white flex items-center justify-center transition-colors">
-        <i class="fas fa-shopping-bag text-sm"></i>
-      </button>
+<div class="h-full flex flex-col">
+  <article class="h-full flex flex-col justify-between bg-white border border-slate-200 rounded-[8px] overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-300 group scroll-anim fade-up">
+    <!-- Ảnh vuông 1:1 tuyệt đối -->
+    <div class="aspect-square w-full relative overflow-hidden bg-slate-50 flex-shrink-0">
+      <img src="{{ $product->image }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+      @if($product->price_old > $product->price)
+        <span class="absolute top-2 left-2 bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-[4px]">-{{ round((($product->price_old - $product->price)/$product->price_old)*100) }}%</span>
+      @endif
     </div>
-  </div>
+    
+    <!-- Nội dung thẻ -->
+    <div class="p-4 flex flex-col flex-1">
+      <p class="text-xs text-slate-400 mb-1 font-medium">{{ $product->cate->name }}</p>
+      <!-- Khóa tối thiểu 3rem (2 dòng chữ) để thẻ không bị lệch cao thấp -->
+      <h3 class="font-bold text-slate-800 text-sm md:text-base line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+        <a href="{{ route('web.resolve', $product->slug) }}">{{ $product->name }}</a>
+      </h3>
+      
+      <!-- Khóa chiều cao thông số kỹ thuật tối thiểu 46px -->
+      <div class="min-h-[46px] text-xs text-slate-500 mt-1 line-clamp-2">
+        {{ $product->intro_vn }}
+      </div>
+
+      <!-- Đáy thẻ luôn bám sát chân nhờ mt-auto -->
+      <div class="mt-auto pt-3 border-t border-slate-100 flex items-center justify-between">
+        <div>
+          <span class="text-base md:text-lg font-bold text-red-600">{{ number_format($product->price) }}đ</span>
+          @if($product->price_old)
+            <span class="text-xs text-slate-400 line-through ml-1">{{ number_format($product->price_old) }}đ</span>
+          @endif
+        </div>
+        <a href="{{ route('web.resolve', $product->slug) }}" class="px-3 py-1.5 text-xs font-semibold rounded-[8px] bg-primary text-white hover:bg-primary-dark transition-colors">
+          Chi tiết
+        </a>
+      </div>
+    </div>
+  </article>
 </div>
 ```
 
 ### B. News Card (Thẻ tin tức)
 
 ```html
-<div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-100 overflow-hidden group scroll-anim fade-up">
-  <div class="aspect-video overflow-hidden">
-    <img src="{{ $news->image }}" alt="{{ $news->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-  </div>
-  <div class="p-4 md:p-5">
-    <span class="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-md">{{ $news->cate->name }}</span>
-    <h3 class="font-bold text-slate-800 text-base mt-2 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-      <a href="{{ route('web.resolve', $news->slug) }}">{{ $news->name }}</a>
-    </h3>
-    <p class="text-slate-500 text-xs md:text-sm line-clamp-2 mb-4">{{ $news->intro_vn }}</p>
-    <div class="text-xs text-slate-400 flex items-center gap-2">
-      <i class="far fa-calendar-alt"></i>
-      <span>{{ $news->created_at->format('d/m/Y') }}</span>
+<div class="h-full flex flex-col">
+  <article class="h-full flex flex-col justify-between bg-white rounded-[8px] border border-slate-200 overflow-hidden hover:shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-300 group scroll-anim fade-up">
+    <div class="aspect-video w-full overflow-hidden bg-slate-100 relative">
+      <img src="{{ $news->image }}" alt="{{ $news->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
     </div>
-  </div>
+    <div class="p-4 md:p-5 flex flex-col flex-1">
+      <span class="text-xs font-semibold text-primary mb-1">{{ $news->cate->name }}</span>
+      <h3 class="font-bold text-slate-800 text-base mb-2 line-clamp-2 min-h-[3rem] group-hover:text-primary transition-colors">
+        <a href="{{ route('web.resolve', $news->slug) }}">{{ $news->name }}</a>
+      </h3>
+      <p class="text-slate-500 text-xs md:text-sm line-clamp-2 mb-4 min-h-[40px]">{{ $news->intro_vn }}</p>
+      <div class="mt-auto pt-3 border-t border-slate-100 text-xs text-slate-400 flex items-center gap-2">
+        <i class="far fa-calendar-alt"></i>
+        <span>{{ $news->created_at->format('d/m/Y') }}</span>
+      </div>
+    </div>
+  </article>
 </div>
 ```
 
@@ -154,8 +174,11 @@ Sử dụng thư viện Scroll Animation nhẹ lưu tại local (`public/fronten
 
 ## 5. QUY CHUẨN KHOẢNG CÁCH SECTION (SECTION SPACING / PADDING)
 
-* **Giới hạn khoảng cách:** Tuyệt đối KHÔNG dùng padding top/bottom quá cao (`py-16`, `py-20`, `py-24`) khiến website bị loãng và thưa thớt nội dung.
-* **Quy định bắt buộc:** Mọi section nội dung chuẩn hóa padding top/bottom ở mức **15px** (`py-[15px]`).
+* **Container chuẩn 1200px:** Mọi section căn thẳng tắp theo lưới `max-w-[1200px]` (`container mx-auto px-4 max-w-7xl` hoặc `.container-b2b`).
+* **Khoảng cách linh hoạt:**
+  - Dải ngăn cách lớn/B2B chuyên nghiệp: Desktop chuẩn 96px (`py-24` hoặc `.section-sp`), Mobile chuẩn 56px (`py-14`).
+  - Dải nội dung liền kề hoặc khối tin/sản phẩm gọn gàng: Duy trì padding tinh tế `py-[15px]` hoặc `py-6`.
+* **Bo góc thống nhất:** Toàn bộ thẻ, nút, input dùng duy nhất **8px** (`rounded-[8px]`).
 
 ---
 
@@ -171,3 +194,18 @@ Sử dụng thư viện Scroll Animation nhẹ lưu tại local (`public/fronten
 * **Cụm cờ ngôn ngữ (Language Switcher Flags):**
   - **KHÔNG dùng border-radius hay background/nền** bọc quanh lá cờ.
   - **KHÔNG dùng dropdown ẩn**: Hiển thị trực tiếp **2 lá cờ nằm ngang cạnh nhau** (`flex items-center gap-2`), mộc, phẳng, click trực tiếp để chuyển ngôn ngữ (VI / EN).
+
+---
+
+## 7. CHUYỂN ĐỘNG CÓ KIỂM SOÁT & PREFERS-REDUCED-MOTION
+
+- **Scroll Reveal:** Hiệu ứng trượt nhẹ 20px + fade 600ms, chỉ chạy 1 lần khi cuộn tới (`.scroll-reveal.is-visible`).
+- **Stat CountUp:** Số liệu đếm lên 1 lần duy nhất (`.stat-counter`).
+- **Tuân thủ @media (prefers-reduced-motion):** Tắt toàn bộ animation khi người dùng bật chế độ giảm chuyển động trong hệ điều hành.
+
+---
+
+## 8. QUY CHUẨN XỬ LÝ MEDIA & CACHE-BUSTING
+
+- **Khử Localhost URL:** Mọi URL trong `AutoImagePathsTrait` tự động làm sạch `http://localhost/` thành `asset(...)` chuẩn domain.
+- **Cache-Busting Assets:** File CSS tĩnh trong `head.blade.php` bắt buộc kèm timestamp `?v={{ filemtime(...) }}`.

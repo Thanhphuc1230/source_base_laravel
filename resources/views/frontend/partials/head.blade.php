@@ -62,8 +62,8 @@
         {!! $website->header_js !!}
     @endif
     <!-- STYLESHEETS -->
-    <link rel="stylesheet" href="{{ asset('frontend/css/image-flip.css') }}">
-    <link rel="stylesheet" href="{{ asset('frontend/css/theme-style.css') }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/image-flip.css') }}?v={{ file_exists(public_path('frontend/css/image-flip.css')) ? filemtime(public_path('frontend/css/image-flip.css')) : '1.0' }}">
+    <link rel="stylesheet" href="{{ asset('frontend/css/theme-style.css') }}?v={{ file_exists(public_path('frontend/css/theme-style.css')) ? filemtime(public_path('frontend/css/theme-style.css')) : '1.0' }}">
 
 <!-- Font (Inter & Plus Jakarta Sans) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
