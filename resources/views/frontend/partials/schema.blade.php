@@ -20,7 +20,7 @@
 {{-- Schema Organization / LocalBusiness --}}
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "{{ '@context' }}": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "{{ addslashes($website->name_vn ?? $website->meta_name ?? config('app.name')) }}",
     "url": "{{ url('/') }}",
@@ -57,7 +57,7 @@
 @if(isset($breadcrumbs) && is_iterable($breadcrumbs) && count($breadcrumbs) > 0)
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "{{ '@context' }}": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
         @foreach($breadcrumbs as $index => $item)
