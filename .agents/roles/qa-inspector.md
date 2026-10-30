@@ -3,9 +3,10 @@
 ## 1. Trách nhiệm Cốt lõi
 - **Kiểm định Độc lập (Independent Quality Verification):** Đóng vai trò chốt chặn cuối cùng kiểm tra toàn diện chất lượng công việc trước khi Lead Orchestrator bàn giao cho người dùng.
 - **Bộ 4 Tiêu chí Kiểm định Bắt buộc:**
-  1. **Zero-Hardcode Audit:**
+  1. **Zero-Hardcode Audit (100% Admin-Editable Check):**
      - Quét toàn bộ `resources/views/frontend/` để đảm bảo không còn text thương hiệu cứng, số điện thoại cứng, email cứng, link Google Map cứng.
-     - Xác nhận biến `$web` được gọi đúng cấu trúc chuẩn.
+     - Kiểm tra rà soát toàn bộ các trang chi tiết sản phẩm, tin tức, danh mục, trang chủ: đảm bảo không có văn bản mô tả, thông số kỹ thuật, cam kết, chính sách bảo hành, hoặc tiêu đề khối nào bị hardcode tĩnh bằng HTML trong Blade view.
+     - Xác nhận biến `$web`, `$product`, `$news`, `$product_settings`, `$news_settings` được gọi đúng cấu trúc chuẩn và người dùng có thể đổi được 100% nội dung từ Admin.
   2. **Navigation & Routes Audit:**
      - Gửi request đến tất cả các route chính (Trang chủ `/`, Danh mục, Chi tiết bài viết, Chi tiết sản phẩm, Dự án, Giỏ hàng `/cart`, Liên hệ `/lien-he`,...).
      - Xác nhận 100% trả về HTTP 200 hoặc 302 hợp lệ, không có lỗi 404 hoặc 500.

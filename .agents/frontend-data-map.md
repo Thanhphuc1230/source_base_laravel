@@ -74,18 +74,36 @@
 ### Trang sản phẩm chi tiết
 **Controller**: `app/Http/Controllers/Frontend/ProductController.php`
 
-| Biến | Mô tả |
-|---|---|
-| `$product_detail` | Object sản phẩm: `name`, `slug`, `image`, `price`, `price_old`, `intro_vn`, `content_vn`, `keyword`, `description`, `uuid`, `cate->name`, `cate->slug` |
-| `$related_products` | Collection sản phẩm liên quan cùng danh mục |
+| Biến / Thuộc tính | Cú pháp Blade | Mô tả |
+|---|---|---|
+| `$product_detail->name` | `{{ $product_detail->name }}` | Tên sản phẩm đa ngữ (`name_vn` / `name_en`) |
+| `$product_detail->price` | `{{ number_format($product_detail->price) }}đ` | Giá bán hiện tại |
+| `$product_detail->price_old` | `{{ number_format($product_detail->price_old) }}đ` | Giá gốc (dùng tính % giảm giá) |
+| `$product_detail->intro_vn` | `{!! $product_detail->intro_vn !!}` | Mô tả ngắn / tóm tắt thông số kỹ thuật |
+| `$product_detail->content_vn` | `{!! $product_detail->content_vn !!}` | Nội dung chi tiết bài viết sản phẩm (HTML từ CKEditor) |
+| `$product_detail->image` | `{{ $product_detail->image }}` | Ảnh đại diện chính |
+| `$product_detail->image_detail` | `@foreach($product_detail->image_detail as $img)...` | Bộ sưu tập ảnh & video chi tiết sản phẩm |
+| `$product_detail->video` | `src="{{ $product_detail->video_url }}"` | Video giới thiệu sản phẩm (URL hoặc relative path) |
+| `$product_detail->cate->name` | `{{ $product_detail->cate->name }}` | Tên danh mục cha của sản phẩm |
+| `$related_products` | Collection | Danh sách sản phẩm liên quan cùng danh mục |
 
-### Trang tin tức
-| Biến | Mô tả |
-|---|---|
-| `$news_list` | Danh sách bài viết (có phân trang) |
-| `$cate` | Thông tin danh mục tin tức hiện tại |
-| `$news_detail` | Object bài viết chi tiết |
-| `$related_news` | Collection bài viết liên quan |
+> ⛔ **CẤM TUYỆT ĐỐI**: Không viết cứng bảng thông số kỹ thuật (Kích thước, Chất liệu, Xuất xứ) hay chính sách bảo hành bằng HTML tĩnh trong file Blade chi tiết sản phẩm. Toàn bộ thông số và mô tả phải được nhập trong `content_vn` hoặc `intro_vn` từ trang Admin để người dùng có thể tự sửa.
+
+### Trang tin tức & bài viết chi tiết
+**Controller**: `app/Http/Controllers/Frontend/NewsController.php`
+
+| Biến / Thuộc tính | Cú pháp Blade | Mô tả |
+|---|---|---|
+| `$news_detail->name` | `{{ $news_detail->name }}` | Tiêu đề bài viết đa ngữ |
+| `$news_detail->intro_vn` | `{!! $news_detail->intro_vn !!}` | Tóm tắt tin tức ngắn |
+| `$news_detail->content_vn` | `{!! $news_detail->content_vn !!}` | Nội dung toàn bài viết chi tiết |
+| `$news_detail->image` | `{{ $news_detail->image }}` | Ảnh đại diện tin tức |
+| `$news_detail->cate->name` | `{{ $news_detail->cate->name }}` | Tên danh mục tin tức |
+| `$news_detail->created_at` | `{{ $news_detail->created_at->format('d/m/Y') }}` | Ngày xuất bản |
+| `$news_list` | Collection (có paginate) | Danh sách bài viết theo trang |
+| `$related_news` | Collection | Danh sách tin tức liên quan |
+
+> ⛔ **CẤM TUYỆT ĐỐI**: Không tự bịa text mẫu hoặc chèn văn bản tĩnh vào bài viết tin tức. 100% nội dung phải lấy từ object `$news_detail`.
 
 ### Trang liên hệ
 Không có biến riêng — **toàn bộ lấy từ `$web`** (toàn cục).

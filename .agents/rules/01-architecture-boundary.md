@@ -36,9 +36,9 @@ Khi xây dựng hoặc tùy biến giao diện mới, **CHỈ ĐƯỢC PHÉP** t
 
 ---
 
-## 💎 3. QUY TẮC "ZERO-HARDCODE" (DỮ LIỆU ĐỘNG 100%)
+## 💎 3. QUY TẮC "ZERO-HARDCODE" & 100% QUẢN TRỊ ĐƯỢC TỪ ADMIN
 
-Mọi thông tin trên Blade View **BẮT BUỘC** phải sử dụng dữ liệu động từ `FrontendComposer` và Controller truyền xuống:
+Mọi thông tin trên Blade View **BẮT BUỘC** phải sử dụng dữ liệu động từ `FrontendComposer`, Models và Controller truyền xuống để đảm bảo người dùng có thể đổi được 100% nội dung từ trang quản trị Admin:
 
 | Thông tin | Cú pháp đúng ✅ | Không dùng ❌ |
 |---|---|---|
@@ -50,3 +50,9 @@ Mọi thông tin trên Blade View **BẮT BUỘC** phải sử dụng dữ liệ
 | Logo / Favicon | `{{ asset($web->logo) }}` | `src="/images/logo.png"` |
 | Menu đa cấp | `@foreach($menu as $item)...` | Viết cứng thẻ `<li><a href="/...">` |
 | Danh sách sản phẩm | `@foreach($products as $product)...` | HTML card tĩnh |
+| Tên & Giá sản phẩm | `{{ $product->name }}` / `{{ number_format($product->price) }}đ` | Ghi cứng tên sản phẩm / giá tiền mẫu |
+| Nội dung mô tả sản phẩm | `{!! $product->content_vn !!}` / `{{ $product->intro_vn }}` | Viết cứng văn bản mô tả trong Blade |
+| Nội dung bài viết tin tức | `{!! $news->content_vn !!}` / `{{ $news->intro_vn }}` | Viết cứng nội dung tin tức mẫu |
+| Tiêu đề khối Sản phẩm/Tin | `{{ $product_settings['title_home'] ?? '' }}` | Gõ text cứng tiêu đề section |
+
+> **Nguyên tắc vàng:** Nếu một nội dung không thể thay đổi được trong Admin hoặc không có trường dữ liệu tương ứng trong CSDL, **TUYỆT ĐỐI KHÔNG ĐƯỢC TỰ BỊA TEXT CỨNG** vào Blade view. Hãy sử dụng các trường cấu hình sẵn có hoặc ẩn khối đó bằng `@if(...)`.

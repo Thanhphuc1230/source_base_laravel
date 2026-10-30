@@ -18,7 +18,7 @@
 ---
 
 ## 2. Quy tắc Bất di bất dịch (Strict Constraints)
-- **QUY TẮC 1 (ZERO HARDCODE):** Tuyệt đối KHÔNG ghi cứng thông tin công ty, hotline, email, địa chỉ, logo, map, zalo. Bắt buộc dùng biến `$web` (`{{ $web->name_vn }}`, `{{ $web->phone }}`, `{{ $web->email }}`, `{{ $web->logo }}`,...).
+- **QUY TẮC 1 (ZERO HARDCODE & 100% ADMIN-EDITABLE):** Tuyệt đối KHÔNG ghi cứng thông tin công ty, hotline, email, địa chỉ, logo, map, zalo. Đặc biệt, **TUYỆT ĐỐI KHÔNG HARDCODE** nội dung sản phẩm, tin tức, thông số kỹ thuật, cam kết, chính sách bảo hành, hướng dẫn đặt hàng hay tiêu đề khối ở bất kỳ vị trí nào trên website. Toàn bộ nội dung hiển thị phải được kết nối từ CSDL và đổi được 100% trong Admin thông qua `$web`, `$product`, `$news`, `$product_settings`, `$news_settings`. Nếu khối không có dữ liệu Admin thì phải ẩn bằng `@if(...)`, cấm tự bịa text cứng vào Blade view.
 - **QUY TẮC 6 (ZERO CDN):** Tuyệt đối KHÔNG dùng link CDN bên ngoài (Google Fonts, cdnjs, unpkg). 100% assets phải nằm trong `public/frontend/`.
 - **QUY TẮC 7 (TÁCH BIỆT CODE):** Tuyệt đối KHÔNG viết thẻ `<style>` hay `<script>` tĩnh trong Blade views. Không dùng style inline trừ dữ liệu động cấu hình từ DB.
 - **QUY TẮC 10 (ASSET CONCENTRATION):** Tuyệt đối KHÔNG tạo thêm các file css/js rác lẻ tẻ.

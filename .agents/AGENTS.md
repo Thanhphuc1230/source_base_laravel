@@ -27,19 +27,34 @@ Khi nhận prompt từ người dùng, AI sẽ phân tách nhiệm vụ và đó
 
 ---
 
-## QUY TẮC SỐ 1 – TUYỆT ĐỐI KHÔNG HARDCODE
+## QUY TẮC SỐ 1 – TUYỆT ĐỐI KHÔNG HARDCODE & 100% QUẢN TRỊ ĐƯỢC TỪ ADMIN
 
-Khi viết blade view, **KHÔNG ĐƯỢC** ghi cứng tên công ty, SĐT, email, địa chỉ, logo, Google Map URL, link mạng xã hội.
+Khi viết Blade view, **TUYỆT ĐỐI KHÔNG ĐƯỢC** ghi cứng (hardcode) bất kỳ thông tin nào ở mọi vị trí trên website (Trang chủ, Chi tiết sản phẩm, Tin tức, Danh mục, Sidebar, Banner, Footer). Toàn bộ nội dung hiển thị phải được kết nối với CSDL và **có thể thay đổi được 100% trong trang quản trị Admin**.
 
-Phải dùng biến động từ `$web`. Xem chi tiết: `.agents/frontend-data-map.md`
+### 1. Chi tiết các phạm vi bắt buộc dùng biến động:
+- **Thông tin công ty & Hệ thống:** Tên công ty, SĐT/Hotline, email, địa chỉ, logo, favicon, Google Map URL, link mạng xã hội (Facebook, Zalo, YouTube,...) phải dùng biến `$web`. Xem chi tiết: [`.agents/frontend-data-map.md`](./frontend-data-map.md).
+- **Nội dung Sản phẩm (Product Content):** Tên sản phẩm, mô tả ngắn (`intro_vn`/`intro_en`), nội dung chi tiết (`content_vn`/`content_en`), thông số kỹ thuật, giá bán, giá cũ, hình ảnh, ảnh chi tiết (`image_detail`) phải lấy từ object `$product` hoặc `$product_detail`.
+  - ❌ CẤM tự gõ text tĩnh trong chi tiết sản phẩm như: `"Cam kết chính hãng 100%"`, `"Bảo hành 24 tháng"`, `"Giao hàng miễn phí toàn quốc"`, `"Kích thước: 200 x 150 cm"`,... nếu những nội dung này không lấy từ trường dữ liệu động hoặc cài đặt trong Admin.
+- **Nội dung Tin tức & Bài viết (News & Post Content):** Tên bài viết, tóm tắt (`intro_vn`), nội dung chi tiết (`content_vn`), tác giả, ngày đăng, danh mục phải lấy từ object `$news` hoặc `$news_detail`.
+  - ❌ CẤM tự chèn các đoạn văn mẫu, nhận xét ảo, hoặc chú thích cố định trong Blade view bài viết.
+- **Tiêu đề Section & Cài đặt giao diện:** Tiêu đề các khối trên trang chủ, banner danh mục, màu sắc, font chữ phải nạp từ biến cài đặt Admin (`$product_settings`, `$news_settings`, `$site_settings`, `$about_section`) hoặc tên danh mục `$category->name_vn`.
+  - ❌ Nếu một khối nội dung không có dữ liệu động từ Admin thì **BẮT BUỘC PHẢI ẨN** bằng `@if(...)`, tuyệt đối không được tự ý bịa text cứng để lấp đầy giao diện.
 
-| Sai ❌ | Đúng ✅ |
-|---|---|
-| `Base` | `{{ $web->name_vn }}` |
-| `0979.248.298` | `{{ $web->phone }}` |
-| `contact@base.local` | `{{ $web->email }}` |
-| `src="https://www.google.com/maps/embed..."` | `src="{{ $web->map }}"` |
-| `<img src="/images/logo/logo.png">` | `<img src="{{ asset($web->logo) }}">` |
+### 2. Bảng đối chiếu mẫu vi phạm và chuẩn hóa:
+
+| Thành phần hiển thị | Sai (Hardcode) ❌ | Đúng (Admin-Editable) ✅ |
+|---|---|---|
+| Tên công ty / Brand | `Base` | `{{ $web->name_vn }}` |
+| Hotline / SĐT tư vấn | `0979.248.298` | `{{ $web->phone }}` |
+| Email liên hệ | `contact@base.local` | `{{ $web->email }}` |
+| Bản đồ Google Map | `src="https://www.google.com/maps/embed..."` | `src="{{ $web->map }}"` |
+| Logo website | `<img src="/images/logo/logo.png">` | `<img src="{{ asset($web->logo) }}">` |
+| Tên & Giá sản phẩm | `<span>Bàn làm việc gỗ sồi</span> 5.000.000đ` | `<span>{{ $product->name }}</span> {{ number_format($product->price) }}đ` |
+| Mô tả ngắn sản phẩm | `<p>Chất liệu gỗ cao cấp nhập khẩu...</p>` | `<p>{{ $product->intro_vn }}</p>` |
+| Nội dung bài viết | `<div>Nội dung bài viết mẫu...</div>` | `<div>{!! $news->content_vn !!}</div>` |
+| Tiêu đề khối Sản phẩm | `<h2>Sản phẩm nổi bật</h2>` | `<h2>{{ $product_settings['title_home'] ?? $category->name ?? '' }}</h2>` |
+| Banner danh mục | `url('/images/banner.jpg')` | `url('{{ asset($product_settings['banner_category']) }}')` |
+| Chính sách / Giới thiệu | Viết cứng thẻ HTML tĩnh trong Blade | Lấy từ `$about_section`, `$web->footer`, hoặc `$page->content_vn` |
 
 ---
 

@@ -10,6 +10,9 @@
 - **Thiết kế từ sản phẩm & nghiệp vụ thật:** 
   - Giao diện phải trông như do một Senior Designer/Dev chuyên nghiệp làm riêng cho doanh nghiệp thật của ngành hàng này, **KHÔNG** dùng template AI sinh ra.
   - Bắt đầu từ quy cách sản phẩm, thông số kỹ thuật, phiếu kiểm định, quy trình dịch vụ và năng lực vận hành thực tế.
+- **100% Dữ liệu động – Tuyệt đối Không Hardcode nội dung:**
+  - Tuyệt đối **KHÔNG** gõ cứng text mô tả sản phẩm, thông số kỹ thuật, chính sách bảo hành, cam kết, hay nội dung tin tức vào file Blade. Người quản trị phải đổi được 100% nội dung từ trang Admin (`content_vn`, `intro_vn`, `$product_settings`, `$news_settings`).
+  - Nếu một khối thông tin không có dữ liệu động tương ứng từ Admin, bắt buộc dùng câu lệnh rẽ nhánh điều kiện `@if(...)` để ẩn đi, cấm tự ý chèn text mẫu tĩnh vào Blade view.
 - **Ưu tiên sự gọn gàng, cụ thể và có lực:** 
   - Khi phân vân giữa "đẹp kiểu quen thuộc AI" và "gọn gàng, thực tế, có lực thị giác", chọn cái sau.
   - Không thêm thành phần chỉ để lấp chỗ trống. Khách hàng cần thông số, giá, quy cách, cách đặt hàng, không cần hiệu ứng lấp lánh rườm rà.
