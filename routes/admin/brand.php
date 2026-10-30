@@ -11,7 +11,7 @@ Route::controller(BrandController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:brand.create');
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:brand.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:brand.create');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:brand.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:brand.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:brand.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:brand.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:brand.delete');

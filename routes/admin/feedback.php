@@ -11,7 +11,7 @@ Route::controller(FeedBackController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:feedback.view'); // Feedback usually no create
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:feedback.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:feedback.edit');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:feedback.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:feedback.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:feedback.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:feedback.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:feedback.delete');

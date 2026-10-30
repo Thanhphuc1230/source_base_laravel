@@ -3,158 +3,123 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Analytic;
-use App\Models\Product;
-use App\Models\User;
+use App\Services\DashboardService;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 class AnalyticController extends BaseController
 {
+    /**
+     * @var string
+     */
     protected $module;
 
-    protected $model;
-
+    /**
+     * @var string
+     */
     protected $nameItem;
 
-    public function __construct()
+    /**
+     * @var DashboardService
+     */
+    protected $dashboardService;
+
+    /**
+     * AnalyticController constructor.
+     *
+     * @param DashboardService $dashboardService
+     */
+    public function __construct(DashboardService $dashboardService)
     {
         $this->module = 'analytics';
-        $this->model = new Analytic;
-        $this->nameItem = 'Biểu đồ';
+        $this->nameItem = 'Bảng điều khiển';
+        $this->dashboardService = $dashboardService;
 
         parent::__construct($this->module);
 
         View::share('nameClass', 'chart');
     }
 
+    /**
+     * Display the main admin dashboard with real-time KPI metrics, alerts, and charts.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View|JsonResponse
+     */
     public function index(Request $request)
     {
-        // Get current date (may be overridden by request month/year)
-        $now = Carbon::now();
-        $currentMonth = $now->month;
-        $currentYear = $now->year;
-
-        // Allow overriding month/year via query params (for AJAX requests)
-        if ($request->has('month') && $request->has('year')) {
-            $currentMonth = intval($request->get('month'));
-            $currentYear = intval($request->get('year'));
-            
-            // Validate month and year
-            if ($currentMonth < 1 || $currentMonth > 12) {
-                $currentMonth = $now->month;
-            }
-            if ($currentYear < 2000 || $currentYear > 2100) {
-                $currentYear = $now->year;
-            }
-            
-            // set a new "now" based on requested month/year for week calculations if needed
-            $now = Carbon::createFromDate($currentYear, $currentMonth, 1);
-        }
-
-        // Tổng lượt truy cập tất cả
-        $totalViews = $this->model::sum('visit_count');
-
-        // Tổng lượt truy cập cho month/year hiện tại (có thể là tháng được yêu cầu)
-        $monthViews = $this->model::whereMonth('visit_date', $currentMonth)
-            ->whereYear('visit_date', $currentYear)
-            ->sum('visit_count');
-
-        // Tổng lượt truy cập tháng trước
-        $lastMonth = $now->copy()->subMonth();
-        $lastMonthViews = $this->model::whereMonth('visit_date', $lastMonth->month)
-            ->whereYear('visit_date', $lastMonth->year)
-            ->sum('visit_count');
-
-        // Tổng lượt truy cập tuần này (relative to $now)
-        $weekStart = $now->copy()->startOfWeek();
-        $weekEnd = $now->copy()->endOfWeek();
-        $weekViews = $this->model::whereBetween('visit_date', [$weekStart, $weekEnd])
-            ->sum('visit_count');
-
-        // Dữ liệu cho biểu đồ cho month/year hiện tại
-        $visits = $this->model::whereMonth('visit_date', $currentMonth)
-            ->whereYear('visit_date', $currentYear)
-            ->orderBy('visit_date')
-            ->get();
-        $chartData = [];
-        foreach ($visits as $visit) {
-            $visitDate = Carbon::parse($visit->visit_date);
-            $chartData[] = [
-                'date' => $visitDate->format('d-m-Y'),
-                'count' => $visit->visit_count,
-            ];
-        }
-        $data['chartData'] = json_encode($chartData);
-        // If this is an AJAX request (or explicitly requested), return JSON so the frontend can update the chart
+        // 1. Handle AJAX chart filtering
         if ($request->ajax() || $request->has('ajax')) {
-            return response()->json([
-                'chartData' => $chartData,
-                'monthViews' => $monthViews,
-                'month' => $currentMonth,
-                'year' => $currentYear,
-            ]);
+            // Revenue Chart AJAX request
+            if ($request->input('chart_type') === 'revenue' || $request->has('period')) {
+                $period = $request->input('period', '30_days');
+                $year = $request->input('year') ? (int) $request->input('year') : null;
+                $chartData = $this->dashboardService->getRevenueChartData($period, $year);
+
+                return response()->json([
+                    'success' => true,
+                    'chartData' => $chartData,
+                ]);
+            }
+
+            // Web Visits Chart AJAX request
+            if ($request->has('month') && $request->has('year')) {
+                $month = (int) $request->input('month', date('n'));
+                $year = (int) $request->input('year', date('Y'));
+
+                $visits = Analytic::whereMonth('visit_date', $month)
+                    ->whereYear('visit_date', $year)
+                    ->orderBy('visit_date', 'asc')
+                    ->get();
+
+                $chartData = $visits->map(function ($item) {
+                    return [
+                        'date' => Carbon::parse($item->visit_date)->format('d-m-Y'),
+                        'count' => (int) $item->visit_count,
+                    ];
+                });
+
+                $monthViews = (int) Analytic::whereMonth('visit_date', $month)
+                    ->whereYear('visit_date', $year)
+                    ->sum('visit_count');
+
+                return response()->json([
+                    'success' => true,
+                    'chartData' => $chartData,
+                    'monthViews' => $monthViews,
+                    'month' => $month,
+                    'year' => $year,
+                ]);
+            }
         }
-        $data['totalViews'] = $totalViews;
-        $data['monthViews'] = $monthViews;
-        $data['lastMonthViews'] = $lastMonthViews;
-        $data['weekViews'] = $weekViews;
-        $data['nameItem'] = $this->nameItem;
 
-        // Dashboard Stats
-        $data['totalProducts'] = Product::count();
-        $data['totalNews'] = DB::table('tp_news')->count();
-        $data['totalComments'] = DB::table('tp_comments')->count();
+        // 2. Fetch overview KPI datasets via Service Layer (Redis cached)
+        $overview = $this->dashboardService->getOverviewData($request->has('refresh'));
 
-        // Top Products (sold quantity)
-        $topProductIds = DB::table('tp_order_product')
-            ->select('product_id', DB::raw('SUM(quantity) as total_sold'))
-            ->groupBy('product_id')
-            ->orderBy('total_sold', 'desc')
-            ->limit(5)
+        // 3. Initial 30-day Revenue Chart dataset
+        $revenueChartData = $this->dashboardService->getRevenueChartData('30_days');
+
+        // 4. Initial Month Visits Chart dataset
+        $now = Carbon::now();
+        $visits = Analytic::whereMonth('visit_date', $now->month)
+            ->whereYear('visit_date', $now->year)
+            ->orderBy('visit_date', 'asc')
             ->get();
-        
-        // Eager load products to avoid N+1
-        $productIds = $topProductIds->pluck('product_id')->toArray();
-        $products = Product::whereIn('id_product', $productIds)->get()->keyBy('id_product');
-        
-        $data['topProducts'] = $topProductIds->map(function ($item) use ($products) {
-            $product = $products->get($item->product_id);
+
+        $visitChartData = $visits->map(function ($item) {
             return [
-                'name' => $product ? $product->name_vn : 'Unknown',
-                'sold' => $item->total_sold,
+                'date' => Carbon::parse($item->visit_date)->format('d-m-Y'),
+                'count' => (int) $item->visit_count,
             ];
         });
 
-        // Recent Orders
-        $data['recentOrders'] = DB::table('tp_order_status')
-            ->join('tp_order_shipping', 'tp_order_status.shipping_id', '=', 'tp_order_shipping.id_order_shipping')
-            ->select('tp_order_status.*', DB::raw('CONCAT(tp_order_shipping.f_name_order, " ", tp_order_shipping.l_name_order) as name'), 'tp_order_shipping.phone')
-            ->orderBy('tp_order_status.created_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        // User Activity (recent registrations)
-        $data['recentUsers'] = User::orderBy('created_at', 'desc')->limit(5)->get();
-
-        // Revenue Chart (monthly for current year)
-        $revenueData = DB::table('tp_order_status')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('SUM(total) as revenue'))
-            ->whereYear('created_at', $currentYear)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->keyBy('month');
-
-        $revenueChart = [];
-        for ($m = 1; $m <= 12; $m++) {
-            $revenueChart[] = [
-                'month' => Carbon::create()->month($m)->format('M'),
-                'revenue' => $revenueData->get($m)->revenue ?? 0,
-            ];
-        }
-        $data['revenueChart'] = json_encode($revenueChart);
+        $data = array_merge($overview, [
+            'nameItem' => $this->nameItem,
+            'revenueChartData' => $revenueChartData,
+            'chartData' => json_encode($visitChartData),
+        ]);
 
         return $this->view_admin('dashboard', $data);
     }

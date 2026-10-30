@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('total');
             $table->tinyInteger('auth_id')->nullable(); // id of user have auth
-            $table->boolean('status')->default(false);
+            $table->tinyInteger('status')->default(0); // 0: Pending, 1: Completed, 2: Cancelled
             $table->timestamps();
 
             $table->foreign('shipping_id')->references('id_order_shipping')->on('tp_order_shipping');

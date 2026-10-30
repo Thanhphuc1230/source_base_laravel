@@ -7,6 +7,7 @@ use App\Mail\AlertOrder;
 use App\Models\OrderProduct;
 use App\Models\OrderShipping;
 use App\Models\OrderStatus;
+use App\Models\Product;
 use App\Services\MailTemplateService;
 use App\Services\MailConfigService;
 use Illuminate\Support\Facades\DB;
@@ -66,6 +67,13 @@ class CheckoutService
             $this->cartService->clearCart();
 
             DB::commit();
+
+            // Clear dashboard analytics cache so real-time KPI updates
+            try {
+                app(DashboardService::class)->flushCache();
+            } catch (\Throwable $cacheEx) {
+                // Silently ignore cache clear errors
+            }
 
             // 5. Send notification email outside transaction (so email failure never breaks order placement)
             try {
@@ -137,6 +145,9 @@ class CheckoutService
                 'quantity' => $product['qty'],
                 'price' => $product['price'],
             ]);
+
+            // Deduct quantity from inventory
+            Product::where('id_product', $product['id_product'])->decrement('quantity', (int) $product['qty']);
         }
     }
 

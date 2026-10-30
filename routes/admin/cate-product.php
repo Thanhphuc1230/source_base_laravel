@@ -11,7 +11,7 @@ Route::controller(CateProductController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:cate_product.create');
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:cate_product.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:cate_product.create');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:cate_product.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:cate_product.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:cate_product.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:cate_product.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:cate_product.delete');

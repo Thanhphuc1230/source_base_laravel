@@ -24,6 +24,12 @@
                                         <div class="d-flex justify-content-sm-end align-items-center">
                                             <form action="{{ route('admin.' . $nameClass . '.index') }}" method="get"
                                                 class="d-flex align-items-center gap-2 m-0 p-0">
+                                                <select name="status" class="form-select rounded-2" style="height: 38px; font-size: 13px; width: 140px;" onchange="this.form.submit()">
+                                                    <option value="">Tất cả trạng thái</option>
+                                                    <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Chờ xử lý</option>
+                                                    <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Đã hoàn thành</option>
+                                                    <option value="2" {{ request('status') === '2' ? 'selected' : '' }}>Đã hủy</option>
+                                                </select>
                                                 <div class="admin-search-box">
                                                     <input type="text" class="form-control admin-search-input" name="search"
                                                         value="{{ request('search') }}" placeholder="Tìm kiếm... (Enter)">
@@ -73,15 +79,36 @@
                                                         @endphp
                                                         <td class="text-end fw-bold text-dark">{{ $totalPrice }}</td>
                                                         <td class="text-center">
-                                                            @if ($item->status == 1)
-                                                                <a href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $item->uuid_order_status, 'status' => 0, 'name' => 'status']) }}"
-                                                                    onclick="return confirm('Xác nhận tắt kích hoạt {{ $nameItem }} ?')"
-                                                                    class="badge bg-success-subtle text-success px-2 py-1 text-uppercase text-decoration-none">Active</a>
-                                                            @else
-                                                                <a href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $item->uuid_order_status, 'status' => 1, 'name' => 'status']) }}"
-                                                                    onclick="return confirm('Xác nhận kích hoạt {{ $nameItem }} ?')"
-                                                                    class="badge bg-danger-subtle text-danger px-2 py-1 text-uppercase text-decoration-none">Block</a>
-                                                            @endif
+                                                            <div class="dropdown d-inline-block">
+                                                                <button class="btn btn-sm dropdown-toggle py-1 px-2 fs-11 rounded-2 border-0
+                                                                    {{ $item->status == 1 ? 'bg-success-subtle text-success' : ($item->status == 2 ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning') }}"
+                                                                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    @if ($item->status == 1)
+                                                                        <i class="ri-checkbox-circle-line me-1"></i>Hoàn thành
+                                                                    @elseif ($item->status == 2)
+                                                                        <i class="ri-close-circle-line me-1"></i>Đã hủy
+                                                                    @else
+                                                                        <i class="ri-time-line me-1"></i>Chờ xử lý
+                                                                    @endif
+                                                                </button>
+                                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-12 py-1">
+                                                                    <li>
+                                                                        <a class="dropdown-item text-warning py-1" href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $item->uuid_order_status, 'status' => 0, 'field' => 'status']) }}">
+                                                                            <i class="ri-time-line me-1"></i> Chờ xử lý
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item text-success py-1" href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $item->uuid_order_status, 'status' => 1, 'field' => 'status']) }}">
+                                                                            <i class="ri-checkbox-circle-line me-1"></i> Hoàn thành
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item text-danger py-1" href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $item->uuid_order_status, 'status' => 2, 'field' => 'status']) }}">
+                                                                            <i class="ri-close-circle-line me-1"></i> Đã hủy
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </td>
                                                         <td class="text-center text-muted fs-12">
                                                             {{ $item->created_at ? date('d/m/Y', strtotime($item->created_at)) : '--' }}

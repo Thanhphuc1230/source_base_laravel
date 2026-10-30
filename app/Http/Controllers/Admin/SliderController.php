@@ -77,7 +77,7 @@ class SliderController extends BaseController
         return $request->has('return_back') ? back() : ($request->has('return_list') ? $this->route_admin('index') : null);
     }
 
-    public function edit($uuid, $currentPage)
+    public function edit($uuid, $currentPage = 1)
     {
         $slider = $this->sliderRepository->findByUuid($uuid);
 

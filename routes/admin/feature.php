@@ -11,7 +11,7 @@ Route::controller(FeatureController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:feature.create');
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:feature.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:feature.create');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:feature.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:feature.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:feature.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:feature.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:feature.delete');

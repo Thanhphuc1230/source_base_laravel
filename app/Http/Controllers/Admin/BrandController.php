@@ -89,7 +89,7 @@ class BrandController extends BaseController
         return $this->route_admin('index', [], [], $request->input('currentPage'));
     }
 
-    public function edit($uuid, $currentPage)
+    public function edit($uuid, $currentPage = 1)
     {
         return $this->performEdit($uuid, $currentPage);
     }

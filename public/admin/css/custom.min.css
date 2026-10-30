@@ -1,3 +1,60 @@
+/* Ensure standard unified font across all admin pages */
+:root {
+    --vz-font-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --vz-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+body, .page-content, h1, h2, h3, h4, h5, h6, .card-title, .counter-value {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+/* ========================================================
+   DASHBOARD COMPACT & BALANCED UI STANDARD
+   ======================================================== */
+.dashboard-card {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.2s ease-in-out;
+}
+.dashboard-card:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+.dashboard-card .card-header {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 0.75rem 1rem !important;
+}
+.table-dashboard {
+    table-layout: fixed !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+}
+.table-dashboard th,
+.table-dashboard td {
+    padding: 0.5rem 0.75rem !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+.table-dashboard thead th {
+    background-color: #f8fafc !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+    color: #64748b !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding-top: 0.6rem !important;
+    padding-bottom: 0.6rem !important;
+}
+.table-dashboard tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+.table-dashboard tbody tr:last-child {
+    border-bottom: none !important;
+}
+
 /* Fix CKEditor vỡ hiển thị trong Bootstrap tab ẩn của localized fields */
 .tab-content-localized > .tab-pane:not(.active) {
     display: block !important;

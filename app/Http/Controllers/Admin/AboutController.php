@@ -58,7 +58,7 @@ class AboutController extends BaseController
         return redirect()->route('admin.about.edit', ['uuid' => $about->uuid, 'page' => 1]);
     }
 
-    public function edit($uuid, $currentPage)
+    public function edit($uuid, $currentPage = 1)
     {
         $about = $this->aboutRepository->findByUuid($uuid);
 

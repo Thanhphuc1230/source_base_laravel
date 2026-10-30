@@ -11,7 +11,7 @@ Route::controller(CateNewController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:cate_news.create');
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:cate_news.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:cate_news.create');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:cate_news.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:cate_news.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:cate_news.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:cate_news.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:cate_news.delete');

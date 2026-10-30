@@ -10,10 +10,35 @@
             <div class="row">
                 <div class="col-xxl-12">
                     <div class="card">
-                        <div class="card-header align-items-center d-flex">
-                            <h4 class="card-title mb-0 flex-grow-1">Thông tin đơn hàng của {{ $user_order->f_name_order }}
+                        <div class="card-header align-items-center d-flex justify-content-between flex-wrap gap-2">
+                            <h4 class="card-title mb-0">Thông tin đơn hàng của {{ $user_order->f_name_order }}
                                 {{ $user_order->l_name_order }}
                             </h4>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fs-12 text-muted me-1">Trạng thái hiện tại:</span>
+                                @if ($user_order->status == 1)
+                                    <span class="badge bg-success-subtle text-success fs-12 px-2 py-1">
+                                        <i class="ri-checkbox-circle-line me-1"></i>Đã hoàn thành
+                                    </span>
+                                @elseif ($user_order->status == 2)
+                                    <span class="badge bg-danger-subtle text-danger fs-12 px-2 py-1">
+                                        <i class="ri-close-circle-line me-1"></i>Đã hủy
+                                    </span>
+                                @else
+                                    <span class="badge bg-warning-subtle text-warning fs-12 px-2 py-1">
+                                        <i class="ri-time-line me-1"></i>Chờ xử lý
+                                    </span>
+                                @endif
+                                <div class="btn-group btn-group-sm ms-2">
+                                    <a href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $user_order->uuid_order_status, 'status' => 0, 'field' => 'status']) }}"
+                                        class="btn btn-outline-warning {{ $user_order->status == 0 ? 'active' : '' }}">Chờ xử lý</a>
+                                    <a href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $user_order->uuid_order_status, 'status' => 1, 'field' => 'status']) }}"
+                                        class="btn btn-outline-success {{ $user_order->status == 1 ? 'active' : '' }}">Hoàn thành</a>
+                                    <a href="{{ route('admin.' . $nameClass . '.status', ['uuid' => $user_order->uuid_order_status, 'status' => 2, 'field' => 'status']) }}"
+                                        class="btn btn-outline-danger {{ $user_order->status == 2 ? 'active' : '' }}"
+                                        onclick="return confirm('Bạn có chắc muốn chuyển trạng thái Đã hủy cho đơn hàng này?')">Hủy đơn</a>
+                                </div>
+                            </div>
                         </div><!-- end card header -->
 
                         <div class="card-body">

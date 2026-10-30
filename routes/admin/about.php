@@ -8,6 +8,6 @@ Route::controller(AboutController::class)
     ->name('about.')
     ->group(function () {
         Route::get('/', 'index')->name('index')->middleware('permission:about.view');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:about.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:about.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:about.edit');
     });

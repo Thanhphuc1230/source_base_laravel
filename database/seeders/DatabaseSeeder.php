@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SliderSeeder::class);
         $this->call(AboutSeeder::class);
         $this->call(AnalyticSeeder::class);
+        $this->call(OrderSeeder::class);
         $this->call(InteriorArchitectureSeeder::class);
     }
 }

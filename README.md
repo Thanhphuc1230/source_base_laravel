@@ -1,126 +1,161 @@
-# Laravel Base Source & Admin System
+# Enterprise Laravel Base Foundation & AI-Ready Admin System
 
-> Hệ thống quản trị và mã nguồn nền tảng (Base Source) Laravel hiện đại theo kiến trúc Layered (`Controller → Service → Repository → Model`), UI/UX chuẩn Modern Premium Retail, tích hợp Multi-Agent AI Squad (`.agents/`) và quy chuẩn Zero-Hardcode.
+[![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/Thanhphuc1230/source_base_laravel/actions)
+[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D%208.2-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel Framework](https://img.shields.io/badge/Laravel-10.x-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![Code Style](https://img.shields.io/badge/Code%20Style-Laravel%20Pint-00D2B4)](https://github.com/laravel/pint)
+[![Architecture](https://img.shields.io/badge/Architecture-4--Tier%20Layered-blue)](./.agents/architecture.md)
+[![AI Engineering Squad](https://img.shields.io/badge/AI%20Squad-4%20Specialists-8A2BE2)](./.agents/AGENTS.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
+> **Live Documentation & Interactive Guide:** [https://thanhphuc1230.github.io/source_base_laravel/](https://thanhphuc1230.github.io/source_base_laravel/)  
+> **Repository:** [https://github.com/Thanhphuc1230/source_base_laravel](https://github.com/Thanhphuc1230/source_base_laravel)
 
 ---
 
-## 🏗️ 1. Kiến Trúc Phân Tầng (Layered Architecture)
+### What is this repository?
+A production-ready, enterprise-grade Laravel foundation engineered for high-performance ecommerce, corporate portals, and modern retail platforms. Designed specifically for software agencies, SaaS founders, and development teams who demand uncompromising code standards and zero technical debt.
+
+### Core Highlights
+* **Strict 4-Tier Layered Architecture**: Unidirectional flow (`Controller → Service → Repository → Model`) ensuring single responsibility, clean transactions, and clean testing.
+* **17 Enforced Engineering Rules**: Zero-Hardcode policy, Zero-CDN offline assets, Redis query optimization, and unified media storage.
+* **AI-Ready Codebase & Multi-Agent Squad**: Integrated `.agents/` squad (Lead Orchestrator, Backend Architect, Frontend Specialist, QA Inspector) with single-command context packing via Repomix.
+* **Automated Self-Testing Loop**: Built-in 4-step autonomous test loop (Syntax, Interface Contracts, Runtime Execution via CLI, and Cache Clearing) to eliminate user-facing bugs.
+
+---
+
+## 📸 Admin Dashboard Overview
+
+| Real-Time Business & Revenue Dashboard |
+| :---: |
+| ![Dashboard Overview](docs/images/dashboard-overview.png) |
+
+| Operational Warnings & Stock Health | Top Selling Products & Order Stream |
+| :---: | :---: |
+| ![Operational Warnings](docs/images/dashboard-analytics.png) | ![Top Selling Products](docs/images/dashboard-orders.png) |
+
+---
+
+## 🏗️ 1. Layered Architecture
 
 ```text
 HTTP Request ──► Controller ──► Service ──► Repository ──► Model (Eloquent) ──► Database
                       │             │
                       ▼             ▼
-              Validation / JSON   Business Logic, Cache, Upload WebP
+              Validation / JSON   Business Logic, DB Transactions, WebP Processing, Cache
 ```
 
-* **Controller**: Chỉ tiếp nhận Request, gọi Service và trả về Response/View. Không viết SQL query.
-* **Service**: Xử lý toàn bộ nghiệp vụ, transaction, cache Redis, email, xử lý ảnh.
-* **Repository**: Đảm nhiệm truy vấn Eloquent DB qua Interface.
-* **Model**: Khai báo Trait (`AutoImagePathsTrait`, `SlugHandlerTrait`), Accessor đa ngôn ngữ.
+* **Controller**: Responsible only for handling incoming HTTP requests, delegating to Service classes, and returning clean View/JSON responses. Raw database queries in controllers are strictly prohibited.
+* **Service Layer**: Houses core business workflows, database transactions (`DB::transaction`), Redis cache orchestration, and automated image/media transformations.
+* **Repository Layer**: Implements interface contracts (`RepositoryInterface`) for encapsulated, reusable Eloquent queries.
+* **Model Layer**: Defines relationships, fillables, casting, and model traits (`AutoImagePathsTrait`, `SlugHandlerTrait`).
 
 ---
 
-## 📌 2. 17 Quy Tắc Cốt Lõi Dự Án
+## 📌 2. The 17 Core Engineering Rules
 
-| STT | Quy tắc | Tóm tắt yêu cầu |
+Every change in this codebase adheres strictly to the 17 platform rules defined in [`.agents/AGENTS.md`](./.agents/AGENTS.md):
+
+| # | Rule Name | Description & Requirement |
 |:---:|---|---|
-| **01** | **Zero-Hardcode** | Dùng biến động 100% từ `$web` (`name_vn`, `phone`, `email`, `logo`, `map`, `zalo`...). |
-| **02** | **Layered Architecture** | Nghiêm cấm query DB trong Controller; tuân thủ Controller → Service → Repository. |
-| **03** | **Blade Components** | Admin dùng 100% components (`table-wrapper`, `table-switch`, `localized-fields`...). |
-| **04** | **Cache Discipline** | Xóa cache sau mọi thay đổi: `php artisan optimize:clear`. |
-| **05** | **Modern UI/UX** | Giao diện chuẩn Modern Premium; padding section `py-[15px]`; mobile chia 2 cột (`grid-cols-2`). |
-| **06** | **Zero-CDN** | 100% assets (JS, CSS, Font, Icons) lưu trữ cục bộ trong `public/`. |
-| **07** | **No Inline CSS/JS** | Không viết `<style>`, `<script>` tĩnh hay `style="..."` trong Blade. |
-| **08** | **Controlled Git Commit** | Không tự ý commit; commit theo yêu cầu đơn lẻ và luôn hỏi lại ở task tiếp theo. |
-| **09** | **Topic Rebuild** | Khi đổi ngành hàng: bắt buộc chạy `php artisan site:rebuild --topic="<tên_topic>"` đầu tiên. |
-| **10** | **Tập trung Asset** | Gom JS vào `main.js`, CSS vào `theme-style.css`, nút nổi vào `contact_buttons.blade.php`. |
-| **11** | **English Commits & Code** | 100% comment và commit message bằng tiếng Anh chuẩn Conventional Commits. |
-| **12** | **Unified Media** | Lưu trực tiếp tại `public/uploads/{module}/`; preview video lấy frame tại `#t=0.5`. |
-| **13** | **Modern Admin UI** | Controls cao 38px, icon action ghost buttons 32x32px, status switch đồng nhất xanh Primary. |
-| **14** | **Redis & Query Optimize**| Kích hoạt Redis cache; lọc danh mục phân cấp tối ưu `whereIn`, bỏ `orderBy` thừa. |
-| **15** | **Strict Verification** | Tham khảo pattern cũ; kiểm thử cú pháp và route thực tế trước khi báo hoàn thành. |
-| **16** | **Instant Routing Map** | Tra cứu ngay [`.agents/codebase-matrix.md`](./.agents/codebase-matrix.md); cấm quét tìm file mò mẫm. |
-| **17** | **Self-Testing Loop** | Tự động chạy Test Loop 4 bước (Syntax, Contract, Runtime, Cache). Cấm để user debug. |
+| **01** | **Zero-Hardcode** | 100% of visible content is dynamically managed via DB and Admin (`$web`, `$product`, `$news`). Static text in Blade is forbidden. |
+| **02** | **Layered Architecture** | No database queries in Controllers. Follows `Controller → Service → Repository → Model`. |
+| **03** | **Blade Components** | Admin uses reusable Blade components (`<x-admin.table-wrapper>`, `<x-admin.table-switch>`, `<x-admin.localized-fields>`). |
+| **04** | **Cache Discipline** | Clear cache after code or config updates: `php artisan optimize:clear`. |
+| **05** | **Anti-AI Design System** | Clean, realistic layouts (60/40 splits, spec tables, CTA bands); no generic pastel badges; mobile 2-column grid. |
+| **06** | **Zero-CDN** | All assets (fonts, icons, JS, CSS) must be stored locally in `public/` for offline resilience. |
+| **07** | **Separation of Concerns** | No inline styles or script tags in Blade files. All CSS lives in `theme-style.css`, and JS lives in `main.js`. |
+| **08** | **Controlled Git Commits** | Commits require explicit user authorization. Conventional Commits in English only. |
+| **09** | **Topic Rebuild** | Change niche/topic seamlessly using `php artisan site:rebuild --topic="<name>"`. |
+| **10** | **Asset Concentration** | No scattered CSS/JS snippet files. Shared widgets live in `contact_buttons.blade.php`. |
+| **11** | **English Code & Commits** | All code comments and Git commit messages must be in English. |
+| **12** | **Unified Media Storage** | All media uploads are stored in `public/uploads/{module}/`. Videos use `#t=0.5` thumbnail frame previews. |
+| **13** | **Modern Admin UI Standards** | Uniform 38px controls height, 32x32px ghost action buttons, single primary accent switches. |
+| **14** | **Redis & Query Optimization** | Redis caching enabled. Hierarchy queries use optimized `whereIn` without redundant `orderBy`. |
+| **15** | **Pattern Reference & Verification** | Reference existing modules before writing new code. Verify syntax and routes before completion. |
+| **16** | **Instant Codebase Routing** | Locate files immediately using [`.agents/codebase-matrix.md`](./.agents/codebase-matrix.md) without blind recursive scanning. |
+| **17** | **Autonomous Self-Testing Loop** | Mandatory 4-step test verification (Syntax, Interface Contract, Runtime Execution, Cache Clear) prior to turn delivery. |
 
 ---
 
-## 💡 3. Hướng Dẫn Ra Lệnh Hiệu Quả Cho AI (Prompting Guide)
+## ⚡ 3. AI-Ready Codebase: Pack Context in One Command
 
-### 🎯 Công thức 3 thành phần chuẩn
-```text
-[Tên Module / Phạm vi] + [Hành động cụ thể] + [Quy chuẩn mong muốn]
+This codebase includes a preconfigured [`repomix.config.json`](./repomix.config.json) that packages the entire project structure and critical source files into a single, structured XML document formatted for Large Language Models (Claude, GPT-4, Gemini):
+
+### How to pack the codebase:
+```bash
+npx repomix
 ```
 
-### 📋 Mẫu lệnh thực chiến có sẵn
-* **Tạo chức năng mới kèm Vòng lặp Kiểm thử Tự thân (Rule 17 - Đề xuất số 1):**
-  > *"Xây dựng module/tính năng `[Tên tính năng]` theo kiến trúc Layered 6 tầng. Bắt buộc kích hoạt Rule 17 (Autonomous Self-Testing Loop): Tự chạy kiểm thử cú pháp, interface contract, test runtime qua tinker CLI với mock data; nếu gặp lỗi phải tự động sửa và lặp lại kiểm thử cho đến khi pass 100% mới được báo hoàn thành, tuyệt đối không để user debug."*
-* **Frontend Theme (Trang chủ/Blade):**
-  > *"Trên trang chủ (module `home`): Tùy biến lại khối Sản phẩm Nổi bật theo chuẩn Modern Premium UI. Bo góc card `rounded-2xl`, shadow nhẹ, hover scale 1.03. Đảm bảo mobile 2 cột (`grid-cols-2`), dùng biến động `$web`, không inline CSS."*
-* **Thêm trường CSDL & Admin Form:**
-  > *"Module `product`: Bổ sung trường `shopee_url` (nullable). Cập nhật migration gốc, file `database/patch_schema.sql`, Model Product, Form Request và hiển thị trong tab thông tin chung của view edit Admin. Chạy test loop xác nhận trước khi bàn giao."*
-* **Đổi ngành hàng mới:**
-  > *"Chuyển website sang chủ đề Đồng hồ (`watches`). Kích hoạt skill theme-rebuild và đồng bộ lại màu sắc trong `theme-style.css`."*
-* **Sửa Logic Backend / Service:**
-  > *"Module `cart`: Cập nhật logic tính phí ship trong CartService miễn phí cho đơn trên 1.000.000đ. Tuân thủ Layered Architecture, không viết trong Controller."*
-* **Kiểm thử chất lượng (QA):**
-  > *"Đóng vai QA Inspector: Quét Zero-Hardcode toàn bộ view `resources/views/frontend/` và kiểm tra route `php artisan route:list`."*
+### Why it matters:
+* **Instant Comprehension**: Feeds your LLM the exact architectural matrix, contracts, and patterns in 1-2 seconds.
+* **Zero Noise**: Automatically filters out `vendor/`, `node_modules/`, `public/uploads/`, and temporary build artifacts.
+* **Ready-to-Use Prompt Example**:
+  > `@[repomix-output.xml] Analyze the checkout transaction pipeline in CheckoutService and verify that inventory stock decrementing is fully wrapped in DB::transaction.`
 
 ---
 
-## ⚡ 4. Đóng Gói Codebase Tức Thì Cho AI (Repomix)
+## 🔧 4. Installation & Quick Start
 
-Dự án đã tích hợp sẵn cấu hình [`repomix.config.json`](./repomix.config.json) giúp nén toàn bộ 400+ file mã nguồn cốt lõi thành 1 file XML duy nhất (đã tự động lọc `vendor/`, `node_modules/`, `uploads/`, `logs`):
+### Prerequisites
+* PHP >= 8.2 with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `gd` or `imagick`, `redis` extensions
+* MySQL >= 8.0
+* Composer >= 2.x
 
-1. **Chạy lệnh đóng gói:**
-   ```bash
-   npx repomix
-   ```
-2. **Ra lệnh cho AI kèm file nén (Đọc hiểu 100% trong 1-2 giây):**
-   > `@[repomix-output.xml] hãy phân tích logic giỏ hàng và đề xuất phương án tối ưu giúp tôi`
-
-> [!TIP]
-> **Dọn dẹp ngữ cảnh khi chat lâu:** Gõ lệnh `/compact` trong phiên chat để giải phóng bộ nhớ đệm, giúp AI tăng tốc độ xử lý gấp 2-3 lần.
-
----
-
-## 🔧 5. Cài Đặt & Lệnh Thường Dùng
-
+### Step-by-Step Setup
 ```bash
-# 1. Khởi tạo môi trường
+# 1. Clone the repository
+git clone https://github.com/Thanhphuc1230/source_base_laravel.git
+cd source_base_laravel
+
+# 2. Install PHP dependencies
 composer install
+
+# 3. Environment configuration
 cp .env.example .env
 php artisan key:generate
 
-# 2. Khởi tạo Database & Seed dữ liệu mẫu theo chủ đề (Ví dụ: watches / travel / cosmetics)
+# 4. Database configuration: Edit DB_* credentials in .env, then seed topic data
 php artisan site:rebuild --topic="watches"
 
-# 3. Làm sạch toàn bộ slug thừa trong CSDL về chuẩn SEO
-php artisan slug:clean
-
-# 4. Xóa cache hệ thống
+# 5. Optimize and clear cache
 php artisan optimize:clear
 
-# 5. Đóng gói mã nguồn cho AI
-npx repomix
-
-# 6. Khởi chạy Server
+# 6. Start local development server
 php artisan serve
 ```
 
 ---
 
-## 🔑 6. Tài Khoản Quản Trị Mặc Định
+## 🔑 5. Default Administrative Access (Demo Seed Only)
 
-Đường dẫn: `/admin/login`
+> ⚠️ **DEMO SEED CREDENTIALS (CHANGE IN PRODUCTION)**:  
+> The accounts below are generated exclusively by database seeders for local development, automated testing, and demonstration. **You MUST change these credentials or purge demo accounts immediately before deploying to any production environment.** These credentials must never be used in any live or public-facing deployment.
 
-| Vai trò | Email | Mật khẩu | Quyền hạn |
+* **Login URL:** `/admin/login`
+
+| Role | Demo Seed Email | Demo Seed Password | Permissions Scope |
 |---|---|---|---|
-| **Admin** | `admin@gmail.com` | `@admin123` | Toàn quyền hệ thống (61 permissions) |
-| **Manager** | `manager@gmail.com` | `@manager123` | Quản lý nội dung & sản phẩm |
-| **Editor** | `editor@gmail.com` | `@editor123` | Biên tập tin tức & trang tĩnh |
+| **Super Admin** | `admin@gmail.com` | `@admin123` | Full system access (All 61 permissions) |
+| **Content Manager** | `manager@gmail.com` | `@admin123` | Catalog, inventory, and order operations |
+| **Staff / Editor** | `staff@gmail.com` | `@admin123` | News articles, static pages, and media |
+
+*Note: Demo seed credentials, change in production.*
 
 ---
 
-## 📄 Bản Quyền & Tham Khảo
-* **License**: MIT License.
-* **Hệ thống AI Multi-Agent**: Chi tiết tại thư mục [`.agents/`](./.agents/AGENTS.md).
+## 👥 6. The Multi-Agent AI Engineering Squad
+
+Located in the [`.agents/`](./.agents/) directory, the squad provides dedicated role definitions and skills:
+
+* **[Lead Orchestrator](.agents/roles/orchestrator.md)**: Task decomposition, cross-specialist coordination, and Git control (Rule 8).
+* **[Backend Architect](.agents/roles/backend-architect.md)**: Layered architecture, DB migrations, repositories, and cache strategy.
+* **[Frontend Specialist](.agents/roles/frontend-specialist.md)**: Blade views, responsive design (Mobile 2-column grid), Zero-CDN, and anti-AI styling.
+* **[QA Inspector](.agents/roles/qa-inspector.md)**: Zero-Hardcode scanner, route integrity checks, and media asset validation.
+
+---
+
+## 📄 License & Attribution
+
+This project is open-source software licensed under the [MIT License](https://opensource.org/licenses/MIT).
+Created & maintained by [Thanh Phuc](https://github.com/Thanhphuc1230).

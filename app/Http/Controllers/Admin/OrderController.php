@@ -46,7 +46,7 @@ class OrderController extends BaseController
             )
             ->orderBy('tp_order_status.created_at', 'desc');
 
-        if ($request->has('search')) {
+        if ($request->has('search') && !empty($request->input('search'))) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('tp_order_shipping.email', 'LIKE', "%{$searchTerm}%")
@@ -55,6 +55,10 @@ class OrderController extends BaseController
                     ->orWhere('tp_order_shipping.l_name_order', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('tp_order_status.uuid_order_status', 'LIKE', "%{$searchTerm}%");
             });
+        }
+
+        if ($request->has('status') && $request->input('status') !== null && $request->input('status') !== '') {
+            $query->where('tp_order_status.status', $request->input('status'));
         }
 
         $data['list'] = $query->paginate(10);
@@ -77,8 +81,17 @@ class OrderController extends BaseController
         $orderStatus->$field = $status;
         $orderStatus->save();
 
-        $mess = $status == 1 ? 'Kích hoạt' : 'Tắt';
-        toast($mess.' '.$this->nameItem.' thành công', 'success');
+        // Flush dashboard cache so stats update immediately
+        try {
+            app(\App\Services\DashboardService::class)->flushCache();
+        } catch (\Throwable $e) {}
+
+        $mess = match ((int) $status) {
+            1 => 'Chuyển trạng thái đơn hàng sang: Hoàn thành',
+            2 => 'Chuyển trạng thái đơn hàng sang: Đã hủy',
+            default => 'Chuyển trạng thái đơn hàng sang: Chờ xử lý',
+        };
+        toast($mess, 'success');
 
         return redirect()->back();
     }
@@ -143,6 +156,10 @@ class OrderController extends BaseController
             DB::table('tp_order_shipping')
                 ->where('id_order_shipping', $orderStatus->shipping_id)
                 ->delete();
+
+            try {
+                app(\App\Services\DashboardService::class)->flushCache();
+            } catch (\Throwable $e) {}
 
             toast('Xóa '.$this->nameItem.' thành công', 'success');
 

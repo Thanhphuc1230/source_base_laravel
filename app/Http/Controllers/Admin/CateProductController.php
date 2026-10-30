@@ -100,7 +100,7 @@ class CateProductController extends BaseController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($uuid, $currentPage)
+    public function edit($uuid, $currentPage = 1)
     {
         $category = $this->cateProductRepository->findByUuid($uuid);
 

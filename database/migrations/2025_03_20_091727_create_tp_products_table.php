@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('intro_en')->nullable();
             $table->decimal('price', 15, 0);
             $table->decimal('price_old', 15, 0)->nullable();
+            $table->integer('quantity')->default(50);
             $table->longText('content_vn');
             $table->longText('content_en')->nullable();
             $table->string('image_vn')->nullable();
@@ -47,6 +48,7 @@ return new class extends Migration
             $table->index('created_at');
             $table->index(['category_id', 'created_at']);
             $table->index(['category_id', 'status', 'created_at']);
+            $table->index(['quantity', 'status']);
 
             // Composite indexes for frontend route & display
             $table->index(['status', 'slug_vn']);

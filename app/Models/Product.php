@@ -39,6 +39,7 @@ class Product extends Model
         'description_en',
         'category_id',
         'brand_id',
+        'quantity',
         'status',
         'hot',
         'home',
@@ -96,9 +97,26 @@ class Product extends Model
         'hot' => 'boolean',
         'home' => 'boolean',
         'sale' => 'boolean',
+        'quantity' => 'integer',
         'price' => 'decimal:2',
         'price_old' => 'decimal:2',
     ];
+
+    /**
+     * Scope query for low stock products.
+     */
+    public function scopeLowStock($query, int $threshold = 5)
+    {
+        return $query->where('status', true)->where('quantity', '<=', $threshold);
+    }
+
+    /**
+     * Scope query for out of stock products.
+     */
+    public function scopeOutOfStock($query)
+    {
+        return $query->where('status', true)->where('quantity', '<=', 0);
+    }
 
     public function cate()
     {

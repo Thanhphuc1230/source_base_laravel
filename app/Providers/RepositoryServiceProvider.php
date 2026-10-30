@@ -27,6 +27,7 @@ use App\Repositories\Eloquent\SystemRepository;
 use App\Repositories\Eloquent\UserRepository;
 use App\Repositories\Eloquent\MediaRepository;
 use App\Repositories\Eloquent\ActivityLogRepository;
+use App\Repositories\Eloquent\DashboardRepository;
 use App\Repositories\Interfaces\AboutRepositoryInterface;
 use App\Repositories\Interfaces\SiteSettingRepositoryInterface;
 use App\Repositories\Interfaces\BrandRepositoryInterface;
@@ -48,6 +49,7 @@ use App\Repositories\Interfaces\ProjectRepositoryInterface;
 use App\Repositories\Interfaces\SliderRepositoryInterface;
 use App\Repositories\Interfaces\MediaRepositoryInterface;
 use App\Repositories\Interfaces\ActivityLogRepositoryInterface;
+use App\Repositories\Interfaces\DashboardRepositoryInterface;
 use App\Repositories\Interfaces\CateServiceRepositoryInterface;
 use App\Repositories\Interfaces\ServiceRepositoryInterface;
 use App\Repositories\Interfaces\CateProjectRepositoryInterface;
@@ -90,6 +92,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(MediaRepositoryInterface::class, MediaRepository::class);
         $this->app->bind(SiteSettingRepositoryInterface::class, SiteSettingRepository::class);
         $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
+        $this->app->bind(DashboardRepositoryInterface::class, DashboardRepository::class);
 
         // Services
         $this->app->bind(SlugResolutionService::class, SlugResolutionService::class);

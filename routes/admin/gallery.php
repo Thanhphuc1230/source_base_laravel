@@ -11,7 +11,7 @@ Route::controller(GalleryController::class)
         Route::get('/create', 'create')->name('create')->middleware('permission:gallery.create');
         Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:gallery.edit');
         Route::post('/store', 'store')->name('store')->middleware('permission:gallery.create');
-        Route::get('/edit/{uuid}/{page}', 'edit')->name('edit')->middleware('permission:gallery.edit');
+        Route::get('/edit/{uuid}/{page?}', 'edit')->name('edit')->middleware('permission:gallery.edit');
         Route::post('/update/{uuid}', 'update')->name('update')->middleware('permission:gallery.edit');
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:gallery.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:gallery.delete');

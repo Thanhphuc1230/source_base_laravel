@@ -11,6 +11,10 @@ class OrderStatus extends Model
 {
     use BaseLogsActivity, Cachable, HasFactory;
 
+    const STATUS_PENDING = 0;
+    const STATUS_COMPLETED = 1;
+    const STATUS_CANCELLED = 2;
+
     protected $table = 'tp_order_status';
 
     protected $primaryKey = 'id_order_status';
@@ -20,12 +24,46 @@ class OrderStatus extends Model
         'shipping_id',
         'payment_method',
         'total',
+        'status',
     ];
 
     protected $casts = [
-        'status' => 'boolean',
+        'status' => 'integer',
         'total' => 'decimal:2',
     ];
+
+    /**
+     * Scope query for pending orders.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('tp_order_status.status', self::STATUS_PENDING);
+    }
+
+    /**
+     * Scope query for completed orders.
+     */
+    public function scopeCompleted($query)
+    {
+        return $query->where('tp_order_status.status', self::STATUS_COMPLETED);
+    }
+
+    /**
+     * Scope query for cancelled orders.
+     */
+    public function scopeCancelled($query)
+    {
+        return $query->where('tp_order_status.status', self::STATUS_CANCELLED);
+    }
+
+    /**
+     * Scope query for overdue pending orders (> X hours).
+     */
+    public function scopeOverduePending($query, int $hours = 24)
+    {
+        return $query->where('tp_order_status.status', self::STATUS_PENDING)
+            ->where('tp_order_status.created_at', '<', now()->subHours($hours));
+    }
 
     /**
      * Get the shipping information for this order
