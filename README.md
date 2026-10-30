@@ -1,8 +1,9 @@
 # Enterprise Laravel Base Foundation & AI-Ready Admin System
 
 [![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=github-actions&logoColor=white)](https://github.com/Thanhphuc1230/source_base_laravel/actions)
-[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D%208.2-777BB4?logo=php&logoColor=white)](https://www.php.net/)
-[![Laravel Framework](https://img.shields.io/badge/Laravel-10.x-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![PHP Version](https://img.shields.io/badge/PHP-%3E%3D%208.3-777BB4?logo=php&logoColor=white)](https://www.php.net/)
+[![Laravel Framework](https://img.shields.io/badge/Laravel-12.x-FF2D20?logo=laravel&logoColor=white)](https://laravel.com/)
+[![Security](https://img.shields.io/badge/Security-0%20Vulnerabilities-success?logo=dependabot&logoColor=white)](https://github.com/Thanhphuc1230/source_base_laravel/security/dependabot)
 [![Code Style](https://img.shields.io/badge/Code%20Style-Laravel%20Pint-00D2B4)](https://github.com/laravel/pint)
 [![Architecture](https://img.shields.io/badge/Architecture-4--Tier%20Layered-blue)](./.agents/architecture.md)
 [![AI Engineering Squad](https://img.shields.io/badge/AI%20Squad-4%20Specialists-8A2BE2)](./.agents/AGENTS.md)
@@ -98,7 +99,7 @@ npx repomix
 ## 🔧 4. Installation & Quick Start
 
 ### Prerequisites
-* PHP >= 8.2 with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `gd` or `imagick`, `redis` extensions
+* PHP >= 8.3 with `pdo_mysql`, `mbstring`, `openssl`, `curl`, `gd` or `imagick`, `redis` extensions
 * MySQL >= 8.0
 * Composer >= 2.x
 
