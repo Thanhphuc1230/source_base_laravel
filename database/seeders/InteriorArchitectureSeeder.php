@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use App\Models\System;
 use App\Models\About;
@@ -24,7 +25,7 @@ class InteriorArchitectureSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Schema::disableForeignKeyConstraints();
 
         // =========================================================================
         // 1. CẬP NHẬT HỆ THỐNG (tp_systems) - ZERO HARDCODE BASE BRANDING
@@ -311,6 +312,19 @@ class InteriorArchitectureSeeder extends Seeder
         // =========================================================================
         // 5. BỘ SƯU TẬP SẢN PHẨM NỘI THẤT (tp_cate_products & tp_products)
         // =========================================================================
+        // Clean child order tables first to preserve FK integrity across all DB drivers
+        if (Schema::hasTable('tp_order_status')) {
+            DB::table('tp_order_status')->truncate();
+        }
+        if (Schema::hasTable('tp_order_product')) {
+            DB::table('tp_order_product')->truncate();
+        }
+        if (Schema::hasTable('tp_orders')) {
+            DB::table('tp_orders')->truncate();
+        }
+        if (Schema::hasTable('tp_order_shipping')) {
+            DB::table('tp_order_shipping')->truncate();
+        }
         DB::table('tp_products')->truncate();
         DB::table('tp_cate_products')->truncate();
 
@@ -746,6 +760,6 @@ class InteriorArchitectureSeeder extends Seeder
             'stt' => 7,
         ]);
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        Schema::enableForeignKeyConstraints();
     }
 }

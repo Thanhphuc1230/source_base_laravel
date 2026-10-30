@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -58,8 +59,10 @@ return new class extends Migration
             $table->index(['status', 'category_id']);
             $table->index(['created_at', 'status']);
 
-            // Fulltext search for high-volume catalog lookup
-            $table->fullText(['name_vn', 'name_en']);
+            // Fulltext search for high-volume catalog lookup (MySQL/PostgreSQL)
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->fullText(['name_vn', 'name_en']);
+            }
         });
     }
 
