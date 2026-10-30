@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CateNewController;
 use App\Models\CateNew;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CateNewControllerTest extends TestCase
@@ -20,20 +21,20 @@ class CateNewControllerTest extends TestCase
     {
         parent::setUp();
 
-        // Create controller instance
-        $this->controller = new CateNewController;
+        // Resolve controller with dependencies from container
+        $this->controller = $this->app->make(CateNewController::class);
 
         // Create test data
         $this->cateNew = CateNew::factory()->create([
             'uuid' => 'test-uuid-123',
             'name_vn' => 'Test Category',
-            'slug' => 'test-category',
+            'slug_vn' => 'test-category',
             'status' => 1,
             'parent_id' => 0,
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_display_index_page_with_categories()
     {
         // Arrange
@@ -46,7 +47,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_search_categories_by_name()
     {
         // Arrange
@@ -59,7 +60,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_filter_categories_by_parent_id()
     {
         // Arrange
@@ -72,7 +73,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_display_create_page()
     {
         // Act
@@ -82,7 +83,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_display_edit_page()
     {
         // Arrange
@@ -96,7 +97,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_returns_error_for_nonexistent_category_in_edit()
     {
         // Arrange
@@ -110,7 +111,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_update_category_order()
     {
         // Arrange
@@ -124,7 +125,7 @@ class CateNewControllerTest extends TestCase
         $this->assertNotNull($result);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_destroy_multiple_categories()
     {
         // Arrange
