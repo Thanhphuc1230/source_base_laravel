@@ -31,57 +31,77 @@
             <div id="two-column-menu">
             </div>
             <ul class="navbar-nav" id="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('web.home') }}" target="_blank">
-                        <i class="ri-home-line"></i> <span data-key="t-widgets">Trang chủ</span>
-                    </a>
-                </li>
                 @hasPermission('analytics.view')
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.analytics.index') }}">
-                        <i class="ri-bar-chart-line"></i> <span data-key="t-widgets">Thống kê</span>
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}" href="{{ route('admin.analytics.index') }}">
+                        <i class="ri-bar-chart-line"></i> <span data-key="t-analytics">Thống kê</span>
                     </a>
                 </li>
                 @endhasPermission
+
+                <!-- Dropdown Trang chủ (Quản lý các section trang chủ) -->
+                @php
+                    $isHomeActive = request()->routeIs('admin.slider.*') ||
+                                    request()->routeIs('admin.about.*') ||
+                                    request()->routeIs('admin.feature.*') ||
+                                    request()->routeIs('admin.gallery.*') ||
+                                    request()->routeIs('admin.brand.*');
+                @endphp
+                <li class="nav-item">
+                    <a class="nav-link menu-link {{ $isHomeActive ? 'active' : '' }}" href="#sidebarHome" data-bs-toggle="collapse" role="button"
+                        aria-expanded="{{ $isHomeActive ? 'true' : 'false' }}" aria-controls="sidebarHome">
+                        <i class="ri-home-4-line"></i> <span data-key="t-home">Trang chủ</span>
+                    </a>
+                    <div class="collapse menu-dropdown {{ $isHomeActive ? 'show' : '' }}" id="sidebarHome">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a href="{{ route('web.home') }}" class="nav-link" target="_blank">
+                                    <i class="ri-external-link-line me-1"></i> Xem trang chủ
+                                </a>
+                            </li>
+                            @hasPermission('slider.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.slider.index') }}" class="nav-link {{ request()->routeIs('admin.slider.*') ? 'active' : '' }}">
+                                    Slider
+                                </a>
+                            </li>
+                            @endhasPermission
+                            @hasPermission('about.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.about.index') }}" class="nav-link {{ request()->routeIs('admin.about.*') ? 'active' : '' }}">
+                                    Giới thiệu
+                                </a>
+                            </li>
+                            @endhasPermission
+                            @hasPermission('feature.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.feature.index') }}" class="nav-link {{ request()->routeIs('admin.feature.*') ? 'active' : '' }}">
+                                    Tính năng
+                                </a>
+                            </li>
+                            @endhasPermission
+                            @hasPermission('gallery.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.gallery.index') }}" class="nav-link {{ request()->routeIs('admin.gallery.*') ? 'active' : '' }}">
+                                    Hình ảnh
+                                </a>
+                            </li>
+                            @endhasPermission
+                            @hasPermission('brand.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.brand.index') }}" class="nav-link {{ request()->routeIs('admin.brand.*') ? 'active' : '' }}">
+                                    Thương hiệu
+                                </a>
+                            </li>
+                            @endhasPermission
+                        </ul>
+                    </div>
+                </li>
+
                 @hasPermission('page.view')
                 <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.page.index') }}">
-                        <i class="ri-file-list-3-line"></i> <span data-key="t-widgets">Trang nội dung</span>
-                    </a>
-                </li>
-                @endhasPermission
-                @hasPermission('about.view')
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.about.index') }}">
-                        <i class="ri-information-line"></i> <span data-key="t-widgets">Giới thiệu</span>
-                    </a>
-                </li>
-                @endhasPermission
-                @hasPermission('slider.view')
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.slider.index') }}">
-                        <i class="ri-image-edit-line"></i> <span data-key="t-widgets">Slider</span>
-                    </a>
-                </li>
-                @endhasPermission
-                @hasPermission('gallery.view')
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.gallery.index') }}">
-                        <i class="ri-gallery-line"></i> <span data-key="t-widgets">Hình ảnh</span>
-                    </a>
-                </li>
-                @endhasPermission
-                @hasPermission('brand.view')
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.brand.index') }}">
-                        <i class="ri-building-line"></i> <span data-key="t-widgets">Thương hiệu</span>
-                    </a>
-                </li>
-                @endhasPermission
-                @hasPermission('feature.view')
-                <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('admin.feature.index') }}">
-                        <i class="ri-star-line"></i> <span data-key="t-widgets">Tính năng</span>
+                    <a class="nav-link menu-link {{ request()->routeIs('admin.page.*') ? 'active' : '' }}" href="{{ route('admin.page.index') }}">
+                        <i class="ri-file-list-3-line"></i> <span data-key="t-pages">Trang nội dung</span>
                     </a>
                 </li>
                 @endhasPermission
@@ -182,7 +202,7 @@
 
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('admin.media.index') }}">
-                        <i class="ri-folder-image-line"></i> <span data-key="t-media">Thư viện Media</span>
+                        <i class="ri-image-2-line"></i> <span data-key="t-media">Thư viện Media</span>
                     </a>
                 </li>
                 @hasAnyPermission(['contact.view', 'comment.view'])

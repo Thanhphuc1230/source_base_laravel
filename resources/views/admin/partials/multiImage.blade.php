@@ -12,7 +12,7 @@
             <p class="text-muted small mb-3">Hỗ trợ JPG, PNG, WEBP, GIF, MP4, WebM (chọn nhiều file cùng lúc, khuyến nghị ảnh: 800x800 px - 1200x1200 px tỉ lệ 1:1; tối đa 50MB/video, 10MB/ảnh).</p>
             <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
                 <button type="button" class="btn btn-primary btn-sm rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="openMediaPickerForGallery(event)">
-                    <i class="ri-folder-image-line fs-15"></i>
+                    <i class="ri-image-2-line fs-15"></i>
                     <span class="fw-semibold">Chọn từ Thư viện Media</span>
                 </button>
                 <button type="button" class="btn btn-outline-secondary btn-sm rounded-2 px-3 bg-white d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="document.getElementById('imageDetailFileInput').click();">
@@ -216,7 +216,7 @@ function syncStagedLibraryMedia() {
 
                 const badge = document.createElement('span');
                 badge.className = 'media-badge bg-primary text-white';
-                badge.innerHTML = '<i class="ri-folder-image-line me-0.5"></i> Thư viện';
+                badge.innerHTML = '<i class="ri-image-2-line me-0.5"></i> Thư viện';
                 card.appendChild(badge);
             }
 

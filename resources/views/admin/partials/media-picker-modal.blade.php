@@ -6,7 +6,7 @@
             <div class="modal-header bg-white border-bottom py-2.5 px-4 d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center gap-2">
                     <span class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-2" style="width: 32px; height: 32px;">
-                        <i class="ri-folder-image-line fs-16"></i>
+                        <i class="ri-image-2-line fs-16"></i>
                     </span>
                     <div>
                         <h6 class="modal-title fw-bold text-dark mb-0" id="mediaPickerModalLabel">Thư viện Media</h6>

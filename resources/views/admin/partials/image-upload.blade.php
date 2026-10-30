@@ -48,7 +48,7 @@
     <!-- Action Toolbar (Rule 13: 38px controls) -->
     <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
         <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="selectMediaFor_{{ $fieldName }}()">
-            <i class="ri-folder-image-line fs-15"></i>
+            <i class="ri-image-2-line fs-15"></i>
             <span class="fw-semibold">Chọn từ Thư viện</span>
         </button>
         <button type="button" class="btn btn-sm btn-outline-secondary rounded-2 px-3 d-inline-flex align-items-center gap-1.5 bg-white" style="height: 38px;" onclick="document.getElementById('{{ $inputUuid }}').click();">
