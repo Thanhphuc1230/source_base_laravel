@@ -243,7 +243,7 @@
                     </li>
                 @endhasAnyPermission
                 {{-- system --}}
-                @hasAnyPermission(['system.view', 'user.view', 'role.view'])
+                @hasAnyPermission(['system.view', 'user.view', 'role.view', 'activity_log.view'])
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#sidebarApps" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="sidebarApps">
@@ -254,12 +254,20 @@
                                 @hasPermission('system.view')
                                     <li class="nav-item">
                                         <a href="{{ route('admin.system.index') }}" class="nav-link"
-                                            data-key="t-calendar">Quản lý hệ thống
+                                             data-key="t-calendar">Quản lý hệ thống
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="{{ route('admin.system.editContact') }}" class="nav-link"
                                             data-key="t-calendar">Cấu hình liên hệ
+                                        </a>
+                                    </li>
+                                @endhasPermission
+                                @hasPermission('activity_log.view')
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.activity_log.index') }}" class="nav-link"
+                                            data-key="t-activity-log">
+                                            Nhật ký hoạt động
                                         </a>
                                     </li>
                                 @endhasPermission

@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
+use App\Traits\BaseLogsActivity;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
 {
-    use AutoImagePathsTrait, Cachable, HasFactory;
+    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory;
 
     protected $table = 'tp_news';
 

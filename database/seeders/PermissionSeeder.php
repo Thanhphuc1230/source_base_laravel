@@ -736,6 +736,19 @@ class PermissionSeeder extends Seeder
                 'group_name' => 'project',
                 'description' => 'Quyền xóa dự án'
             ],
+            // Activity Log permissions (Nhật ký hoạt động)
+            [
+                'name' => 'activity_log.view',
+                'display_name' => 'Xem nhật ký hoạt động',
+                'group_name' => 'activity_log',
+                'description' => 'Quyền xem danh sách nhật ký hoạt động hệ thống'
+            ],
+            [
+                'name' => 'activity_log.delete',
+                'display_name' => 'Xóa nhật ký hoạt động',
+                'group_name' => 'activity_log',
+                'description' => 'Quyền dọn dẹp hoặc xóa nhật ký hoạt động'
+            ],
         ];
 
         foreach ($permissions as $permission) {

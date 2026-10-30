@@ -50,4 +50,5 @@ Route::prefix('admin')
         require __DIR__.'/admin/mail-template.php';
         require __DIR__.'/admin/gallery.php';
         require __DIR__.'/admin/media.php';
+        require __DIR__.'/admin/activity-log.php';
     });

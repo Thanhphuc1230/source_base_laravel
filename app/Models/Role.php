@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\BaseLogsActivity;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model
 {
-    use Cachable, HasFactory;
+    use BaseLogsActivity, Cachable, HasFactory;
 
     protected $table = 'tp_roles';
 
