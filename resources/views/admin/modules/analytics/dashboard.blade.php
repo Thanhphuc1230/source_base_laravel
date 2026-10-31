@@ -1,6 +1,9 @@
 @extends('admin.master')
-@section('module', 'Bảng điều khiển')
-@section('action', 'Tổng quan kinh doanh & Vận hành')
+@php
+    $isEn = session('locale') === 'en';
+@endphp
+@section('module', $isEn ? 'Dashboard' : 'Bảng điều khiển')
+@section('action', $isEn ? 'Business & Operations Overview' : 'Tổng quan kinh doanh & Vận hành')
 @section('content')
 <div class="page-content">
     <div class="container-fluid">
@@ -9,14 +12,14 @@
             <div class="col-12">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div>
-                        <h4 class="fs-16 fw-bold text-dark mb-1">Tổng quan hoạt động kinh doanh</h4>
-                        <p class="text-muted fs-12 mb-0">Theo dõi doanh thu, vận hành đơn hàng và cảnh báo tồn kho thời gian thực</p>
+                        <h4 class="fs-16 fw-bold text-dark mb-1">{{ $isEn ? 'Business & Operations Overview' : 'Tổng quan hoạt động kinh doanh' }}</h4>
+                        <p class="text-muted fs-12 mb-0">{{ $isEn ? 'Real-time revenue tracking, order operations, and inventory threshold alerts' : 'Theo dõi doanh thu, vận hành đơn hàng và cảnh báo tồn kho thời gian thực' }}</p>
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <a href="{{ route('admin.analytics.index', ['refresh' => 1]) }}"
                             class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center rounded-2 px-3"
-                            style="height: 36px; font-weight: 500; font-size: 13px;" title="Làm mới bộ nhớ đệm và nạp lại dữ liệu">
-                            <i class="ri-refresh-line me-1 fs-14"></i> Làm mới dữ liệu
+                            style="height: 36px; font-weight: 500; font-size: 13px;" title="{{ $isEn ? 'Refresh cache and reload data' : 'Làm mới bộ nhớ đệm và nạp lại dữ liệu' }}">
+                            <i class="ri-refresh-line me-1 fs-14"></i> {{ $isEn ? 'Refresh Data' : 'Làm mới dữ liệu' }}
                         </a>
                     </div>
                 </div>
@@ -30,7 +33,7 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-uppercase fw-semibold text-muted fs-11">Doanh thu hôm nay</span>
+                            <span class="text-uppercase fw-semibold text-muted fs-11">{{ $isEn ? "TODAY'S REVENUE" : 'DOANH THU HÔM NAY' }}</span>
                             <div class="avatar-xs flex-shrink-0">
                                 <span class="avatar-title bg-primary-subtle text-primary rounded-2 fs-15">
                                     <i class="ri-money-dollar-circle-line"></i>
@@ -43,8 +46,8 @@
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-primary-subtle text-primary me-1 px-1.5 py-0.5">
-                                    <i class="ri-shopping-cart-2-line align-middle"></i> {{ $summary['orders_today'] }} đơn
-                                </span> mới hôm nay
+                                    <i class="ri-shopping-cart-2-line align-middle"></i> {{ $summary['orders_today'] }} {{ $isEn ? 'orders' : 'đơn' }}
+                                </span> {{ $isEn ? 'new today' : 'mới hôm nay' }}
                             </div>
                         </div>
                     </div>
@@ -56,7 +59,7 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-uppercase fw-semibold text-muted fs-11">Doanh thu tuần này</span>
+                            <span class="text-uppercase fw-semibold text-muted fs-11">{{ $isEn ? "THIS WEEK'S REVENUE" : 'DOANH THU TUẦN NÀY' }}</span>
                             <div class="avatar-xs flex-shrink-0">
                                 <span class="avatar-title bg-success-subtle text-success rounded-2 fs-15">
                                     <i class="ri-calendar-check-line"></i>
@@ -69,8 +72,8 @@
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-success-subtle text-success me-1 px-1.5 py-0.5">
-                                    <i class="ri-calendar-line align-middle"></i> {{ $summary['orders_week'] }} đơn
-                                </span> trong tuần
+                                    <i class="ri-calendar-line align-middle"></i> {{ $summary['orders_week'] }} {{ $isEn ? 'orders' : 'đơn' }}
+                                </span> {{ $isEn ? 'this week' : 'trong tuần' }}
                             </div>
                         </div>
                     </div>
@@ -82,7 +85,7 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-uppercase fw-semibold text-muted fs-11">Doanh thu tháng {{ date('m/Y') }}</span>
+                            <span class="text-uppercase fw-semibold text-muted fs-11">{{ $isEn ? 'REVENUE FOR ' . date('M Y') : 'DOANH THU THÁNG ' . date('m/Y') }}</span>
                             <div class="avatar-xs flex-shrink-0">
                                 <span class="avatar-title bg-info-subtle text-info rounded-2 fs-15">
                                     <i class="ri-line-chart-line"></i>
@@ -95,8 +98,8 @@
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-info-subtle text-info me-1 px-1.5 py-0.5">
-                                    <i class="ri-file-list-3-line align-middle"></i> {{ $summary['orders_month'] }} đơn
-                                </span> trong tháng
+                                    <i class="ri-file-list-3-line align-middle"></i> {{ $summary['orders_month'] }} {{ $isEn ? 'orders' : 'đơn' }}
+                                </span> {{ $isEn ? 'this month' : 'trong tháng' }}
                             </div>
                         </div>
                     </div>
@@ -108,7 +111,7 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-body p-3">
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="text-uppercase fw-semibold text-muted fs-11">Tổng doanh thu tích lũy</span>
+                            <span class="text-uppercase fw-semibold text-muted fs-11">{{ $isEn ? 'TOTAL ACCUMULATED REVENUE' : 'TỔNG DOANH THU TÍCH LŨY' }}</span>
                             <div class="avatar-xs flex-shrink-0">
                                 <span class="avatar-title bg-secondary-subtle text-secondary rounded-2 fs-15">
                                     <i class="ri-wallet-3-line"></i>
@@ -121,8 +124,8 @@
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-secondary-subtle text-secondary me-1 px-1.5 py-0.5">
-                                    <i class="ri-archive-line align-middle"></i> {{ $summary['orders_total'] }} đơn
-                                </span> toàn thời gian
+                                    <i class="ri-archive-line align-middle"></i> {{ $summary['orders_total'] }} {{ $isEn ? 'orders' : 'đơn' }}
+                                </span> {{ $isEn ? 'all time' : 'toàn thời gian' }}
                             </div>
                         </div>
                     </div>
@@ -137,7 +140,7 @@
                     <div class="card dashboard-card h-100 mb-0">
                         <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted fs-11 fw-medium">Đơn mới hôm nay</span>
+                                <span class="text-muted fs-11 fw-medium">{{ $isEn ? 'New Orders Today' : 'Đơn mới hôm nay' }}</span>
                                 <h4 class="fs-18 fw-bold text-dark mb-0 mt-0.5">{{ $summary['orders_today'] }}</h4>
                             </div>
                             <div class="avatar-xs flex-shrink-0">
@@ -155,7 +158,7 @@
                     <div class="card dashboard-card h-100 mb-0">
                         <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted fs-11 fw-medium">Đơn chờ xử lý</span>
+                                <span class="text-muted fs-11 fw-medium">{{ $isEn ? 'Pending Orders' : 'Đơn chờ xử lý' }}</span>
                                 <h4 class="fs-18 fw-bold text-warning mb-0 mt-0.5">{{ $summary['orders_pending'] }}</h4>
                             </div>
                             <div class="avatar-xs flex-shrink-0">
@@ -173,7 +176,7 @@
                     <div class="card dashboard-card h-100 mb-0">
                         <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted fs-11 fw-medium">Đơn đã hoàn thành</span>
+                                <span class="text-muted fs-11 fw-medium">{{ $isEn ? 'Completed Orders' : 'Đơn đã hoàn thành' }}</span>
                                 <h4 class="fs-18 fw-bold text-success mb-0 mt-0.5">{{ $summary['orders_completed'] }}</h4>
                             </div>
                             <div class="avatar-xs flex-shrink-0">
@@ -191,7 +194,7 @@
                     <div class="card dashboard-card h-100 mb-0">
                         <div class="card-body py-2 px-3 d-flex align-items-center justify-content-between">
                             <div>
-                                <span class="text-muted fs-11 fw-medium">Đơn đã hủy</span>
+                                <span class="text-muted fs-11 fw-medium">{{ $isEn ? 'Cancelled Orders' : 'Đơn đã hủy' }}</span>
                                 <h4 class="fs-18 fw-bold text-danger mb-0 mt-0.5">{{ $summary['orders_cancelled'] }}</h4>
                             </div>
                             <div class="avatar-xs flex-shrink-0">
@@ -212,10 +215,10 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title mb-0 fs-13 fw-bold text-danger d-flex align-items-center">
-                            <i class="ri-alarm-warning-line me-1.5 fs-15"></i> Cảnh báo đơn chưa xử lý quá hạn (> 24h)
+                            <i class="ri-alarm-warning-line me-1.5 fs-15"></i> {{ $isEn ? 'Overdue Pending Orders Alert (> 24h)' : 'Cảnh báo đơn chưa xử lý quá hạn (> 24h)' }}
                         </h5>
                         <span class="badge {{ $overdue_orders_count > 0 ? 'bg-danger text-white' : 'bg-light text-muted' }} rounded-2 px-2 py-0.5 fs-11">
-                            {{ $overdue_orders_count }} đơn tồn đọng
+                            {{ $overdue_orders_count }} {{ $isEn ? 'backlogged orders' : 'đơn tồn đọng' }}
                         </span>
                     </div>
                     <div class="card-body p-0">
@@ -224,10 +227,10 @@
                                 <table class="table table-dashboard table-hover align-middle">
                                     <thead>
                                         <tr>
-                                            <th style="width: 42%;" class="ps-3 text-start">Khách hàng</th>
-                                            <th style="width: 22%;" class="text-center">Thời gian chờ</th>
-                                            <th style="width: 20%;" class="text-end">Tổng tiền</th>
-                                            <th style="width: 16%;" class="text-center pe-3">Xử lý</th>
+                                            <th style="width: 42%;" class="ps-3 text-start">{{ $isEn ? 'Customer' : 'Khách hàng' }}</th>
+                                            <th style="width: 22%;" class="text-center">{{ $isEn ? 'Waiting Time' : 'Thời gian chờ' }}</th>
+                                            <th style="width: 20%;" class="text-end">{{ $isEn ? 'Total Amount' : 'Tổng tiền' }}</th>
+                                            <th style="width: 16%;" class="text-center pe-3">{{ $isEn ? 'Action' : 'Xử lý' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -239,7 +242,7 @@
                                                 </td>
                                                 <td class="text-center" style="width: 22%;">
                                                     <span class="badge bg-danger-subtle text-danger px-2 py-0.5 fs-11 fw-medium">
-                                                        <i class="ri-time-line me-0.5"></i>Quá {{ $ord['hours_overdue'] }} giờ
+                                                        <i class="ri-time-line me-0.5"></i>{{ $isEn ? 'Over ' . $ord['hours_overdue'] . ' hrs' : 'Quá ' . $ord['hours_overdue'] . ' giờ' }}
                                                     </span>
                                                 </td>
                                                 <td class="text-end fw-semibold text-dark" style="width: 20%;">
@@ -248,8 +251,8 @@
                                                 <td class="text-center pe-3" style="width: 16%;">
                                                     <a href="{{ route('admin.order.edit', $ord['uuid']) }}"
                                                         class="btn btn-sm btn-soft-danger d-inline-flex align-items-center justify-content-center px-2 py-1 fs-11 fw-medium rounded-2"
-                                                        style="white-space: nowrap;" title="Xem chi tiết đơn hàng">
-                                                        <i class="ri-eye-line me-1"></i>Xem đơn
+                                                        style="white-space: nowrap;" title="{{ $isEn ? 'View order details' : 'Xem chi tiết đơn hàng' }}">
+                                                        <i class="ri-eye-line me-1"></i>{{ $isEn ? 'View' : 'Xem đơn' }}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -260,7 +263,7 @@
                         @else
                             <div class="text-center py-4 text-muted">
                                 <i class="ri-checkbox-circle-line fs-24 text-success d-block mb-1"></i>
-                                <span class="fs-12">Tuyệt vời! Không có đơn hàng nào bị tồn đọng quá hạn.</span>
+                                <span class="fs-12">{{ $isEn ? 'Great! No overdue pending orders.' : 'Tuyệt vời! Không có đơn hàng nào bị tồn đọng quá hạn.' }}</span>
                             </div>
                         @endif
                     </div>
@@ -272,10 +275,10 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title mb-0 fs-13 fw-bold text-dark d-flex align-items-center">
-                            <i class="ri-store-2-line text-warning me-1.5 fs-15"></i> Cảnh báo tồn kho & Sắp hết hàng
+                            <i class="ri-store-2-line text-warning me-1.5 fs-15"></i> {{ $isEn ? 'Inventory & Low Stock Alerts' : 'Cảnh báo tồn kho & Sắp hết hàng' }}
                         </h5>
                         <span class="badge {{ $low_stock_count > 0 ? 'bg-warning-subtle text-warning' : 'bg-light text-muted' }} rounded-2 px-2 py-0.5 fs-11">
-                            {{ $low_stock_count }} mặt hàng cần nhập
+                            {{ $low_stock_count }} {{ $isEn ? 'items need restock' : 'mặt hàng cần nhập' }}
                         </span>
                     </div>
                     <div class="card-body p-0">
@@ -284,10 +287,10 @@
                                 <table class="table table-dashboard table-hover align-middle">
                                     <thead>
                                         <tr>
-                                            <th style="width: 44%;" class="ps-3 text-start">Sản phẩm</th>
-                                            <th style="width: 24%;" class="text-start">Danh mục</th>
-                                            <th style="width: 16%;" class="text-center">Tồn kho</th>
-                                            <th style="width: 16%;" class="text-center pe-3">Thao tác</th>
+                                            <th style="width: 44%;" class="ps-3 text-start">{{ $isEn ? 'Product' : 'Sản phẩm' }}</th>
+                                            <th style="width: 24%;" class="text-start">{{ $isEn ? 'Category' : 'Danh mục' }}</th>
+                                            <th style="width: 16%;" class="text-center">{{ $isEn ? 'Stock' : 'Tồn kho' }}</th>
+                                            <th style="width: 16%;" class="text-center pe-3">{{ $isEn ? 'Action' : 'Thao tác' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -310,24 +313,24 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-start" style="width: 24%;">
-                                                    <span class="category-badge">{{ $prod['category'] ?? 'Chưa phân loại' }}</span>
+                                                    <span class="category-badge">{{ $prod['category'] ?? ($isEn ? 'Uncategorized' : 'Chưa phân loại') }}</span>
                                                 </td>
                                                 <td class="text-center" style="width: 16%;">
                                                     @if($prod['is_out_of_stock'])
                                                         <span class="badge bg-danger-subtle text-danger px-2 py-0.5 fs-11 fw-medium">
-                                                            Hết hàng (0)
+                                                            {{ $isEn ? 'Out of stock (0)' : 'Hết hàng (0)' }}
                                                         </span>
                                                     @else
                                                         <span class="badge bg-warning-subtle text-warning px-2 py-0.5 fs-11 fw-medium">
-                                                            Còn {{ $prod['quantity'] }} sp
+                                                            {{ $isEn ? $prod['quantity'] . ' left' : 'Còn ' . $prod['quantity'] . ' sp' }}
                                                         </span>
                                                     @endif
                                                 </td>
                                                 <td class="text-center pe-3" style="width: 16%;">
                                                     <a href="{{ route('admin.product.edit', ['uuid' => $prod['uuid'], 'page' => 1]) }}"
                                                         class="btn btn-sm btn-soft-primary d-inline-flex align-items-center justify-content-center px-2 py-1 fs-11 fw-medium rounded-2"
-                                                        style="white-space: nowrap;" title="Cập nhật thông tin & tồn kho">
-                                                        <i class="ri-edit-line me-1"></i>Cập nhật
+                                                        style="white-space: nowrap;" title="{{ $isEn ? 'Update info & stock' : 'Cập nhật thông tin & tồn kho' }}">
+                                                        <i class="ri-edit-line me-1"></i>{{ $isEn ? 'Update' : 'Cập nhật' }}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -338,7 +341,7 @@
                         @else
                             <div class="text-center py-4 text-muted">
                                 <i class="ri-checkbox-circle-line fs-24 text-success d-block mb-1"></i>
-                                <span class="fs-12">Tồn kho các mặt hàng hiện đang ở mức an toàn.</span>
+                                <span class="fs-12">{{ $isEn ? 'All inventory stocks are currently healthy.' : 'Tồn kho các mặt hàng hiện đang ở mức an toàn.' }}</span>
                             </div>
                         @endif
                     </div>
@@ -353,15 +356,15 @@
                     <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
                         <div>
                             <h5 class="card-title mb-0 fs-14 fw-bold text-dark">
-                                <i class="ri-funds-line text-primary me-1.5 fs-15"></i>Biểu đồ Doanh thu & Đơn hàng theo ngày
+                                <i class="ri-funds-line text-primary me-1.5 fs-15"></i>{{ $isEn ? 'Daily Revenue & Orders Chart' : 'Biểu đồ Doanh thu & Đơn hàng theo ngày' }}
                             </h5>
-                            <p class="text-muted fs-11 mb-0">Theo dõi doanh thu thực tế và tần suất đặt hàng theo thời gian</p>
+                            <p class="text-muted fs-11 mb-0">{{ $isEn ? 'Track actual revenue and order fulfillment frequency over time' : 'Theo dõi doanh thu thực tế và tần suất đặt hàng theo thời gian' }}</p>
                         </div>
                         <div class="d-flex align-items-center gap-2">
                             <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-outline-primary active revenue-filter-btn px-2.5 py-1 fs-12 rounded-start-2" data-period="7_days">7 ngày</button>
-                                <button type="button" class="btn btn-outline-primary revenue-filter-btn px-2.5 py-1 fs-12" data-period="30_days">30 ngày</button>
-                                <button type="button" class="btn btn-outline-primary revenue-filter-btn px-2.5 py-1 fs-12 rounded-end-2" data-period="year">Cả năm</button>
+                                <button type="button" class="btn btn-outline-primary active revenue-filter-btn px-2.5 py-1 fs-12 rounded-start-2" data-period="7_days">{{ $isEn ? '7 Days' : '7 ngày' }}</button>
+                                <button type="button" class="btn btn-outline-primary revenue-filter-btn px-2.5 py-1 fs-12" data-period="30_days">{{ $isEn ? '30 Days' : '30 ngày' }}</button>
+                                <button type="button" class="btn btn-outline-primary revenue-filter-btn px-2.5 py-1 fs-12 rounded-end-2" data-period="year">{{ $isEn ? 'This Year' : 'Cả năm' }}</button>
                             </div>
                         </div>
                     </div>
@@ -379,9 +382,9 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title mb-0 text-dark fs-13 fw-bold">
-                            <i class="ri-medal-line text-warning me-1.5 fs-15"></i> Top 5 Sản phẩm bán chạy nhất
+                            <i class="ri-medal-line text-warning me-1.5 fs-15"></i> {{ $isEn ? 'Top 5 Best-Selling Products' : 'Top 5 Sản phẩm bán chạy nhất' }}
                         </h5>
-                        <span class="badge bg-light text-muted fs-11">Theo số lượng</span>
+                        <span class="badge bg-light text-muted fs-11">{{ $isEn ? 'Ranked by volume' : 'Theo số lượng' }}</span>
                     </div>
                     <div class="card-body p-0">
                         @if(!empty($top_products))
@@ -390,9 +393,9 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 38px;" class="ps-3 text-center">#</th>
-                                            <th style="width: 48%;" class="text-start">Sản phẩm</th>
-                                            <th style="width: 24%;" class="text-center">Đã bán</th>
-                                            <th style="width: 28%;" class="text-end pe-3">Doanh thu</th>
+                                            <th style="width: 48%;" class="text-start">{{ $isEn ? 'Product' : 'Sản phẩm' }}</th>
+                                            <th style="width: 24%;" class="text-center">{{ $isEn ? 'Sold' : 'Đã bán' }}</th>
+                                            <th style="width: 28%;" class="text-end pe-3">{{ $isEn ? 'Revenue' : 'Doanh thu' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -424,7 +427,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-center" style="width: 24%;">
-                                                    <div class="fw-semibold text-dark fs-12">{{ $tp['total_sold'] }} cái</div>
+                                                    <div class="fw-semibold text-dark fs-12">{{ $tp['total_sold'] }} {{ $isEn ? 'pcs' : 'cái' }}</div>
                                                     <div class="progress mt-1 mx-auto" style="height: 4px; max-width: 90px;">
                                                         <div class="progress-bar bg-primary" role="progressbar"
                                                             style="width: {{ $tp['percentage'] }}%" aria-valuenow="{{ $tp['percentage'] }}" aria-valuemin="0" aria-valuemax="100"></div>
@@ -441,7 +444,7 @@
                         @else
                             <div class="text-center py-4 text-muted">
                                 <i class="ri-inbox-line fs-24 d-block mb-1"></i>
-                                <span class="fs-12">Chưa có dữ liệu sản phẩm bán ra.</span>
+                                <span class="fs-12">{{ $isEn ? 'No product sales recorded yet.' : 'Chưa có dữ liệu sản phẩm bán ra.' }}</span>
                             </div>
                         @endif
                     </div>
@@ -453,10 +456,10 @@
                 <div class="card dashboard-card h-100 mb-0">
                     <div class="card-header d-flex align-items-center justify-content-between">
                         <h5 class="card-title mb-0 text-dark fs-13 fw-bold">
-                            <i class="ri-history-line text-primary me-1.5 fs-15"></i> Đơn hàng mới phát sinh
+                            <i class="ri-history-line text-primary me-1.5 fs-15"></i> {{ $isEn ? 'Recent Incoming Orders' : 'Đơn hàng mới phát sinh' }}
                         </h5>
                         <a href="{{ route('admin.order.index') }}" class="fs-12 text-primary text-decoration-none fw-medium">
-                            Xem tất cả <i class="ri-arrow-right-s-line align-middle"></i>
+                            {{ $isEn ? 'View All' : 'Xem tất cả' }} <i class="ri-arrow-right-s-line align-middle"></i>
                         </a>
                     </div>
                     <div class="card-body p-0">
@@ -465,10 +468,10 @@
                                 <table class="table table-dashboard table-hover align-middle">
                                     <thead>
                                         <tr>
-                                            <th style="width: 42%;" class="ps-3 text-start">Khách hàng</th>
-                                            <th style="width: 22%;" class="text-center">Thời gian</th>
-                                            <th style="width: 20%;" class="text-end">Tổng tiền</th>
-                                            <th style="width: 16%;" class="text-center pe-3">Trạng thái</th>
+                                            <th style="width: 42%;" class="ps-3 text-start">{{ $isEn ? 'Customer' : 'Khách hàng' }}</th>
+                                            <th style="width: 22%;" class="text-center">{{ $isEn ? 'Time' : 'Thời gian' }}</th>
+                                            <th style="width: 20%;" class="text-end">{{ $isEn ? 'Total' : 'Tổng tiền' }}</th>
+                                            <th style="width: 16%;" class="text-center pe-3">{{ $isEn ? 'Status' : 'Trạng thái' }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -486,11 +489,11 @@
                                                 </td>
                                                 <td class="text-center pe-3" style="width: 16%;">
                                                     @if($ro['status'] === 1)
-                                                        <span class="badge bg-success-subtle text-success px-2 py-0.5 fs-11 fw-medium">Hoàn thành</span>
+                                                        <span class="badge bg-success-subtle text-success px-2 py-0.5 fs-11 fw-medium">{{ $isEn ? 'Completed' : 'Hoàn thành' }}</span>
                                                     @elseif($ro['status'] === 2)
-                                                        <span class="badge bg-danger-subtle text-danger px-2 py-0.5 fs-11 fw-medium">Đã hủy</span>
+                                                        <span class="badge bg-danger-subtle text-danger px-2 py-0.5 fs-11 fw-medium">{{ $isEn ? 'Cancelled' : 'Đã hủy' }}</span>
                                                     @else
-                                                        <span class="badge bg-warning-subtle text-warning px-2 py-0.5 fs-11 fw-medium">Chờ xử lý</span>
+                                                        <span class="badge bg-warning-subtle text-warning px-2 py-0.5 fs-11 fw-medium">{{ $isEn ? 'Pending' : 'Chờ xử lý' }}</span>
                                                     @endif
                                                 </td>
                                             </tr>
@@ -501,7 +504,7 @@
                         @else
                             <div class="text-center py-4 text-muted">
                                 <i class="ri-inbox-line fs-24 d-block mb-1"></i>
-                                <span class="fs-12">Chưa có đơn hàng nào được ghi nhận.</span>
+                                <span class="fs-12">{{ $isEn ? 'No orders recorded yet.' : 'Chưa có đơn hàng nào được ghi nhận.' }}</span>
                             </div>
                         @endif
                     </div>
@@ -572,12 +575,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const revenueOptions = {
         series: [
             {
-                name: 'Doanh thu (VNĐ)',
+                name: '{{ $isEn ? "Revenue (VND)" : "Doanh thu (VNĐ)" }}',
                 type: 'area',
                 data: revAmounts
             },
             {
-                name: 'Số đơn hàng',
+                name: '{{ $isEn ? "Orders" : "Số đơn hàng" }}',
                 type: 'column',
                 data: revOrders
             }
@@ -762,8 +765,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         labels: newDates
                     });
                     revenueChart.updateSeries([
-                        { name: 'Doanh thu (VNĐ)', data: newRev },
-                        { name: 'Số đơn hàng', data: newOrders }
+                        { name: '{{ $isEn ? "Revenue (VND)" : "Doanh thu (VNĐ)" }}', data: newRev },
+                        { name: '{{ $isEn ? "Orders" : "Số đơn hàng" }}', data: newOrders }
                     ]);
                 }
             })

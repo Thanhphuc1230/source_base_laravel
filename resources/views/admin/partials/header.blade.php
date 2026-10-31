@@ -128,8 +128,35 @@
             </div>
 
             <div class="d-flex align-items-center">
+                <!-- Language Switcher (Two flags side-by-side) -->
+                <div class="header-item d-flex align-items-center me-3">
+                    <div class="d-flex align-items-center" style="gap: 8px;">
+                        <a href="{{ route('lang', ['locale' => 'vn']) }}"
+                           class="d-inline-flex align-items-center text-decoration-none"
+                           style="opacity: {{ session('locale') == 'vn' || !session('locale') ? '1' : '0.35' }}; transition: opacity 0.2s;"
+                           title="Tiếng Việt">
+                            <svg style="width: 24px; height: 16px; display: block;" viewBox="0 0 640 480">
+                                <path fill="#da251d" d="M0 0h640v480H0z"/>
+                                <path fill="#ff0" d="M320 133l27 82h86l-70 51 27 82-70-51-70 51 27-82-70-51h86z"/>
+                            </svg>
+                        </a>
+                        <a href="{{ route('lang', ['locale' => 'en']) }}"
+                           class="d-inline-flex align-items-center text-decoration-none"
+                           style="opacity: {{ session('locale') == 'en' ? '1' : '0.35' }}; transition: opacity 0.2s;"
+                           title="English">
+                            <svg style="width: 24px; height: 16px; display: block;" viewBox="0 0 640 480">
+                                <path fill="#bd3d44" d="M0 0h640v480H0z"/>
+                                <path stroke="#fff" stroke-width="37" d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
+                                <path fill="#192f5d" d="M0 0h256v258H0z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
                 <div class="ms-1 header-item d-none d-sm-flex">
-                    <button id="create-sitemap-btn" class="btn btn-sm btn-success edit-item-btn">Tạo Sitemap</button>
+                    <button id="create-sitemap-btn" class="btn btn-sm btn-success edit-item-btn">
+                        {{ session('locale') === 'en' ? 'Generate Sitemap' : 'Tạo Sitemap' }}
+                    </button>
                 </div>
                 <div class="dropdown ms-sm-3 header-item topbar-user">
                     <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
@@ -141,19 +168,19 @@
                                 <span
                                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ Auth::user()->fullname }}</span>
                                 <span
-                                    class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{ Auth::user()->level == 1 ? 'Admin' : (Auth::user()->level == 2 ? 'Staff' : 'User') }}</span>
+                                    class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">{{ Auth::user()->level == 1 ? (session('locale') === 'en' ? 'Super Admin' : 'Quản trị viên') : (Auth::user()->level == 2 ? 'Staff' : 'User') }}</span>
                             </span>
                         </span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end">
                         <!-- item-->
-                        <h6 class="dropdown-header">Xin chào {{Auth::user()->fullname}}!</h6>
+                        <h6 class="dropdown-header">{{ session('locale') === 'en' ? 'Hello ' . Auth::user()->fullname . '!' : 'Xin chào ' . Auth::user()->fullname . '!' }}</h6>
                         <a class="dropdown-item" href="{{route('admin.profile.index')}}"><i
                                 class="ri-user-line text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle">Thông tin cá nhân</span></a>
+                                class="align-middle">{{ session('locale') === 'en' ? 'Profile' : 'Thông tin cá nhân' }}</span></a>
                         <a class="dropdown-item" href="{{route('logout')}}"><i
                                 class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle" data-key="t-logout">Đăng xuất</span></a>
+                                class="align-middle" data-key="t-logout">{{ session('locale') === 'en' ? 'Logout' : 'Đăng xuất' }}</span></a>
                     </div>
                 </div>
             </div>
