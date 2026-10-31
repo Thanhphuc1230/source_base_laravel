@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: deploy-laravel
@@ -12,6 +13,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: "${{ secrets.PROD_HOST != '' }}"
 
     steps:
       - name: Checkout repository

@@ -255,6 +255,12 @@ class PermissionSeeder extends Seeder
                 'description' => 'Quyền xem danh sách phản hồi từ khách hàng'
             ],
             [
+                'name' => 'feedback.create',
+                'display_name' => 'Tạo phản hồi',
+                'group_name' => 'feedback',
+                'description' => 'Quyền tạo phản hồi/đánh giá khách hàng mới'
+            ],
+            [
                 'name' => 'feedback.edit',
                 'display_name' => 'Sửa phản hồi',
                 'group_name' => 'feedback',
@@ -556,6 +562,12 @@ class PermissionSeeder extends Seeder
                 'group_name' => 'mail_template',
                 'description' => 'Quyền xóa template mail'
             ],
+            [
+                'name' => 'mail-template.set-active',
+                'display_name' => 'Kích hoạt template mail',
+                'group_name' => 'mail_template',
+                'description' => 'Quyền kích hoạt hoặc tắt kích hoạt template mail'
+            ],
 
             // Site Setting permissions (Cài đặt site)
             [
@@ -748,6 +760,25 @@ class PermissionSeeder extends Seeder
                 'display_name' => 'Xóa nhật ký hoạt động',
                 'group_name' => 'activity_log',
                 'description' => 'Quyền dọn dẹp hoặc xóa nhật ký hoạt động'
+            ],
+            // Media Library permissions (Thư viện media)
+            [
+                'name' => 'media.view',
+                'display_name' => 'Xem thư viện media',
+                'group_name' => 'media',
+                'description' => 'Quyền xem danh sách tập tin và thư viện media'
+            ],
+            [
+                'name' => 'media.create',
+                'display_name' => 'Tải lên media',
+                'group_name' => 'media',
+                'description' => 'Quyền tải lên hình ảnh và video vào hệ thống'
+            ],
+            [
+                'name' => 'media.delete',
+                'display_name' => 'Xóa tập tin media',
+                'group_name' => 'media',
+                'description' => 'Quyền xóa tập tin trong thư viện media'
             ],
         ];
 

@@ -72,7 +72,7 @@ class RoleSeeder extends Seeder
             // Menu - đầy đủ
             'menu.view', 'menu.create', 'menu.edit', 'menu.delete',
             // Feedback - xem và sửa
-            'feedback.view', 'feedback.edit',
+            'feedback.view', 'feedback.create', 'feedback.edit',
             // Contact - xem và sửa
             'contact.view', 'contact.edit',
             // Comment - đầy đủ
@@ -96,7 +96,7 @@ class RoleSeeder extends Seeder
             // Mail Config - đầy đủ
             'mail-config.view', 'mail-config.create', 'mail-config.edit', 'mail-config.delete',
             // Mail Template - đầy đủ
-            'mail-template.view', 'mail-template.create', 'mail-template.edit', 'mail-template.delete',
+            'mail-template.view', 'mail-template.create', 'mail-template.edit', 'mail-template.delete', 'mail-template.set-active',
             // Gallery - đầy đủ
             'gallery.view', 'gallery.create', 'gallery.edit', 'gallery.delete',
             // Site Setting - đầy đủ
@@ -112,7 +112,11 @@ class RoleSeeder extends Seeder
             // Category Project - đầy đủ
             'cate_project.view', 'cate_project.create', 'cate_project.edit', 'cate_project.delete',
             // Project - đầy đủ
-            'project.view', 'project.create', 'project.edit', 'project.delete'
+            'project.view', 'project.create', 'project.edit', 'project.delete',
+            // Media - đầy đủ
+            'media.view', 'media.create', 'media.delete',
+            // Activity log - xem
+            'activity_log.view'
         ])->pluck('id')->toArray();
         
         $managerRole->syncPermissions($managerPermissions);
@@ -166,7 +170,9 @@ class RoleSeeder extends Seeder
             // Category Project - xem, tạo, sửa
             'cate_project.view', 'cate_project.create', 'cate_project.edit',
             // Project - xem, tạo, sửa
-            'project.view', 'project.create', 'project.edit'
+            'project.view', 'project.create', 'project.edit',
+            // Media - xem, tải lên
+            'media.view', 'media.create'
         ])->pluck('id')->toArray();
         
         $staffRole->syncPermissions($staffPermissions);
@@ -228,7 +234,9 @@ class RoleSeeder extends Seeder
             // Category Project - chỉ xem
             'cate_project.view',
             // Project - chỉ xem
-            'project.view'
+            'project.view',
+            // Media - chỉ xem
+            'media.view'
         ])->pluck('id')->toArray();
         
         $viewerRole->syncPermissions($viewerPermissions);

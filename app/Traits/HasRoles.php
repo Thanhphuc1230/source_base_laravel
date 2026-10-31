@@ -26,10 +26,30 @@ trait HasRoles
     }
 
     /**
+     * Determine if user is super admin (level 1 or admin role)
+     */
+    public function isSuperAdmin(): bool
+    {
+        if ((int) $this->level === 1) {
+            return true;
+        }
+
+        if ($this->relationLoaded('roles')) {
+            return $this->roles->contains('name', 'admin');
+        }
+
+        return $this->roles()->where('name', 'admin')->exists();
+    }
+
+    /**
      * Lấy tất cả permissions qua roles + direct permissions
      */
     public function permissions()
     {
+        if ($this->isSuperAdmin()) {
+            return Permission::all();
+        }
+
         // Get permissions from roles
         $rolePermissions = $this->roles()->with('permissions')->get()
             ->flatMap(function ($role) {
@@ -171,6 +191,10 @@ trait HasRoles
      */
     public function hasPermission($permission): bool
     {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         if (is_string($permission)) {
             return in_array($permission, $this->getUserPermissions());
         }
@@ -187,6 +211,10 @@ trait HasRoles
      */
     public function hasAllPermissions($permissions): bool
     {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         if (is_string($permissions)) {
             $permissions = [$permissions];
         }
@@ -203,6 +231,10 @@ trait HasRoles
      */
     public function hasAnyPermission($permissions): bool
     {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
         if (is_string($permissions)) {
             return in_array($permissions, $this->getUserPermissions());
         }

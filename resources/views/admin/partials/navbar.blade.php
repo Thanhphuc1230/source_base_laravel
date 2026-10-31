@@ -47,6 +47,7 @@
                                     request()->routeIs('admin.gallery.*') ||
                                     request()->routeIs('admin.brand.*');
                 @endphp
+                @hasAnyPermission(['slider.view', 'about.view', 'feature.view', 'gallery.view', 'brand.view'])
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ $isHomeActive ? 'active' : '' }}" href="#sidebarHome" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ $isHomeActive ? 'true' : 'false' }}" aria-controls="sidebarHome">
@@ -97,6 +98,7 @@
                         </ul>
                     </div>
                 </li>
+                @endhasAnyPermission
 
                 @hasPermission('page.view')
                 <li class="nav-item">
@@ -198,13 +200,15 @@
                         <i class="ri-feedback-line"></i> <span data-key="t-widgets">Đánh giá khách hàng</span>
                     </a>
                 </li>
-                @endhasAnyPermission
+                @endhasPermission
 
+                @hasPermission('media.view')
                 <li class="nav-item">
                     <a class="nav-link menu-link" href="{{ route('admin.media.index') }}">
                         <i class="ri-image-2-line"></i> <span data-key="t-media">Thư viện Media</span>
                     </a>
                 </li>
+                @endhasPermission
                 @hasAnyPermission(['contact.view', 'comment.view'])
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#Contact" data-bs-toggle="collapse" role="button"
