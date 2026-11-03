@@ -63,10 +63,10 @@
         <div class="pt-2.5 border-t border-border-subtle flex items-center justify-between gap-1">
             <div class="flex flex-col">
                 @if($priceOld > $price)
-                    <span class="text-3xs text-charcoal-light line-through leading-none">{{ number_format($priceOld, 0, ',', '.') }}đ</span>
+                    <span class="text-3xs text-charcoal-light line-through leading-none">{{ number_format($priceOld, 0, ',', '.') }}{{ currency_unit() }}</span>
                 @endif
                 <span class="text-xs sm:text-base font-bold text-charcoal leading-none mt-1 group-hover:text-taupe-oak transition-colors">
-                    {{ number_format($price, 0, ',', '.') }}đ
+                    {{ number_format($price, 0, ',', '.') }}{{ currency_unit() }}
                 </span>
             </div>
 

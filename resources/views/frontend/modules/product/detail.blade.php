@@ -223,10 +223,10 @@
                     <div class="text-center space-y-1">
                         <span class="text-slate-400 text-3xs uppercase tracking-wider block font-bold">Giá niêm yết chính hãng</span>
                         @if($product_detail->price_old > $product_detail->price)
-                            <span class="text-xs text-slate-400 line-through block leading-none">{{ number_format($product_detail->price_old, 0, ',', '.') }}đ</span>
+                            <span class="text-xs text-slate-400 line-through block leading-none">{{ number_format($product_detail->price_old, 0, ',', '.') }}{{ currency_unit() }}</span>
                         @endif
                         <span class="text-2xl sm:text-3xl font-heading font-black text-slate-900 block leading-none mt-1">
-                            {{ number_format($product_detail->price, 0, ',', '.') }}đ
+                            {{ number_format($product_detail->price, 0, ',', '.') }}{{ currency_unit() }}
                         </span>
                     </div>
 
@@ -286,7 +286,7 @@
                                                 {{ lang($rel, 'name') }}
                                             </a>
                                         </h4>
-                                        <span class="text-xs font-black text-slate-900 block">{{ number_format($rel->price, 0, ',', '.') }}đ</span>
+                                        <span class="text-xs font-black text-slate-900 block">{{ number_format($rel->price, 0, ',', '.') }}{{ currency_unit() }}</span>
                                     </div>
                                 </div>
                             @endforeach

@@ -63,7 +63,7 @@
                                                     <label class="form-label" for="product-price-input">Giá tiền(nhập 0 sẽ
                                                         hiện liên hệ)</label>
                                                     <div class="input-group has-validation mb-3">
-                                                        <span class="input-group-text" id="product-price-addon">VND</span>
+                                                        <span class="input-group-text" id="product-price-addon">{{ currency_unit() }}</span>
                                                         <input type="number"
                                                             class="form-control @error('price') is-invalid @enderror"
                                                             placeholder="Enter price" name="price"
@@ -78,7 +78,7 @@
                                                 <div class="mb-3">
                                                     <label class="form-label" for="product-discount-input">Giá cũ</label>
                                                     <div class="input-group mb-3">
-                                                        <span class="input-group-text" id="product-price-addon">VND</span>
+                                                        <span class="input-group-text" id="product-price-addon">{{ currency_unit() }}</span>
                                                         <input type="text" class="form-control"
                                                             placeholder="Enter discount" name="price_old"
                                                             value="{{ old('price_old', $page->price_old ?? '') }}">

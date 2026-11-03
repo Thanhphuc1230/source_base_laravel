@@ -1,6 +1,9 @@
 @extends('admin.master')
+@php
+    $isEn = session('locale') === 'en';
+@endphp
 @section('module', $title)
-@section('action', 'Chi tiết')
+@section('action', $isEn ? 'Detail' : 'Chi tiết')
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -27,9 +30,28 @@
                     <div class="col-lg-6">
                         <div class="card shadow-sm border-0 mb-4">
                             <div class="card-header bg-light border-0 py-3">
-                                <h5 class="card-title mb-0 font-weight-bold text-emerald-900">1. Cấu hình hiển thị</h5>
+                                <h5 class="card-title mb-0 font-weight-bold text-emerald-900">{{ $isEn ? '1. Display & Currency Settings' : '1. Cấu hình hiển thị & Tiền tệ' }}</h5>
                             </div>
                             <div class="card-body">
+                                <!-- Currency Unit -->
+                                <div class="mb-3 p-3 bg-light rounded-2 border">
+                                    <label class="form-label font-weight-semibold text-primary" for="products_currency_unit">
+                                        <i class="ri-money-dollar-circle-line me-1"></i> {{ $isEn ? 'System Currency Unit' : 'Đơn vị tiền tệ toàn hệ thống' }} <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" id="products_currency_unit" name="products_currency_unit"
+                                            class="form-control fw-bold fs-14" value="{{ $settings['currency_unit'] ?? 'đ' }}"
+                                            placeholder="{{ $isEn ? 'e.g. đ, VNĐ, $, USD' : 'ví dụ: đ, VNĐ, $, USD' }}" maxlength="20" required>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="document.getElementById('products_currency_unit').value='đ'">đ</button>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="document.getElementById('products_currency_unit').value='VNĐ'">VNĐ</button>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="document.getElementById('products_currency_unit').value='$'">$</button>
+                                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="document.getElementById('products_currency_unit').value='USD'">USD</button>
+                                    </div>
+                                    <small class="text-muted d-block mt-1">
+                                        {{ $isEn ? 'Change this currency unit to update all prices across web store and admin management.' : 'Thay đổi đơn vị này sẽ tự động cập nhật toàn bộ hiển thị giá cả ở ngoài Website và trang Quản trị Admin.' }}
+                                    </small>
+                                </div>
+
                                 <!-- Pagination -->
                                 <div class="mb-3">
                                     <label class="form-label font-weight-semibold" for="products_pagination">

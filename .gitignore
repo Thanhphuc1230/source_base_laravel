@@ -23,3 +23,5 @@ docs_backup/
 /scratch/
 storage/framework
 repomix-output.*
+dump.rdb
+

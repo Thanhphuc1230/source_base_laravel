@@ -125,7 +125,7 @@
                         </div>
 
                         <div class="space-y-1.5">
-                            <label class="text-[10px] font-extrabold uppercase text-slate-500">Mức giá (VNĐ)</label>
+                            <label class="text-[10px] font-extrabold uppercase text-slate-500">Mức giá ({{ currency_unit() }})</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <input type="number" name="price_min" value="{{ request('price_min') }}" placeholder="Từ" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-gold-500">
                                 <input type="number" name="price_max" value="{{ request('price_max') }}" placeholder="Đến" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-gold-500">

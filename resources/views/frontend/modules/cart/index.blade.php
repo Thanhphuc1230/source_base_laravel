@@ -43,9 +43,9 @@
                                         </a>
                                     </h3>
                                     <div class="text-2xs text-gray-500 flex items-center justify-center sm:justify-start space-x-3 pt-0.5">
-                                        <span>Đơn giá: <strong class="text-emerald-950">{{ number_format($item['price'], 0, ',', '.') }}đ</strong></span>
+                                        <span>Đơn giá: <strong class="text-emerald-950">{{ number_format($item['price'], 0, ',', '.') }}{{ currency_unit() }}</strong></span>
                                         @if($item['price_old'] > $item['price'])
-                                            <span class="line-through text-gray-450">{{ number_format($item['price_old'], 0, ',', '.') }}đ</span>
+                                            <span class="line-through text-gray-450">{{ number_format($item['price_old'], 0, ',', '.') }}{{ currency_unit() }}</span>
                                         @endif
                                     </div>
                                 </div>
@@ -65,7 +65,7 @@
                                 <div class="text-center sm:text-right flex-shrink-0 min-w-[100px]">
                                     <span class="text-3xs text-gray-400 block font-bold uppercase">Thành tiền</span>
                                     <span id="subtotal-{{ $item['stt'] }}" class="text-sm font-extrabold text-red-650 subtotal-value" data-price="{{ $item['price'] }}">
-                                        {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}đ
+                                        {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}{{ currency_unit() }}
                                     </span>
                                 </div>
 
@@ -92,7 +92,7 @@
                         <div class="flex items-center justify-between text-gray-500">
                             <span>Tạm tính</span>
                             <span id="summary-subtotal" class="font-bold text-emerald-950">
-                                {{ number_format($totalPrice ?? array_sum(array_map(function($i) { return $i['price'] * $i['qty']; }, $cart)), 0, ',', '.') }}đ
+                                {{ number_format($totalPrice ?? array_sum(array_map(function($i) { return $i['price'] * $i['qty']; }, $cart)), 0, ',', '.') }}{{ currency_unit() }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between text-gray-500">
@@ -103,7 +103,7 @@
                         <div class="flex items-center justify-between text-sm">
                             <span class="font-bold text-emerald-950">Tổng thanh toán</span>
                             <span id="summary-total" class="text-lg font-black text-red-650">
-                                {{ number_format($totalPrice ?? array_sum(array_map(function($i) { return $i['price'] * $i['qty']; }, $cart)), 0, ',', '.') }}đ
+                                {{ number_format($totalPrice ?? array_sum(array_map(function($i) { return $i['price'] * $i['qty']; }, $cart)), 0, ',', '.') }}{{ currency_unit() }}
                             </span>
                         </div>
                     </div>

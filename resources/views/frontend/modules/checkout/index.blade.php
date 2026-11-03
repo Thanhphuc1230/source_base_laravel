@@ -142,7 +142,7 @@
                                         <span class="text-3xs text-gray-500 block">Số lượng: <strong class="text-emerald-950">{{ $item['qty'] }}</strong></span>
                                     </div>
                                     <span class="text-2xs font-extrabold text-emerald-950 flex-shrink-0">
-                                        {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}đ
+                                        {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}{{ currency_unit() }}
                                     </span>
                                 </div>
                             @endforeach
@@ -152,7 +152,7 @@
                         <div class="space-y-3 text-xs border-t border-gray-100 pt-4">
                             <div class="flex items-center justify-between text-gray-500">
                                 <span>Tạm tính</span>
-                                <span class="font-bold text-emerald-950">{{ number_format($total, 0, ',', '.') }}đ</span>
+                                <span class="font-bold text-emerald-950">{{ number_format($total, 0, ',', '.') }}{{ currency_unit() }}</span>
                             </div>
                             <div class="flex items-center justify-between text-gray-500">
                                 <span>Phí dịch vụ / VAT</span>
@@ -161,7 +161,7 @@
                             <hr class="border-gray-100">
                             <div class="flex items-center justify-between text-sm">
                                 <span class="font-bold text-emerald-950">Tổng thanh toán</span>
-                                <span class="text-lg font-black text-red-650">{{ number_format($total, 0, ',', '.') }}đ</span>
+                                <span class="text-lg font-black text-red-650">{{ number_format($total, 0, ',', '.') }}{{ currency_unit() }}</span>
                             </div>
                         </div>
 

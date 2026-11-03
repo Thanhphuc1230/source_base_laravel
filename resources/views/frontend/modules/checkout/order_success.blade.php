@@ -51,7 +51,7 @@
 
                 <span class="text-slate-400 border-t border-slate-100 pt-2">Tổng thanh toán:</span>
                 <span class="font-black text-slate-900 text-right border-t border-slate-100 pt-2 text-base">
-                    {{ number_format($order['total'], 0, ',', '.') }}đ
+                    {{ number_format($order['total'], 0, ',', '.') }}{{ currency_unit() }}
                 </span>
             </div>
 

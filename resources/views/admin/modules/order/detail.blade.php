@@ -146,9 +146,9 @@
                                                                 width="50px"></td>
                                                         <td><a href="{{ route('web.resolve',['slug' => $product->slug]) }}">{{ $product->name_vn }}</a></td>
                                                       
-                                                        <td>{{ number_format($item->price) }} VND</td>
+                                                        <td>{{ number_format($item->price) }} {{ currency_unit() }}</td>
                                                         <td>{{ $item->quantity }}</td>
-                                                        <td>{{ number_format($item->price * $item->quantity) }} VND</td>
+                                                        <td>{{ number_format($item->price * $item->quantity) }} {{ currency_unit() }}</td>
                                                     </tr>
                                                 @endforeach
                                             @else
@@ -160,7 +160,7 @@
                                         <tfoot>
                                             <tr>
                                                 <td>Tổng hóa đơn</td>
-                                                <td>{{ number_format($user_order->total) }} VND</td>
+                                                <td>{{ number_format($user_order->total) }} {{ currency_unit() }}</td>
                                                 <td>
                                                     <form
                                                         action="{{ route('admin.' . $nameClass . '.index', ['client' => $lastSegment]) }}"

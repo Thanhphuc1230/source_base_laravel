@@ -33,6 +33,7 @@ class ProductSettingController extends BaseController
             'module' => $this->module,
             'nameClass' => $this->module,
             'settings' => [
+                'currency_unit' => ProductSetting::getCurrencyUnit(),
                 'pagination' => ProductSetting::get('products_pagination', 8),
                 'font_size' => ProductSetting::get('products_font_size', '16px'),
                 'show_intro' => ProductSetting::get('products_show_intro', true),
@@ -52,7 +53,16 @@ class ProductSettingController extends BaseController
      */
     public function updateSettings(Request $request)
     {
-        // 1. Lưu các giá trị cấu hình chữ, màu sắc vào DB
+        // 1. Lưu các giá trị cấu hình chữ, màu sắc và tiền tệ vào DB
+        $currencyUnit = trim((string) $request->input('products_currency_unit', 'đ'));
+        if (empty($currencyUnit)) {
+            $currencyUnit = 'đ';
+        }
+        ProductSetting::set('products_currency_unit', $currencyUnit, 'text', 'general', 'Đơn vị tiền tệ hiển thị toàn hệ thống (Web & Admin)');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('product_settings', 'currency_unit')) {
+            ProductSetting::query()->update(['currency_unit' => $currencyUnit]);
+        }
+
         ProductSetting::set('products_pagination', (int) $request->input('products_pagination', 8), 'number', 'general');
         ProductSetting::set('products_font_size', $request->input('products_font_size', '16px'), 'text', 'style');
         ProductSetting::set('products_show_intro', $request->has('products_show_intro') ? '1' : '0', 'boolean', 'general');

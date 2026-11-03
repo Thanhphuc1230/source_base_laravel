@@ -42,7 +42,7 @@
                         </div>
                         <div class="mt-2">
                             <h3 class="fs-20 fw-bold text-dark mb-1">
-                                {{ number_format($summary['revenue_today']) }} <span class="fs-12 fw-normal text-muted">đ</span>
+                                {{ number_format($summary['revenue_today']) }} <span class="fs-12 fw-normal text-muted">{{ currency_unit() }}</span>
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-primary-subtle text-primary me-1 px-1.5 py-0.5">
@@ -68,7 +68,7 @@
                         </div>
                         <div class="mt-2">
                             <h3 class="fs-20 fw-bold text-success mb-1">
-                                {{ number_format($summary['revenue_week']) }} <span class="fs-12 fw-normal text-muted">đ</span>
+                                {{ number_format($summary['revenue_week']) }} <span class="fs-12 fw-normal text-muted">{{ currency_unit() }}</span>
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-success-subtle text-success me-1 px-1.5 py-0.5">
@@ -94,7 +94,7 @@
                         </div>
                         <div class="mt-2">
                             <h3 class="fs-20 fw-bold text-info mb-1">
-                                {{ number_format($summary['revenue_month']) }} <span class="fs-12 fw-normal text-muted">đ</span>
+                                {{ number_format($summary['revenue_month']) }} <span class="fs-12 fw-normal text-muted">{{ currency_unit() }}</span>
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-info-subtle text-info me-1 px-1.5 py-0.5">
@@ -120,7 +120,7 @@
                         </div>
                         <div class="mt-2">
                             <h3 class="fs-20 fw-bold text-dark mb-1">
-                                {{ number_format($summary['revenue_total']) }} <span class="fs-12 fw-normal text-muted">đ</span>
+                                {{ number_format($summary['revenue_total']) }} <span class="fs-12 fw-normal text-muted">{{ currency_unit() }}</span>
                             </h3>
                             <div class="d-flex align-items-center text-muted fs-11">
                                 <span class="badge bg-secondary-subtle text-secondary me-1 px-1.5 py-0.5">
@@ -246,7 +246,7 @@
                                                     </span>
                                                 </td>
                                                 <td class="text-end fw-semibold text-dark" style="width: 20%;">
-                                                    {{ number_format($ord['total']) }} đ
+                                                    {{ number_format($ord['total']) }} {{ currency_unit() }}
                                                 </td>
                                                 <td class="text-center pe-3" style="width: 16%;">
                                                     <a href="{{ route('admin.order.edit', $ord['uuid']) }}"
@@ -422,7 +422,7 @@
                                                             <div class="fw-semibold text-dark text-truncate" style="max-width: 200px;" title="{{ $tp['name'] }}">
                                                                 {{ $tp['name'] }}
                                                             </div>
-                                                            <div class="text-muted fs-11">{{ number_format($tp['price']) }} đ</div>
+                                                            <div class="text-muted fs-11">{{ number_format($tp['price']) }} {{ currency_unit() }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -434,7 +434,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-end pe-3 fw-bold text-dark" style="width: 28%;">
-                                                    {{ number_format($tp['total_revenue']) }} đ
+                                                    {{ number_format($tp['total_revenue']) }} {{ currency_unit() }}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -485,7 +485,7 @@
                                                     {{ $ro['created_at'] }}
                                                 </td>
                                                 <td class="text-end fw-semibold text-dark" style="width: 20%;">
-                                                    {{ number_format($ro['total']) }} đ
+                                                    {{ number_format($ro['total']) }} {{ currency_unit() }}
                                                 </td>
                                                 <td class="text-center pe-3" style="width: 16%;">
                                                     @if($ro['status'] === 1)
@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
         yaxis: [
             {
                 title: {
-                    text: 'Doanh thu (VNĐ)',
+                    text: '{{ $isEn ? 'Revenue' : 'Doanh thu' }} (' + '{{ currency_unit() }}' + ')',
                     style: {
                         color: '#2563eb',
                         fontSize: '11.5px',
@@ -724,7 +724,7 @@ document.addEventListener('DOMContentLoaded', function() {
             y: {
                 formatter: function(y, opt) {
                     if (opt.seriesIndex === 0) {
-                        return new Intl.NumberFormat('vi-VN').format(y) + ' đ';
+                        return new Intl.NumberFormat('vi-VN').format(y) + ' {{ currency_unit() }}';
                     }
                     return Math.floor(y) + ' đơn';
                 }

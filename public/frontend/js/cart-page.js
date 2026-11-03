@@ -48,17 +48,18 @@ function updateCartAjax() {
             }
 
             // Update subtotals for each row based on updated quantites returned
+            const currencyUnit = window.CURRENCY_UNIT || 'đ';
             const cartList = Object.values(data.cart);
             cartList.forEach(item => {
                 const subtotalSpan = document.getElementById(`subtotal-${item.stt}`);
                 if (subtotalSpan) {
-                    const formattedSubtotal = new Intl.NumberFormat('vi-VN').format(item.price * item.qty) + 'đ';
+                    const formattedSubtotal = new Intl.NumberFormat('vi-VN').format(item.price * item.qty) + currencyUnit;
                     subtotalSpan.innerText = formattedSubtotal;
                 }
             });
 
             // Update summary totals in real-time
-            const formattedTotalPrice = new Intl.NumberFormat('vi-VN').format(data.totalPrice) + 'đ';
+            const formattedTotalPrice = new Intl.NumberFormat('vi-VN').format(data.totalPrice) + currencyUnit;
             
             const summarySubtotal = document.getElementById('summary-subtotal');
             if (summarySubtotal) summarySubtotal.innerText = formattedTotalPrice;

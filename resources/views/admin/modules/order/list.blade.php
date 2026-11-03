@@ -74,7 +74,7 @@
                                                             if ($item->total == 0) {
                                                                 $totalPrice = 'Liên hệ';
                                                             } else {
-                                                                $totalPrice = number_format($item->total) .' đ';
+                                                                $totalPrice = number_format($item->total) . ' ' . currency_unit();
                                                             }
                                                         @endphp
                                                         <td class="text-end fw-bold text-dark">{{ $totalPrice }}</td>

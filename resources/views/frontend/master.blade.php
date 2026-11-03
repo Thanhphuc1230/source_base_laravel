@@ -31,6 +31,7 @@
 
     <script>
         window.addToCartUrl = "{{ url('/add-to-cart') }}";
+        window.CURRENCY_UNIT = "{{ currency_unit() }}";
     </script>
     <script src="{{ asset('frontend/js/cart.js') }}"></script>
 </body>

@@ -19,6 +19,7 @@ class ProductSetting extends Model
         'group',
         'description',
         'is_active',
+        'currency_unit',
         'sort_order',
     ];
 
@@ -61,6 +62,25 @@ class ProductSetting extends Model
         }
 
         return static::castValue($setting->value, $setting->type);
+    }
+
+    /**
+     * Get system-wide currency unit.
+     */
+    public static function getCurrencyUnit(): string
+    {
+        try {
+            $val = static::get('products_currency_unit');
+            if (! empty($val)) {
+                return (string) $val;
+            }
+
+            // Fallback to column if exists
+            $row = static::whereNotNull('currency_unit')->first();
+            return $row && ! empty($row->currency_unit) ? (string) $row->currency_unit : 'đ';
+        } catch (\Throwable $e) {
+            return 'đ';
+        }
     }
 
     /**

@@ -79,7 +79,9 @@ class FrontendComposer
             }),
 
             // 8. Toàn bộ cấu hình sản phẩm (Tag: products)
+            'currency_unit' => \App\Models\ProductSetting::getCurrencyUnit(),
             'product_settings' => [
+                'currency_unit' => \App\Models\ProductSetting::getCurrencyUnit(),
                 'font_size' => \App\Models\ProductSetting::get('products_font_size', '16px'),
                 'show_intro' => \App\Models\ProductSetting::get('products_show_intro', true),
                 'click_image_detail' => \App\Models\ProductSetting::get('products_click_image_detail', true),

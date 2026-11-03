@@ -105,7 +105,7 @@
                                                 {{ $prod->name_vn }}
                                             </a>
                                         </h4>
-                                        <span class="text-xs font-black text-slate-900 block">{{ number_format($prod->price, 0, ',', '.') }}đ</span>
+                                        <span class="text-xs font-black text-slate-900 block">{{ number_format($prod->price, 0, ',', '.') }}{{ currency_unit() }}</span>
                                     </div>
                                 </div>
                             @endforeach
