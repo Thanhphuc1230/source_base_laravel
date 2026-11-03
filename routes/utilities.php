@@ -17,9 +17,7 @@ Route::group(['middleware' => 'web'], function () {
 });
 
 // Sitemap
-Route::get('/sitemap.xml', function () {
-    return response()->file(public_path('sitemap.xml'));
-});
+Route::get('/sitemap.xml', [\App\Http\Controllers\Frontend\SitemapController::class, 'index'])->name('sitemap.xml');
 
 // Custom File Manager API Routes (with permission middleware)
 // Package routes tại /filemanager được dùng cho CKEditor

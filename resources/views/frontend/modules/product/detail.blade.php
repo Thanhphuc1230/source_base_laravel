@@ -3,6 +3,7 @@
 @section('keywords', lang($product_detail, 'keyword'))
 @section('description', lang($product_detail, 'description'))
 @section('images', $product_detail->image_vn ?? $web->logo)
+@section('og_type', 'product')
 
 @section('content')
     <!-- Product Detail Header Breadcrumb -->

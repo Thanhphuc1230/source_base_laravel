@@ -36,16 +36,23 @@ class HomeService
             ->orderBy('stt', 'asc')
             ->get();
 
-        // Eager load products to prevent N+1
-        $data['category_product'] = CateProduct::with(['products' => function($q) {
-                $q->where('status', 1)->orderBy('stt', 'asc')->limit(8);
+        // Eager load products with pruned columns (Rule 19 compliance)
+        $previewColumns = [
+            'id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en',
+            'image_vn', 'image_en', 'price', 'price_old', 'category_id',
+            'hot', 'status', 'stt', 'intro_vn', 'intro_en', 'created_at'
+        ];
+
+        $data['category_product'] = CateProduct::with(['products' => function($q) use ($previewColumns) {
+                $q->select($previewColumns)->where('status', 1)->orderBy('stt', 'asc')->limit(8);
             }])
             ->where('status', 1)
             ->where('home', 1)
             ->orderBy('stt', 'asc')
             ->get();
 
-        $data['hot_products'] = Product::where('status', 1)
+        $data['hot_products'] = Product::select($previewColumns)
+            ->where('status', 1)
             ->where('hot', 1)
             ->orderBy('stt', 'asc')
             ->limit(8)

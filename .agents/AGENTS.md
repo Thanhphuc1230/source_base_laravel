@@ -262,6 +262,55 @@ Trước khi bàn giao task, AI **BẮT BUỘC** tự động chạy tuần tự
 
 ---
 
+## QUY TẮC SỐ 18 – QUY CHUẨN SEO KỸ THUẬT & DỮ LIỆU CẤU TRÚC (TECHNICAL & ON-PAGE SEO)
+
+Mọi dự án xây dựng từ Base bắt buộc phải đạt điểm chất lượng SEO kỹ thuật tối đa từ Google:
+1. **Sitemap tự động động (Dynamic Sitemap XML):**
+   - Bắt buộc có Controller & Route `/sitemap.xml` động kết nối CSDL (Trang chủ, Trang tĩnh, Danh mục sản phẩm, Sản phẩm chi tiết, Danh mục tin tức, Bài viết chi tiết).
+   - Có đầy đủ thẻ XML: `<loc>`, `<lastmod>`, `<changefreq>`, `<priority>` và bọc trong `Cache::remember()` (TTL 12h - 24h) để phản hồi tức thì, không gây tải MySQL.
+2. **Quy chuẩn `robots.txt` an toàn & tối ưu:**
+   - File `public/robots.txt` bắt buộc khai báo đường dẫn Sitemap: `Sitemap: https://{domain}/sitemap.xml`.
+   - Bắt buộc Disallow các đường dẫn quản trị & bảo mật: `/admintv`, `/admintv/`, `/admintv_logout`, `/admintv_post_login`, `/admin/`, `/admin`, `/filemanager/`, `/laravel-filemanager/`, `/cart`, `/checkout`, `/add-to-cart`, `/update-cart`, `/remove-item`, `/checkout-store`, `/order-success`, và các route POST xử lý nội bộ.
+3. **Cấu trúc Headings & Thẻ tiêu đề trang:**
+   - **Tuyệt đối CẤM** dùng `<h1 style="display: none">` trong layout chung (`master.blade.php`).
+   - Mỗi trang hiển thị bắt buộc có **đúng duy nhất 1 thẻ `<h1>`** ngữ nghĩa đại diện cho nội dung cốt lõi của trang đó:
+     * Trang chủ: `<h1 class="sr-only">{{ $web->name_company }} - {{ $web->name_vn }}</h1>` (dùng class `.sr-only` trợ năng/SEO, không dùng `display: none`).
+     * Chi tiết sản phẩm/tour: `<h1>{{ $product->name }}</h1>`.
+     * Chi tiết tin tức: `<h1>{{ $news->name_vn }}</h1>`.
+   - Thẻ `<title>` bắt buộc chứa từ khóa định vị thương hiệu (dài 50 - 60 ký tự); `<meta name="description">` bắt buộc đủ 140 - 160 ký tự súc tích.
+4. **Dữ liệu có cấu trúc Schema (JSON-LD):**
+   - **Layout chung (`head.blade.php`):** Tự động nhúng Schema `@type: "Organization"` hoặc `"TravelAgency"` / `"LocalBusiness"` lấy từ biến `$web` (tên công ty, logo, địa chỉ, hotline, email).
+   - **Chi tiết sản phẩm/tour:** Tự động nhúng Schema `@type: "Product"` (kèm giá VND, `offers`, `InStock`) và `@type: "BreadcrumbList"` (phân cấp điều hướng).
+   - **Chi tiết tin tức/bài viết:** Tự động nhúng Schema `@type: "NewsArticle"` (tiêu đề, ngày đăng, ngày sửa, ảnh đại diện).
+5. **Chuẩn hóa OpenGraph & Twitter Card:**
+   - Thẻ `og:type` phải động theo từng trang (`website` cho trang chủ, `product` cho sản phẩm, `article` cho bài viết).
+   - Bắt buộc khai báo kích thước ảnh chuẩn `og:image:width: 1200` và `og:image:height: 630`.
+   - Bổ sung đầy đủ bộ thẻ `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`.
+
+---
+
+## QUY TẮC SỐ 19 – TỐI ƯU HIỆU NĂNG TẬN GỐC & QUY CHUẨN CLOUDFLARE EDGE CACHE
+
+Nhằm đưa thời gian phản hồi máy chủ (TTFB) về mức **mili-giây (~50ms - 200ms)** và giảm tải tối đa cho Origin Server:
+1. **Tối ưu hóa tầng ứng dụng (Origin Application Tuning):**
+   - **Thanh lọc cột truy vấn:** Trong các hàm Controller/Repository cho trang chủ và trang danh mục, TUYỆT ĐỐI KHÔNG `select *` hoặc lấy các cột văn bản dài (`content_vn`, `content_en`, `image_detail`). Chỉ chọn đúng các cột hiển thị thẻ preview (`id`, `name`, `slug`, `avatar`, `price`, `stt`).
+   - **Bộ nhớ đệm đa tầng (Multi-tier Cache):** Toàn bộ truy vấn danh mục, slider, tin mới, sản phẩm hot trên trang chủ bắt buộc bọc trong `Cache::remember()`.
+2. **Quy chuẩn 2 Cache Rules của Cloudflare (The 2-Rule Cloudflare Standard):**
+   > ⚠️ **Quy tắc vàng Cloudflare Cache Rules:** Hoạt động theo cơ chế **"Last Match Wins"** (Rule nằm dưới cùng sẽ ghi đè lên các rule nằm phía trên).
+   - **Rule 1 – Bảo vệ Admin & Dữ liệu động (`Bypass Admin`):**
+     * *Match:* `(starts_with(http.request.uri.path, "/admintv") or starts_with(http.request.uri.path, "/admin") or starts_with(http.request.uri.path, "/filemanager") or starts_with(http.request.uri.path, "/laravel-filemanager") or starts_with(http.request.uri.path, "/cart") or starts_with(http.request.uri.path, "/checkout") or starts_with(http.request.uri.path, "/add-to-cart") or starts_with(http.request.uri.path, "/update-cart") or starts_with(http.request.uri.path, "/remove-item") or starts_with(http.request.uri.path, "/order-success"))`
+     * *Action:* `Bypass cache`
+   - **Rule 2 – Tăng tốc toàn bộ Frontend (`Cache Frontend Everything`):**
+     * *Match (Phải có điều kiện loại trừ rõ ràng để tránh bị đè):*
+       `(not starts_with(http.request.uri.path, "/admintv") and not starts_with(http.request.uri.path, "/admin") and not starts_with(http.request.uri.path, "/filemanager") and not starts_with(http.request.uri.path, "/laravel-filemanager") and not starts_with(http.request.uri.path, "/cart") and not starts_with(http.request.uri.path, "/checkout") and not starts_with(http.request.uri.path, "/add-to-cart") and not starts_with(http.request.uri.path, "/update-cart") and not starts_with(http.request.uri.path, "/remove-item") and not starts_with(http.request.uri.path, "/order-success"))`
+     * *Action:* `Eligible for cache`
+     * *Edge TTL:* `Ignore cache-control header and use this TTL` ➔ Đặt `2 hours` hoặc `4 hours`.
+     * *Browser TTL:* `Respect origin TTL` (để tránh tình trạng client bị dính cache trình duyệt khi quản trị viên cập nhật bài).
+   - **Quy trình làm mới Cache khi Admin sửa nội dung:**
+     * Khi cập nhật giá, thêm bài viết hay sản phẩm mới trong Admin, chỉ cần vào Cloudflare: **Caching ➔ Configuration ➔ Purge Everything** (hoặc gọi Cloudflare API) để làm mới toàn trang trong 1 giây.
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |

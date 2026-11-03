@@ -1,7 +1,29 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
+
+# Admin & Authentication (Base: /admintv & /admin)
+Disallow: /admintv
 Disallow: /admintv/
+Disallow: /admintv_logout
+Disallow: /admintv_post_login
+Disallow: /admin
+Disallow: /admin/
+Disallow: /laravel-filemanager
+Disallow: /laravel-filemanager/
+Disallow: /filemanager
+Disallow: /filemanager/
 Disallow: /api/
 
-Sitemap: http://localhost/sitemap.xml
+# Cart & Dynamic Checkout
+Disallow: /cart
+Disallow: /checkout
+Disallow: /checkout-store
+Disallow: /add-to-cart
+Disallow: /update-cart
+Disallow: /remove-item
+Disallow: /order-success
+Disallow: /gio-hang
+Disallow: /thanh-toan
+
+# Sitemap
+Sitemap: https://{domain}/sitemap.xml

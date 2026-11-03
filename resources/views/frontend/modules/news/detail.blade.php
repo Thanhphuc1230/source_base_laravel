@@ -3,6 +3,7 @@
 @section('keywords', lang($news_detail, 'keyword'))
 @section('description', lang($news_detail, 'description'))
 @section('images', lang($news_detail, 'image') ?? $web->logo)
+@section('og_type', 'article')
 
 @section('content')
     @if(!empty($news_settings['banner_detail']))
@@ -47,9 +48,15 @@
                         <span class="text-gold-650 text-2xs font-bold uppercase tracking-wider block">
                             {{ $news_detail->created_at ? $news_detail->created_at->format('d/m/Y') : '' }}
                         </span>
-                        <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-emerald-950 leading-tight">
-                            {{ lang($news_detail, 'name') }}
-                        </h1>
+                        @if(empty($news_settings['banner_detail']))
+                            <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-emerald-950 leading-tight">
+                                {{ lang($news_detail, 'name') }}
+                            </h1>
+                        @else
+                            <h2 class="text-2xl sm:text-3xl font-heading font-extrabold text-emerald-950 leading-tight">
+                                {{ lang($news_detail, 'name') }}
+                            </h2>
+                        @endif
                         <p class="text-xs text-gray-500 font-semibold italic leading-relaxed border-l-4 border-gold-500 pl-4">
                             {{ lang($news_detail, 'intro') }}
                         </p>

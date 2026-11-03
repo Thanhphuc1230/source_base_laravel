@@ -25,9 +25,9 @@
                             </span>
                         </div>
 
-                        <h1 class="text-base sm:text-2xl md:text-4xl lg:text-5xl font-heading font-semibold leading-tight text-white drop-shadow-md tracking-tight">
+                        <h2 class="text-base sm:text-2xl md:text-4xl lg:text-5xl font-heading font-semibold leading-tight text-white drop-shadow-md tracking-tight">
                             {{ lang($slide, 'name') }}
-                        </h1>
+                        </h2>
 
                         <!-- Action Buttons Row -->
                         <div class="pt-1 sm:pt-2 flex flex-wrap items-center gap-2 sm:gap-3 pointer-events-auto">

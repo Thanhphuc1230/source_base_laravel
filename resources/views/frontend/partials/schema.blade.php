@@ -72,3 +72,70 @@
 }
 </script>
 @endif
+
+{{-- Schema Product (Tự động render khi ở trang chi tiết sản phẩm) --}}
+@if(isset($product_detail) && $product_detail)
+@php
+    $prodImage = !empty($product_detail->image_vn) ? asset($product_detail->image_vn) : $orgImage;
+    $prodPrice = $product_detail->price ?: 0;
+    $currencyCode = (function_exists('currency_unit') && in_array(currency_unit(), ['$', 'USD'])) ? 'USD' : 'VND';
+@endphp
+<script type="application/ld+json">
+{
+    "{{ '@context' }}": "https://schema.org",
+    "@type": "Product",
+    "name": "{{ addslashes(lang($product_detail, 'name')) }}",
+    "image": [
+        "{{ $prodImage }}"
+    ],
+    "description": "{{ addslashes(strip_tags(lang($product_detail, 'intro') ?: lang($product_detail, 'content'))) }}",
+    "sku": "{{ $product_detail->uuid ?? $product_detail->id_product }}",
+    "brand": {
+        "@type": "Brand",
+        "name": "{{ addslashes($website->name_vn ?? 'Base') }}"
+    },
+    "offers": {
+        "@type": "Offer",
+        "url": "{{ url()->current() }}",
+        "priceCurrency": "{{ $currencyCode }}",
+        "price": "{{ $prodPrice }}",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+    }
+}
+</script>
+@endif
+
+{{-- Schema NewsArticle (Tự động render khi ở trang chi tiết tin tức) --}}
+@if(isset($news_detail) && $news_detail)
+@php
+    $newsImage = !empty($news_detail->image_vn) ? asset($news_detail->image_vn) : $orgImage;
+    $publishedAt = $news_detail->created_at ? $news_detail->created_at->toIso8601String() : now()->toIso8601String();
+    $modifiedAt = $news_detail->updated_at ? $news_detail->updated_at->toIso8601String() : $publishedAt;
+@endphp
+<script type="application/ld+json">
+{
+    "{{ '@context' }}": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": "{{ addslashes(lang($news_detail, 'name')) }}",
+    "image": [
+        "{{ $newsImage }}"
+    ],
+    "datePublished": "{{ $publishedAt }}",
+    "dateModified": "{{ $modifiedAt }}",
+    "description": "{{ addslashes(strip_tags(lang($news_detail, 'intro') ?: lang($news_detail, 'content'))) }}",
+    "author": {
+        "@type": "Organization",
+        "name": "{{ addslashes($website->name_vn ?? 'Base') }}"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "{{ addslashes($website->name_vn ?? 'Base') }}",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ $orgLogo }}"
+        }
+    }
+}
+</script>
+@endif

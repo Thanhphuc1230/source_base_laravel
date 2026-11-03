@@ -5,6 +5,9 @@
 @section('images', $web->favicon)
 
 @section('content')
+    {{-- Semantic Page Heading for Technical SEO (Hidden visually via .sr-only) --}}
+    <h1 class="sr-only">{{ $web->name_company ?? $web->name_vn }} - {{ $web->name_vn }}</h1>
+
     <!-- 1. Main Hero Slider Carousel -->
     @include('frontend.partials.slider')
 
