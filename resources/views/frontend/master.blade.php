@@ -33,6 +33,6 @@
         window.addToCartUrl = "{{ url('/add-to-cart') }}";
         window.CURRENCY_UNIT = "{{ currency_unit() }}";
     </script>
-    <script src="{{ asset('frontend/js/cart.js') }}"></script>
+    <script defer src="{{ asset('frontend/js/cart.js') }}?v={{ file_exists(public_path('frontend/js/cart.js')) ? filemtime(public_path('frontend/js/cart.js')) : '1.0' }}"></script>
 </body>
 </html>

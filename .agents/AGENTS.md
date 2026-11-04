@@ -311,6 +311,55 @@ Nhằm đưa thời gian phản hồi máy chủ (TTFB) về mức **mili-giây 
 
 ---
 
+## QUY TẮC SỐ 20 – CHUẨN TỐI ƯU GOOGLE PAGESPEED 95-100, TIẾP CẬN (ACCESSIBILITY) & CORE WEB VITALS (PERFORMANCE, ACCESSIBILITY & SEO ARCHITECTURE RULES)
+
+Khi thiết kế giao diện (Blade/HTML), viết CSS/JS và xử lý Backend (Laravel/PHP), BẮT BUỘC tuân thủ nghiêm ngặt 6 trụ cột sau để đảm bảo website đạt **95-100 điểm Google Lighthouse & PageSpeed Insights**:
+
+### 1. Hình ảnh & Core Web Vitals (LCP, CLS):
+- **CẤM DÙNG ẢNH GỐC CHƯA XỬ LÝ:** Tuyệt đối KHÔNG BAO GIỜ lưu ảnh trực tiếp từ camera/điện thoại (>1500px). Backend (`ImageService`) phải tự động resize và nén WebP khi upload:
+  * **Ảnh thẻ card / blog / sản phẩm:** Max width `600px - 800px` (WebP, quality 70-75, dung lượng < 60KB).
+  * **Ảnh Banner / Slider Hero:** Max width `1600px` (WebP, quality 80, dung lượng < 100KB).
+- **100% thẻ `<img>` BẮT BUỘC có kích thước:** Khai báo rõ ràng thuộc tính `width="..."` và `height="..."` cùng CSS `aspect-ratio` để ngăn giật nhảy giao diện (**CLS = 0**).
+- **Phần tử LCP (Ảnh Banner/Hero đầu tiên Above-the-fold):**
+  * Thêm thuộc tính `fetchpriority="high"` vào thẻ `<img>` của Slide đầu tiên.
+  * Preload trước trong `<head>`: `<link rel="preload" as="image" href="..." fetchpriority="high">`.
+- **Mọi ảnh dưới nếp gấp màn hình (Below-the-fold):** BẮT BUỘC có `loading="lazy"` và `decoding="async"`.
+
+### 2. CSS & Dựng Giao Diện (FCP, Render-Blocking):
+- **CẤM Play CDN trên Production:** TUYỆT ĐỐI KHÔNG dùng Play CDN (`tailwind.js` qua thẻ script) trên môi trường production vì gây nghẽn CPU > 1.000ms. BẮT BUỘC biên dịch trước thành file CSS tĩnh thu gọn (`tailwind.min.css` hoặc `theme-style.css`, gzip < 20KB).
+- **Tải bất đồng bộ Icon (Non-blocking):** Thư viện icon nặng (như FontAwesome `all.min.css`) BẮT BUỘC dùng cơ chế tải bất đồng bộ:
+  ```html
+  <link rel="preload" href="all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="all.min.css"></noscript>
+  ```
+- **Font chữ cục bộ (Local Fonts):** Preload file font chính dạng `.woff2` (chứa tập ký tự Latin cơ bản và tiếng Việt) kèm thuộc tính `crossorigin`.
+
+### 3. JavaScript & Tối Ưu Main Thread (TBT, Script Evaluation):
+- **Không chặn luồng chính:** KHÔNG đặt thẻ `<script>` đồng bộ chặn đứng trong `<head>` hoặc giữa thân `<body>`.
+- **Trì hoãn thực thi:** Toàn bộ file JavaScript (`main.js`, `cart.js`, `slider.js`) BẮT BUỘC có thuộc tính `defer` hoặc đặt ở cuối thẻ `<body>`.
+- **Tương tác cực ngắn (< 10 dòng):** Các tương tác vi mô (như toggle menu mobile đơn giản) ưu tiên viết inline ngắn gọn trực tiếp thay vì tạo thêm 1 file `.js` rời gây tốn lượt request mạng.
+
+### 4. Hỗ Trợ Tiếp Cận & Trải Nghiệm Người Dùng (Accessibility >= 95):
+- **Kích thước đích chạm (Tap Target):** Mọi nút bấm (`<button>`), liên kết icon, chấm chuyển slide (pagination dots) BẮT BUỘC có diện tích chạm tối thiểu **`44x44px`** (áp dụng `min-w-[44px] min-h-[44px]` hoặc padding tương ứng).
+- **Thứ bậc tiêu đề (Heading Hierarchy):**
+  * Đúng duy nhất 1 thẻ `<h1>` trên mỗi trang.
+  * Tuân thủ nghiêm thứ tự giảm dần: `<h1>` ➔ `<h2>` ➔ `<h3>` ➔ `<h4>`. TUYỆT ĐỐI KHÔNG nhảy cóc từ `<h2>` xuống `<h4>`.
+- **Nhãn điều khiển (Accessible Labels):** Mọi thẻ `<button>`, `<a>` chứa icon không có chữ BẮT BUỘC phải có thuộc tính `aria-label="..."`.
+- **Mô tả ảnh:** Toàn bộ thẻ `<img>` BẮT BUỘC có thuộc tính `alt="..."` mô tả ngữ nghĩa rõ ràng, không để trống vô nghĩa.
+
+### 5. SEO & Best Practices (100/100):
+- **Chuẩn hóa Open Graph:** Thẻ `<meta property="og:type">` BẮT BUỘC là `"website"` (hoặc `"article"` cho chi tiết bài viết, `"product"` cho sản phẩm). KHÔNG tự ý ghi tên công ty/thương hiệu vào `og:type`.
+- **Thẻ `<title>` chuẩn:** Định dạng: `Tên Brand | Thông điệp cốt lõi / Từ khóa chính` (độ dài 50 - 60 ký tự).
+- **Bảo mật liên kết ngoài:** Mọi thẻ `<a>` mở tab mới (`target="_blank"`) BẮT BUỘC có `rel="noopener noreferrer"`.
+- **Thẻ bắt buộc:** Luôn có `<meta name="viewport" content="width=device-width,initial-scale=1">` và `<link rel="canonical" href="...">`.
+
+### 6. Bộ Nhớ Đệm & Triển Khai (Cache, Cloudflare & Anti-419):
+- **Tự động Busting Cache:** Toàn bộ asset tĩnh (CSS, JS) phải thêm version bằng `?v={{ filemtime(...) }}` để trình duyệt cập nhật tức thì khi deploy.
+- **Tối ưu Cloudflare CDN:** Kích hoạt HTTP/3 (QUIC), nén Brotli, và bật Edge Cache cho static files (`/uploads/*`, `/frontend/*`).
+- **Phòng chống lỗi 419 (CSRF Protection):** TUYỆT ĐỐI KHÔNG cache HTML tĩnh đối với các trang chứa form CSRF token (`/admintv`, `/admin/*`, `/checkout`, `/cart`) để triệt tiêu lỗi `419 Page Expired`.
+
+---
+
 ## CÁC TÀI LIỆU THAM KHẢO
 
 | File | Nội dung |

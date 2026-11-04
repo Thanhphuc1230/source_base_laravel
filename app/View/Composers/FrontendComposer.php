@@ -30,8 +30,11 @@ class FrontendComposer
         $cacheTtl = 120; // 2 giờ
 
         $systemData = \App\Services\CacheService::remember('system', 'frontend_web_data', $cacheTtl, function() {
-            return System::first();
+            return System::first() ?? new System(['name_vn' => 'Base', 'name_en' => 'Base']);
         });
+        if (! $systemData) {
+            $systemData = new System(['name_vn' => 'Base', 'name_en' => 'Base']);
+        }
 
         $data = [
             // 1. Dữ liệu hệ thống (Tag: system)

@@ -230,7 +230,7 @@ class ImageService
      * @param  int  $quality  Chất lượng ảnh (1-100)
      * @return string|bool Tên file thực tế đã lưu (ví dụ: 'hash.webp' hoặc 'hash.jpg'), hoặc false nếu lỗi
      */
-    public function convertToWebp(UploadedFile|string $file, string $targetPath, int $quality = 80): string|bool
+    public function convertToWebp(UploadedFile|string $file, string $targetPath, int $quality = 80, int $maxWidth = 1600): string|bool
     {
         // 1. Phân loại đối tượng file và lấy đường dẫn vật lý
         if ($file instanceof UploadedFile) {
@@ -272,9 +272,9 @@ class ImageService
                 return $this->fallbackToOriginal($file, $targetPath);
             }
 
-            // Tự động resize nếu chiều rộng hoặc chiều cao > 1920px (giữ aspect ratio & upsize constraint)
-            if ($image->width() > 1920 || $image->height() > 1920) {
-                $image->resize(1920, 1920, function ($constraint) {
+            // Tự động resize theo giới hạn độ phân giải tối đa (giữ aspect ratio & upsize constraint)
+            if ($image->width() > $maxWidth || $image->height() > $maxWidth) {
+                $image->resize($maxWidth, $maxWidth, function ($constraint) {
                     $constraint->aspectRatio();
                     $constraint->upsize();
                 });
@@ -382,9 +382,14 @@ class ImageService
 
         $webpFileName = pathinfo($fileName, PATHINFO_FILENAME).'.webp';
         $targetPath = public_path("uploads/{$subPath}/{$webpFileName}");
-        $quality = $options['quality'] ?? 80;
 
-        $savedFileName = $this->convertToWebp($file, $targetPath, $quality);
+        // Auto determine optimal dimension & quality per module/context (Rule 20)
+        // Sliders/Banners: max 1600px, quality 80 (<100KB). Products/News/Cards: max 800px, quality 75 (<60KB)
+        $isHero = str_contains(strtolower($subPath), 'slider') || str_contains(strtolower($subPath), 'banner');
+        $maxWidth = $options['maxWidth'] ?? ($isHero ? 1600 : 800);
+        $quality = $options['quality'] ?? ($isHero ? 80 : 75);
+
+        $savedFileName = $this->convertToWebp($file, $targetPath, $quality, $maxWidth);
 
         if (! $savedFileName) {
             throw new Exception('Không thể chuyển đổi hoặc lưu ảnh');

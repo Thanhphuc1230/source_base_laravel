@@ -19,7 +19,7 @@ A production-ready, enterprise-grade Laravel foundation engineered for high-perf
 
 ### Core Highlights
 * **Strict 4-Tier Layered Architecture**: Unidirectional flow (`Controller → Service → Repository → Model`) ensuring single responsibility, clean transactions, and clean testing.
-* **19 Enforced Engineering Rules**: Zero-Hardcode policy, Zero-CDN offline assets, Redis query optimization, unified media storage, technical SEO schema, and Cloudflare Edge caching.
+* **20 Enforced Engineering Rules**: Zero-Hardcode policy, Zero-CDN offline assets, Redis query optimization, unified media storage, technical SEO schema, Cloudflare Edge caching, and Google PageSpeed 95-100 Core Web Vitals.
 * **AI-Ready Codebase & Multi-Agent Squad**: Integrated `.agents/` squad (Lead Orchestrator, Backend Architect, Frontend Specialist, QA Inspector) with single-command context packing via Repomix.
 * **Automated Self-Testing Loop**: Built-in 4-step autonomous test loop (Syntax, Interface Contracts, Runtime Execution via CLI, and Cache Clearing) to eliminate user-facing bugs.
 
@@ -53,9 +53,9 @@ HTTP Request ──► Controller ──► Service ──► Repository ──�
 
 ---
 
-## 📌 2. The 19 Core Engineering Rules
+## 📌 2. The 20 Core Engineering Rules
 
-Every change in this codebase adheres strictly to the 19 platform rules defined in [`.agents/AGENTS.md`](./.agents/AGENTS.md):
+Every change in this codebase adheres strictly to the 20 platform rules defined in [`.agents/AGENTS.md`](./.agents/AGENTS.md):
 
 | # | Rule Name | Description & Requirement |
 |:---:|---|---|
@@ -78,6 +78,7 @@ Every change in this codebase adheres strictly to the 19 platform rules defined 
 | **17** | **Autonomous Self-Testing Loop** | Mandatory 4-step test verification (Syntax, Interface Contract, Runtime Execution, Cache Clear) prior to turn delivery. |
 | **18** | **Technical & On-Page SEO** | Dynamic cached `/sitemap.xml`, secure `robots.txt`, single semantic `<h1>` per page, complete JSON-LD Schemas (LocalBusiness, Product, NewsArticle, Breadcrumbs), OpenGraph & Twitter Cards. |
 | **19** | **Origin Performance & Cloudflare Edge** | Pruned column queries (no `select *` in catalog/home), multi-tier cache, and standard 2-rule Cloudflare Edge Cache (`Bypass Admin` & `Cache Frontend Everything`). |
+| **20** | **PageSpeed 95-100 & A11y Standards** | Backend auto-resize WebP (<800px card, <1600px hero), `aspect-ratio` + explicit width/height (CLS=0), LCP `fetchpriority="high"`, below-fold lazy/async, non-blocking icon CSS, deferred JS, 44x44px tap targets, strict heading hierarchy, and CSRF anti-419 edge protection. |
 
 ---
 

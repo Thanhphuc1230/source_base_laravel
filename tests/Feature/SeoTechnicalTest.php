@@ -37,4 +37,31 @@ class SeoTechnicalTest extends TestCase
         $this->assertStringContainsString('Disallow: /checkout', $content);
         $this->assertStringContainsString('Sitemap:', $content);
     }
+
+    /**
+     * Test homepage contains valid og:type website, canonical link, and viewport.
+     */
+    public function test_homepage_contains_canonical_and_og_type_website()
+    {
+        \App\Models\System::create([
+            'name_vn' => 'Base Interior',
+            'name_en' => 'Base Interior',
+            'email' => 'contact@base.local',
+            'phone' => '0979248298',
+            'address_vn' => 'Ho Chi Minh City',
+        ]);
+
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+        $content = $response->getContent();
+
+        $this->assertStringContainsString('<meta property="og:type" content="website">', $content);
+        $this->assertStringContainsString('name="viewport"', $content);
+        $this->assertStringContainsString('rel="canonical"', $content);
+
+        while (ob_get_level() > 1) {
+            ob_end_clean();
+        }
+    }
 }

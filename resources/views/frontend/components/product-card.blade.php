@@ -9,7 +9,7 @@
     <!-- Clickable Product Image (aspect-square) -->
     <div class="aspect-square w-full overflow-hidden bg-beige-warm relative p-3 sm:p-4 flex items-center justify-center zoom-container">
         <a href="{{ route('web.resolve', ['slug' => $productSlug]) }}" class="block w-full h-full flex items-center justify-center">
-            <img src="{{ asset($productImage) }}" alt="{{ $productName }}" class="w-full h-full object-cover rounded-xl transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy">
+            <img src="{{ asset($productImage) }}" alt="{{ $productName }}" width="400" height="400" class="w-full h-full object-cover rounded-xl transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" decoding="async">
         </a>
         
         <!-- Hot / Bespoke Badge -->
@@ -71,7 +71,7 @@
             </div>
 
             <!-- Add to Cart Action Button -->
-            <button type="button" onclick="addToCartAjax('{{ $product->uuid }}', this)" class="inline-flex items-center justify-center bg-beige-warm hover:bg-taupe-oak text-charcoal hover:text-white border border-border-subtle hover:border-taupe-oak font-medium p-2 sm:p-2.5 rounded-xl transition-all duration-300 shadow-2xs group/btn flex-shrink-0" title="Thêm vào giỏ hàng">
+            <button type="button" onclick="addToCartAjax('{{ $product->uuid }}', this)" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] bg-beige-warm hover:bg-taupe-oak text-charcoal hover:text-white border border-border-subtle hover:border-taupe-oak font-medium p-2 sm:p-2.5 rounded-xl transition-all duration-300 shadow-2xs group/btn flex-shrink-0" title="Thêm vào giỏ hàng" aria-label="Thêm {{ $productName }} vào giỏ hàng">
                 <i class="fa-solid fa-bag-shopping text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
             </button>
         </div>

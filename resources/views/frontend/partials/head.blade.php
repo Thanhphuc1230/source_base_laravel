@@ -21,7 +21,7 @@
 
     <!-- Open Graph / Meta Facebook & Zalo & Viber -->
     <meta property="og:locale" content="vi_VN">
-    <meta property="og:type" content="@yield('og_type', $website->meta_name ?? 'website')">
+    <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="{{ $website->name_vn ?? $website->meta_name ?? 'Base' }}">
     <meta property="og:title" content="@yield('module', $website->meta_title ?? $website->name_vn ?? 'Base')">
     <meta property="og:description" content="@yield('description', $website->description_vn ?? '')">
@@ -70,8 +70,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- FontAwesome 6 Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- FontAwesome 6 Icons (Non-blocking async load) -->
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
 <!-- Tailwind CSS Play CDN (Editorial Luxury Interior & Architecture Configuration) -->
 <script src="https://cdn.tailwindcss.com"></script>

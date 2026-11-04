@@ -9,7 +9,7 @@
 
             <picture class="w-full h-full block">
                 <source media="(max-width: 767px)" srcset="{{ asset(lang($slide, 'image_mobile')) }}">
-                <img src="{{ asset(lang($slide, 'image_desktop')) }}" alt="{{ lang($slide, 'name') }}" class="w-full h-full object-cover object-center">
+                <img src="{{ asset(lang($slide, 'image_desktop')) }}" alt="{{ lang($slide, 'name') }}" width="1920" height="1280" {{ $key === 0 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"' }} class="w-full h-full object-cover object-center">
             </picture>
 
             <!-- Subtle atmospheric gradient overlay for textual readability without obscuring banner artwork -->
@@ -54,13 +54,15 @@
         <i class="fa-solid fa-chevron-right text-sm"></i>
     </button>
 
-    <!-- Pagination dots -->
-    <div class="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex space-x-2.5">
+    <!-- Pagination dots (Tap target min 44x44px for accessibility) -->
+    <div class="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center space-x-1">
         @foreach($sliders as $key => $slide)
-            <button onclick="goToSlide({{ $key }})" class="w-3 h-3 rounded-full border border-white/50 transition-all duration-300 slide-dot {{ $key === 0 ? 'bg-taupe-oak w-8 border-taupe-oak' : 'bg-white/50' }}" data-slide-dot="{{ $key }}" aria-label="Slide {{ $key + 1 }}"></button>
+            <button type="button" onclick="goToSlide({{ $key }})" class="min-w-[44px] min-h-[44px] inline-flex items-center justify-center p-2 focus:outline-none" data-slide-dot="{{ $key }}" aria-label="Chuyển đến Slide {{ $key + 1 }}">
+                <span class="inline-block h-3 rounded-full border border-white/50 transition-all duration-300 slide-dot {{ $key === 0 ? 'bg-taupe-oak w-8 border-taupe-oak' : 'bg-white/50 w-3' }}"></span>
+            </button>
         @endforeach
     </div>
 </div>
 
-<script src="{{ asset('frontend/js/slider.js') }}"></script>
+<script defer src="{{ asset('frontend/js/slider.js') }}?v={{ file_exists(public_path('frontend/js/slider.js')) ? filemtime(public_path('frontend/js/slider.js')) : '1.0' }}"></script>
 @endif
