@@ -1,0 +1,14 @@
+{
+  "name": "base-source-laravel",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "context:summary": "repomix --config repomix.summary.json",
+    "context:full": "repomix --config repomix.config.json",
+    "ast": "ast-grep"
+  },
+  "devDependencies": {
+    "@ast-grep/cli": "^0.38.0",
+    "repomix": "^0.2.30"
+  }
+}

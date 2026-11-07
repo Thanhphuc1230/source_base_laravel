@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/yamadashy/repomix/main/repomix.schema.json",
+  "output": {
+    "filePath": ".agents/codebase-summary.xml",
+    "style": "xml",
+    "parsableStyle": true,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "removeComments": false,
+    "removeEmptyLines": true,
+    "showLineNumbers": false,
+    "copyToClipboard": false
+  },
+  "include": [
+    "app/Models/**",
+    "app/Repositories/**",
+    "app/Services/**",
+    "routes/**"
+  ],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
+    "customPatterns": [
+      "vendor/**",
+      "node_modules/**",
+      "storage/**",
+      "public/**",
+      "database/**",
+      "tests/**",
+      "*.log",
+      "repomix-output.*",
+      ".agents/codebase-summary.xml"
+    ]
+  }
+}

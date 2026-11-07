@@ -1,0 +1,29 @@
+# Database & Archives
+*.sql
+*.sql.gz
+*.rdb
+
+# Media & Static Uploads / Admin Assets (Avoid heavy background indexing)
+public/uploads/
+/public/uploads/
+public/images/
+/public/images/
+public/admin/
+/public/admin/
+
+# Storage & Framework Cache / Logs
+storage/framework/cache/
+/storage/framework/cache/
+storage/logs/
+/storage/logs/
+
+# Package Lock files
+composer.lock
+package-lock.json
+
+# Dependencies & Outputs
+vendor/
+node_modules/
+repomix-output.xml
+repomix-output.*
+.agents/codebase-summary.xml

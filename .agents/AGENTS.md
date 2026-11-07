@@ -1,14 +1,14 @@
-# AGENTS.md – Quy tắc cốt lõi & Đội ngũ Multi-Agent dự án Base
+# AGENTS.md – Master Router & Đội ngũ Kỹ thuật Đa tác nhân Base
 
-> File này được AI tự động nạp mỗi phiên làm việc. Hệ thống vận hành theo mô hình **Tổ đội Kỹ thuật Đa tác nhân (Multi-Agent Engineering Squad)**.
+> File cấu hình trung tâm nạp tự động cho AI Coding Assistants. Vận hành theo mô hình **Tổ đội Kỹ thuật Đa tác nhân (Multi-Agent Engineering Squad)**.
 
 ---
 
 ## 👥 ĐỘI NGŨ MULTI-AGENT CHUYÊN MÔN HÓA (ROLES)
 
-Khi nhận prompt từ người dùng, AI sẽ phân tách nhiệm vụ và đóng vai trò tương ứng:
+Khi nhận prompt từ người dùng, AI tự động kích hoạt vai trò chuyên trách tương ứng:
 
-| Role | File định nghĩa | Trách nhiệm chính |
+| Role | Định nghĩa | Trách nhiệm chính |
 |---|---|---|
 | **Lead Orchestrator** | [`.agents/roles/orchestrator.md`](./roles/orchestrator.md) | Phân rã yêu cầu, điều phối chuyên viên, kiểm soát Git & Commit (Rule 8). |
 | **Frontend Specialist** | [`.agents/roles/frontend-specialist.md`](./roles/frontend-specialist.md) | Blade views, Tailwind CSS, Responsive (Mobile 2 cột), Zero-CDN, Zero-Hardcode. |
@@ -19,7 +19,7 @@ Khi nhận prompt từ người dùng, AI sẽ phân tách nhiệm vụ và đó
 
 ## ⚡ BỘ KỸ NĂNG TỰ ĐỘNG HÓA (SKILLS)
 
-| Kỹ năng | File cấu hình | Mô tả |
+| Kỹ năng | Cấu hình | Mô tả |
 |---|---|---|
 | **`theme-rebuild`** | [`.agents/skills/theme-rebuild/SKILL.md`](./skills/theme-rebuild/SKILL.md) | Chuyển đổi toàn bộ chủ đề website sang ngành hàng mới (`site:rebuild`). |
 | **`hardcode-scanner`** | [`.agents/skills/hardcode-scanner/SKILL.md`](./skills/hardcode-scanner/SKILL.md) | Quét tự động mã nguồn Blade Views để phát hiện vi phạm Rule 1. |
@@ -27,349 +27,45 @@ Khi nhận prompt từ người dùng, AI sẽ phân tách nhiệm vụ và đó
 
 ---
 
-## QUY TẮC SỐ 1 – TUYỆT ĐỐI KHÔNG HARDCODE & 100% QUẢN TRỊ ĐƯỢC TỪ ADMIN
+## 📋 MA TRẬN ĐIỀU PHỐI QUY TẮC DỰ ÁN (CORE RULES ROUTER)
 
-Khi viết Blade view, **TUYỆT ĐỐI KHÔNG ĐƯỢC** ghi cứng (hardcode) bất kỳ thông tin nào ở mọi vị trí trên website (Trang chủ, Chi tiết sản phẩm, Tin tức, Danh mục, Sidebar, Banner, Footer). Toàn bộ nội dung hiển thị phải được kết nối với CSDL và **có thể thay đổi được 100% trong trang quản trị Admin**.
+Mọi thay đổi mã nguồn bắt buộc tuân thủ bộ quy tắc chuyên sâu tương ứng:
 
-### 1. Chi tiết các phạm vi bắt buộc dùng biến động:
-- **Thông tin công ty & Hệ thống:** Tên công ty, SĐT/Hotline, email, địa chỉ, logo, favicon, Google Map URL, link mạng xã hội (Facebook, Zalo, YouTube,...) phải dùng biến `$web`. Xem chi tiết: [`.agents/frontend-data-map.md`](./frontend-data-map.md).
-- **Nội dung Sản phẩm (Product Content):** Tên sản phẩm, mô tả ngắn (`intro_vn`/`intro_en`), nội dung chi tiết (`content_vn`/`content_en`), thông số kỹ thuật, giá bán, giá cũ, hình ảnh, ảnh chi tiết (`image_detail`) phải lấy từ object `$product` hoặc `$product_detail`.
-  - ❌ CẤM tự gõ text tĩnh trong chi tiết sản phẩm như: `"Cam kết chính hãng 100%"`, `"Bảo hành 24 tháng"`, `"Giao hàng miễn phí toàn quốc"`, `"Kích thước: 200 x 150 cm"`,... nếu những nội dung này không lấy từ trường dữ liệu động hoặc cài đặt trong Admin.
-- **Nội dung Tin tức & Bài viết (News & Post Content):** Tên bài viết, tóm tắt (`intro_vn`), nội dung chi tiết (`content_vn`), tác giả, ngày đăng, danh mục phải lấy từ object `$news` hoặc `$news_detail`.
-  - ❌ CẤM tự chèn các đoạn văn mẫu, nhận xét ảo, hoặc chú thích cố định trong Blade view bài viết.
-- **Tiêu đề Section & Cài đặt giao diện:** Tiêu đề các khối trên trang chủ, banner danh mục, màu sắc, font chữ phải nạp từ biến cài đặt Admin (`$product_settings`, `$news_settings`, `$site_settings`, `$about_section`) hoặc tên danh mục `$category->name_vn`.
-  - ❌ Nếu một khối nội dung không có dữ liệu động từ Admin thì **BẮT BUỘC PHẢI ẨN** bằng `@if(...)`, tuyệt đối không được tự ý bịa text cứng để lấp đầy giao diện.
+| ID | Tên Quy Tắc | Tóm tắt Bắt buộc | Tài liệu Chi tiết |
+|---|---|---|---|
+| **01** | **Zero-Hardcode** | 100% dữ liệu lấy từ CSDL / Admin; cấm tuyệt đối text tĩnh trong Blade. | [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) |
+| **02** | **Layered Architecture** | `Controller → Service → Repository → Model`. Không viết SQL trong Controller. | [`.agents/architecture.md`](./architecture.md) |
+| **03** | **Anti-AI Design System** | Lưới 1200px, bo góc duy nhất 8px, cấm pill/gradient ảo, mobile 2 cột. | [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md) |
+| **04** | **Admin UI/UX Standard** | Height 38px đồng bộ, switches accent `#2563eb`, ghost action buttons 32px. | [`.agents/rules/04-admin-ui-ux.md`](./rules/04-admin-ui-ux.md) |
+| **05** | **Unified Media Storage** | Lưu ảnh/video trực tiếp `public/uploads/{module}/`, nén WebP, preview `#t=0.5`. | [`.agents/rules/05-media-storage.md`](./rules/05-media-storage.md) |
+| **06** | **SEO & Cloudflare Edge** | Dynamic sitemap, schema JSON-LD, 2 Cloudflare Cache Rules (Bypass Admin). | [`.agents/rules/06-seo-cloudflare.md`](./rules/06-seo-cloudflare.md) |
+| **07** | **Autonomous Testing** | Quy trình 6 tầng, vòng lặp 4 bước tự test trước khi báo hoàn thành cho user. | [`.agents/rules/07-autonomous-testing.md`](./rules/07-autonomous-testing.md) |
+| **08** | **Git & Commit Safety** | CẤM tự ý commit/push; commit message tiếng Anh chuẩn Conventional. | _Xem mục Invariants bên dưới_ |
+| **09** | **Theme Rebuilding** | Chạy `php artisan site:rebuild --topic="..."` trước khi sửa view & CSS. | [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) |
+| **10** | **Asset Consolidation** | Cấm tạo file lẻ; CSS vào `theme-style.css`, JS vào `main.js`. | [`.agents/frontend-design.md`](./frontend-design.md) |
 
-### 2. Bảng đối chiếu mẫu vi phạm và chuẩn hóa:
+---
 
-| Thành phần hiển thị | Sai (Hardcode) ❌ | Đúng (Admin-Editable) ✅ |
+## 🔒 3 NGUYÊN TẮC BẤT BIẾN (CORE INVARIANTS)
+
+1. **Tuyệt đối Không Hardcode (Zero-Hardcode)**:
+   - Mọi thông tin (công ty, số điện thoại, banner, tiêu đề khối, sản phẩm) đều phải chỉnh sửa được từ trang Quản trị Admin hoặc biến `$web`.
+   - Tra cứu biến động tại [`.agents/frontend-data-map.md`](./frontend-data-map.md).
+2. **Quy trình Git có kiểm soát (Strict Git Protocol)**:
+   - AI tuyệt đối **KHÔNG ĐƯỢC TỰ Ý COMMIT HOẶC PUSH** khi người dùng không yêu cầu trực tiếp.
+   - Khi hoàn thành task, luôn hỏi: *"Tôi đã hoàn thành task [Tên Task]. Bạn có muốn tôi commit các thay đổi này không?"*.
+   - Mọi commit message bắt buộc viết bằng **tiếng Anh chuẩn Conventional Commits** (`feat:`, `fix:`, `refactor:`, `chore:`).
+3. **Kiểm thử tự thân trước khi bàn giao (Zero-User-Debugging)**:
+   - Phải tự chạy lint syntax PHP (`php -l`), compile Blade (`php artisan view:cache`), check route (`php artisan route:list`), và xóa cache (`php artisan optimize:clear`) trước khi thông báo xong việc.
+
+---
+
+## 🚀 TÀI LIỆU ĐỊNH VỊ TỨC THÌ (INSTANT NAVIGATION)
+
+| Tài liệu | Đường dẫn | Công dụng cho AI |
 |---|---|---|
-| Tên công ty / Brand | `Base` | `{{ $web->name_vn }}` |
-| Hotline / SĐT tư vấn | `0979.248.298` | `{{ $web->phone }}` |
-| Email liên hệ | `contact@base.local` | `{{ $web->email }}` |
-| Bản đồ Google Map | `src="https://www.google.com/maps/embed..."` | `src="{{ $web->map }}"` |
-| Logo website | `<img src="/images/logo/logo.png">` | `<img src="{{ asset($web->logo) }}">` |
-| Tên & Giá sản phẩm | `<span>Bàn làm việc gỗ sồi</span> 5.000.000đ` | `<span>{{ $product->name }}</span> {{ number_format($product->price) }}đ` |
-| Mô tả ngắn sản phẩm | `<p>Chất liệu gỗ cao cấp nhập khẩu...</p>` | `<p>{{ $product->intro_vn }}</p>` |
-| Nội dung bài viết | `<div>Nội dung bài viết mẫu...</div>` | `<div>{!! $news->content_vn !!}</div>` |
-| Tiêu đề khối Sản phẩm | `<h2>Sản phẩm nổi bật</h2>` | `<h2>{{ $product_settings['title_home'] ?? $category->name ?? '' }}</h2>` |
-| Banner danh mục | `url('/images/banner.jpg')` | `url('{{ asset($product_settings['banner_category']) }}')` |
-| Chính sách / Giới thiệu | Viết cứng thẻ HTML tĩnh trong Blade | Lấy từ `$about_section`, `$web->footer`, hoặc `$page->content_vn` |
-
----
-
-## QUY TẮC SỐ 2 – KIẾN TRÚC LAYERED
-
-```
-Controller → Service → Repository → Model
-```
-Không viết query SQL trực tiếp trong Controller. Xem chi tiết: `.agents/architecture.md`
-
----
-
-## QUY TẮC SỐ 3 – BLADE COMPONENTS ADMIN
-
-Trang Admin dùng 100% Blade Components, không viết HTML bảng thủ công:
-`<x-admin.table-wrapper>`, `<x-admin.table-switch>`, `<x-admin.localized-fields>`, `<x-admin.image-upload>`
-
----
-
-## QUY TẮC SỐ 4 – CACHE
-
-Sau mọi thay đổi code/config: `php artisan optimize:clear`
-Admin có nút **"Xoá cache"** tại: Admin → Hệ thống → Xoá cache
-
----
-
-## QUY TẮC SỐ 5 – THẨM MỸ GIAO DIỆN CHUẨN BASE: CẤU TRÚC VỮNG CHẮC & TRÁNH "CHẤT AI"
-
-Chi tiết xem tại: [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md)
-
-- **Nguyên tắc gốc (Anti-AI Principles):** 
-  - Thiết kế từ sản phẩm & nghiệp vụ thật của doanh nghiệp. Ưu tiên sự gọn gàng, cụ thể, có lực thị giác.
-  - Mỗi màn hình (viewport) có đúng 1 điểm nhấn thị giác (ảnh lớn, mảng màu thương hiệu lớn, hoặc số liệu năng lực thật).
-  - Đa dạng bố cục section: chia 2 cột lệch (60/40), bảng thông số kỹ thuật (Spec Table), quy trình từng bước, dải CTA. Toàn trang chỉ có tối đa 1 loại card duy nhất (dành cho Danh mục Sản phẩm).
-  - ❌ CẤM khối 4 ô thống kê đều nhau nếu là số liệu ảo; CẤM icon đặt trong ô vuông/tròn nền pastel; CẤM badge pill chữ hoa nhỏ dẫn đường trên tiêu đề section; CẤM pill tên công ty trên Hero; CẤM emoji; CẤM gradient cầu vồng/neon.
-- **Hệ thống màu sắc theo bản sắc ngành hàng (Niche Color System):**
-  - Màu chính thương hiệu (Brand Primary) dùng cho các MẢNG LỚN CÓ LỰC (dải CTA, footer, banner).
-  - Quy tắc nhịp nền xen kẽ: Nền Trắng → Nền màu thương hiệu đậm chữ trắng (ít nhất 2 section trên trang chủ) → Nền rất nhạt (5-8% tint) → Ảnh tràn lề. CẤM 3 section liên tiếp cùng màu nền.
-  - Màu nhấn (Accent): CHỈ dùng cho nút CTA chính và tối đa 1 điểm nhấn mỗi viewport.
-- **Lưới bố cục, Khoảng cách & Bo góc thống nhất:**
-  - Container chuẩn 1200px (`max-w-[1200px]`, `.container-b2b`).
-  - Bo góc thống nhất: Duy nhất **8px** (`rounded-[8px]`). CẤM nút tròn dạng pill (`rounded-full`).
-  - Bóng đổ có kiểm soát: Chỉ dùng bóng nhẹ (`0 10px 30px rgba(0, 0, 0, 0.08)`) khi hover card hoặc header dính. CẤM shadow mềm lớn lan tràn.
-- **Thẻ sản phẩm cân bằng chiều cao tuyệt đối (Equal Height Product Cards):**
-  - Khung ảnh vuông chuẩn 1:1 (`aspect-square`), `<img>` dùng `absolute inset-0 object-cover`.
-  - Cột bọc: `w-full h-full flex flex-col`. Thẻ `<article>`: `h-full flex flex-col justify-between`.
-  - Tiêu đề khóa chiều cao tối thiểu `min-h-[3rem]` (2 dòng chữ); Thông số khóa tối thiểu `min-h-[46px]`.
-  - Hàng giá & Nút CTA đặt `mt-auto`, đảm bảo luôn nằm thẳng tắp trên cùng một đường kẻ ngang đáy thẻ.
-- **Nút/Icon Header & Floating Buttons:**
-  - **Không để SĐT trên Header:** Hotline & Zalo tập trung tại floating action button bên phải (`contact_buttons.blade.php`).
-  - **Icon Giỏ hàng:** Giữ nguyên bản mộc, KHÔNG bọc hình tròn/vuông nền màu (`no border-radius, no background`), icon kèm badge nhỏ.
-  - **Lá cờ Ngôn ngữ:** KHÔNG dùng border-radius hay background/nền, hiển thị trực tiếp 2 lá cờ nằm ngang (`flex items-center gap-2`), mộc, phẳng.
-  - **Floating Action Buttons:** Nằm tập trung trong `contact_buttons.blade.php`: Hotline đỏ chuông rung, Zalo xanh, Back-to-top tối màu.
-- **Chuyển động có kiểm soát (Controlled Transitions):**
-  - Scroll reveal: Trượt 20px + fade 600ms, chỉ chạy 1 lần duy nhất khi cuộn tới (`.scroll-reveal.is-visible`).
-  - Bắt buộc tuân thủ `@media (prefers-reduced-motion: reduce)`: Tắt toàn bộ animation khi người dùng bật chế độ giảm chuyển động.
-- **Responsive:** Chuẩn Responsive 100%. Mobile: tin tức và sản phẩm bắt buộc hiển thị **2 cột** (`grid grid-cols-2 gap-3`).
-
----
-
-## QUY TẮC SỐ 6 – KHÔNG DÙNG CDN (DOWNLOAD LOCAL ASSETS)
-
-- Tải local toàn bộ Font ("Noto Sans", "Roboto"), Tailwind CSS (compiled), FontAwesome, và thư viện Scroll Animation vào `public/frontend/`.
-- Không nhúng CDN từ bên thứ ba.
-
----
-
-## QUY TẮC SỐ 7 – TÁCH BIỆT CODE CSS & JS (NO INLINE/EMBEDDED)
-
-* **Không viết** code CSS hoặc JS tĩnh trực tiếp trong các file Blade (thẻ `<style>`, `<script>`). Phải tổ chức chúng vào các file `.css`, `.js` chuẩn cấu trúc trong thư mục `public/`.
-* **Không viết** thuộc tính CSS inline (`style="..."`) trực tiếp vào các thẻ HTML, trừ trường hợp dữ liệu đó thực sự động và được cấu hình từ database (như màu sắc, font-size cấu hình từ Admin).
-
----
-
-## QUY TẮC SỐ 8 – QUY TRÌNH GIT & COMMIT CÓ KIỂM SOÁT (TUYỆT ĐỐI BẮT BUỘC)
-
-1. **KHÔNG TỰ Ý COMMIT HAY PUSH:** AI tuyệt đối KHÔNG ĐƯỢC tự động chạy lệnh `git commit` hoặc `git push` trong bất kỳ trường hợp nào trừ khi user ra lệnh trực tiếp trong phiên chat đó.
-2. **COMMIT THEO YÊU CẦU ĐƠN LẺ:** Khi user yêu cầu *"Commit code giúp tôi"*, AI CHỈ ĐƯỢC COMMIT DUY NHẤT LẦN ĐÓ cho công việc/task hiện tại.
-3. **LUÔN HỎI LẠI Ở TASK TIẾP THEO:** Sau khi hoàn thành một task mới tiếp theo, AI KHÔNG ĐƯỢC tự động commit dựa trên lệnh cũ. AI phải dừng lại và hỏi user: *"Tôi đã hoàn thành task [Tên Task]. Bạn có muốn tôi commit các thay đổi này không?"*.
-4. **CHUẨN COMMITS TIẾNG ANH (CONVENTIONAL COMMITS):** Commit message BẮT BUỘC viết bằng tiếng Anh theo chuẩn Conventional Commits (ví dụ: `feat: ...`, `fix: ...`, `refactor: ...`, `chore: ...`). Tuyệt đối KHÔNG viết commit message bằng tiếng Việt.
-
----
-
-## QUY TẮC SỐ 9 – QUY TRÌNH CHUYỂN ĐỔI CHỦ ĐỀ/THEME (TOPIC REBUILD)
-
-Khi người dùng yêu cầu đổi chủ đề website sang ngành hàng mới (ví dụ: Đồng hồ, Mỹ phẩm, Spa, Du lịch, Nội thất...):
-1. BẮT BUỘC thực thi Artisan command đầu tiên: `php artisan site:rebuild --topic="<tên_topic>"` (Để hệ thống dọn sạch media rác, reset DB và seed đúng bộ dữ liệu/hình ảnh của ngành hàng đó).
-2. SAU ĐÓ MỚI tiến hành tùy biến file Blade và CSS (`theme-style.css`).
-3. Chạy lệnh xóa cache: `php artisan optimize:clear`.
-
----
-
-## QUY TẮC SỐ 10 – QUY TẮC TẬP TRUNG ASSET (KHÔNG TẠO FILE JS/CSS RÁC)
-
-- **Cấm phân mảnh File:** Tuyệt đối KHÔNG TẠO thêm các file `.js` hoặc `.css` lẻ cho từng component nhỏ (ví dụ: KHÔNG tạo `back-to-top.js`, `cart-fix.js`, `popup.js`).
-- **Gom về File chuẩn:** 
-  - Mọi JS tương tác UI/UX phải viết nối tiếp vào `public/frontend/js/main.js` (hoặc `resources/views/frontend/partials/script.blade.php`).
-  - Mọi CSS tùy biến phải viết vào `public/frontend/css/theme-style.css`.
-- **Tái sử dụng Partials:** Các phần tử UI nổi (như nút Cuộn lên đầu trang, Hotline, Zalo) BẮT BUỘC nằm chung trong `resources/views/frontend/partials/contact_buttons.blade.php`.
-- **Tối giản Code:** Ưu tiên dùng Vanilla JS ngắn gọn hoặc Tailwind CSS classes thay vì viết thêm các thư viện/script cồng kềnh.
-
----
-
-## QUY TẮC SỐ 11 – QUY CHUẨN COMMENT & COMMIT (ENGLISH ONLY & MINIMAL COMMENTS)
-
-- **Ngôn ngữ 100% tiếng Anh (No Vietnamese in Code Comments & Commits):**
-  - Mọi comment trong toàn bộ mã nguồn (PHP, Blade, JS, CSS, SQL, Config...) BẮT BUỘC viết bằng tiếng Anh. Tuyệt đối KHÔNG viết comment bằng tiếng Việt trong code.
-  - Mọi Commit message BẮT BUỘC viết bằng tiếng Anh theo chuẩn Conventional Commits. Tuyệt đối KHÔNG viết commit message bằng tiếng Việt.
-- **Tối giản & Giữ sạch mã nguồn (Minimal & Clean Comments):**
-  - Tuyệt đối KHÔNG sửa đổi comment tràn lan hoặc thêm comment giải thích thừa thãi, rườm rà.
-  - Ưu tiên code tự tường minh (Self-documenting code). Chỉ viết comment khi thật sự cần thiết để giải thích lý do (rationale) hoặc logic nghiệp vụ phức tạp.
-
----
-
-## QUY TẮC SỐ 12 – QUY CHUẨN LƯU TRỮ MEDIA & UPLOAD ĐỒNG NHẤT (UNIFIED MEDIA STORAGE)
-
-- **Đồng nhất thư mục lưu trữ:** Mọi hình ảnh và video tải lên từ Admin (`ImageService`, `ImageHandlerTrait`, `multiImage`) đều được lưu trữ trực tiếp trong thư mục module `public/uploads/{module}/` (hoặc theo ngày tháng `uploads/{module}/{Y}/{m}/`). Tuyệt đối KHÔNG tự ý tách riêng thư mục con như `videos/`.
-- **Hỗ trợ Media đa phương tiện xen kẽ:** Thư viện ảnh chi tiết (`image_detail`) hỗ trợ upload cả ảnh (tự động chuyển WebP) và video (MP4, WebM, MOV), bảo toàn đúng thứ tự sắp xếp xen kẽ do người dùng chọn.
-- **Khung hình Preview Video:** Mọi thẻ video preview ở cả Admin và Frontend bắt buộc dùng cú pháp `<video src="...#t=0.5" preload="metadata" muted playsinline>` để lấy khung hình tại giây 0.5 làm ảnh đại diện, tránh khung đen tĩnh.
-
----
-
-## QUY TẮC SỐ 13 – QUY CHUẨN UI/UX ADMIN & BẢNG QUẢN LÝ (MODERN ADMIN LIST STANDARD)
-
-- **Header Controls (Bộ lọc & Ô tìm kiếm):**
-  - **Đồng bộ Height:** Tất cả nút Thêm mới, Xóa đã chọn, Select danh mục và Search Input phải đồng bộ chiều cao chuẩn `38px` (`rounded-2`).
-  - **Search Box:** Tích hợp icon kính lúp chìm bên trái ô input, không dùng nút "Search" màu xanh lá rời rạc bị tràn viền. Hỗ trợ Enter và debounce typing tự động search.
-- **Cột Danh mục (Chip / Badge Tag):** Chuyển văn bản thành dạng Badge thanh lịch (`#f1f5f9`, chữ `#334155` font đứng), không dùng chữ in nghiêng màu xanh.
-- **Đồng bộ Status Switches:** Mọi switch khi bật (ON) đồng nhất dùng 1 màu Primary Accent duy nhất (`#2563eb`), khi tắt (OFF) là màu xám nhạt (`#cbd5e1`). Không dùng nhiều màu xanh/cam/xanh lơ gây rối mắt.
-- **Cột Thứ tự (STT Reorder):** Ô input số thu nhỏ vừa vặn `52px`, căn giữa `text-center`, ẩn nút mũi tên spinner của number input.
-- **Cột Hành động (Icon-only Ghost Buttons):**
-  - 100% nút dạng icon vuông `32x32px`, bo góc nhẹ `5px`, nền soft ghost nhạt (`#f1f5f9`), icon `#64748b`:
-    * Xem ngoài web: Hover nền `#e0f2fe`, icon `#0284c7` (`ri-eye-line`).
-    * Sửa: Hover nền `#e0e7ff`, icon `#4338ca` (`ri-pencil-line`).
-    * Xóa: Hover nền `#fee2e2`, icon `#ef4444` (`ri-delete-bin-line`).
-  - Khoảng cách giữa các nút luôn dùng `d-inline-flex` với `gap: 6px;`, căn giữa cột.
-- **Table Alignment & Spacing:** Checkbox/STT/Hình ảnh/Switches/STT/Ngày/Action căn giữa (`text-center`); Tiêu đề và Danh mục căn trái (`text-start`). Hiệu ứng hover hàng nền nhạt `#f8fafc`.
-
----
-
-## QUY TẮC SỐ 14 – BỘ NHỚ ĐỆM REDIS & TỐI ƯU TRUY VẤN DỮ LIỆU (REDIS CACHE & OPTIMIZED QUERIES)
-
-- **Redis Cache Driver:** Hệ thống kích hoạt Redis Cache (`CACHE_DRIVER=redis`) để tăng tốc độ phản hồi và giảm tải MySQL.
-- **Truy vấn danh mục phân cấp (Hierarchy Category Query):** Khi lọc theo danh mục trong Repository, bắt buộc truy vấn gồm cả danh mục con (`whereIn`), chỉ `select` các cột cần thiết cho quan hệ, và loại bỏ mệnh đề `orderBy` dư thừa.
-
----
-
-## QUY TẮC SỐ 15 – THAM KHẢO CHỨC NĂNG CŨ, TUYỆT ĐỐI ZERO-HARDCODE & KIỂM THỬ XÁC MINH TRƯỚC KHI BÁO HOÀN THÀNH (FEATURE REFERENCE, ZERO-HARDCODE & RIGOROUS TESTING)
-
-1. **Tham khảo chức năng cũ tương tự (Pattern Reference & Consistency):**
-   - Khi tạo hoặc nâng cấp bất kỳ chức năng mới nào, AI BẮT BUỘC phải đọc và tham chiếu các module/chức năng tương tự đã chạy ổn định trong codebase (Controllers, Services, Repositories, Models, Requests, Blade components, UI/UX conventions, Traits).
-   - Bảo đảm tái sử dụng đúng chuẩn kiến trúc hiện hành (`Controller → Service → Repository → Model`), không tự sáng tạo cấu trúc lạ làm phân mảnh hệ thống.
-2. **Tuyệt đối không Hardcode (Zero-Hardcode Mandatory):**
-   - Mọi chức năng mới BẮT BUỘC dùng biến động từ CSDL, helper, `$web`, route name, lang helper.
-   - Tuyệt đối KHÔNG hardcode chuỗi hiển thị, link tĩnh, email, hotline, hoặc magic number.
-3. **Kiểm thử thực tế, debug triệt để trước khi báo hoàn thành (Rigorous Verification & Debugging):**
-   - AI KHÔNG ĐƯỢC báo hoàn thành task khi chưa kiểm tra và debug thực tế.
-   - BẮT BUỘC thực hiện các bước xác thực:
-     - Kiểm tra cú pháp (Syntax check, Blade compile `php artisan view:cache` rồi `php artisan view:clear`).
-     - Kiểm tra Routes (`php artisan route:list`).
-     - Xóa cache hệ thống (`php artisan optimize:clear`).
-     - Rà soát các trường hợp ngoại lệ (Edge cases, validation rules, permissions, DB transactions).
-   - Chỉ khi đã xác minh chức năng chạy đúng 100% và không còn bất kỳ lỗi nào, AI mới được thông báo hoàn thành task cho người dùng.
-
----
-
-## QUY TẮC SỐ 16 – ĐỊNH VỊ MÃ NGUỒN SIÊU TỐC QUA AGENTS (INSTANT CODEBASE ROUTING PROTOCOL)
-
-- **Cấm quét thư mục mù mờ (No Blind Recursive Scanning):**
-  - Khi nhận câu lệnh/task từ người dùng, AI TUYỆT ĐỐI KHÔNG ĐƯỢC chạy các lệnh tìm kiếm mò mẫm (`find`, `dir -r`, `Get-ChildItem -Recurse`) hoặc đọc lần lượt từng thư mục dự án để tìm file.
-- **Quy trình định vị 3 bước tức thì:**
-  1. **Bước 1 (Tra cứu Ma Trận):** Đọc ngay bảng ánh xạ [`.agents/codebase-matrix.md`](./codebase-matrix.md) và [`.agents/frontend-data-map.md`](./frontend-data-map.md).
-  2. **Bước 2 (Mở thẳng File đích):** Xác định chính xác danh sách file mục tiêu (Controller, Service, Repository, Blade View, CSS/JS) tương ứng với nghiệp vụ được yêu cầu và mở trực tiếp các file này.
-  3. **Bước 3 (Thực thi đúng Phân vai):** Chuyển giao đúng chuyên trách (`backend-architect` nếu dính logic DB/Controller, `frontend-specialist` nếu là Blade/CSS/JS, `qa-inspector` để kiểm thử).
-
----
-
-## QUY TẮC SỐ 17 – QUY TRÌNH TẠO CHỨC NĂNG MỚI & VÒNG LẶP KIỂM THỬ TỰ THÂN (AUTONOMOUS SELF-TESTING LOOP & ZERO-USER-DEBUGGING PROTOCOL)
-
-### 1. Quy trình chuẩn khi tạo chức năng mới (Layered Feature Pipeline)
-Khi xây dựng chức năng/module mới, bắt buộc triển khai tuần tự theo 6 tầng kiến trúc, không nhảy cóc:
-1. **Database Schema:** Cập nhật file migration gốc trong `database/migrations/` và đồng thời ghi câu lệnh `ALTER TABLE` vào `database/patch_schema.sql` (Rule 12).
-2. **Model & Traits:** Khai báo `$fillable`, `$casts`, gán `AutoImagePathsTrait`, quan hệ Eloquent (`belongsTo`, `hasMany`).
-3. **Repository Layer:** Khai báo contract trong `app/Repositories/Interfaces/` trước, sau đó implement trong `app/Repositories/Eloquent/`.
-4. **Service Layer:** Viết business logic, transaction, dọn cache bằng tags trong `app/Services/`.
-5. **Controller & Form Request:** Viết Form Request xác thực input (`app/Http/Requests/`), Controller chỉ điều hướng và gọi Service/Repository, trả về View hoặc JSON.
-6. **Blade Views & Assets:** Dùng Blade Components Admin (`<x-admin.table-wrapper>`), áp dụng chuẩn UI 38px controls, ghost action buttons, CSS viết vào `theme-style.css`, JS gom vào `main.js`.
-
-### 2. Vòng lặp kiểm thử tự thân bắt buộc (The Autonomous 4-Step Test Loop)
-> ⛔ **CẤM TUYỆT ĐỐI**: AI không được báo "hoàn thành" khi chưa tự mình chạy vòng lặp kiểm thử thực tế. Tuyệt đối không để người dùng phải làm "tester" phát hiện lỗi cú pháp, thiếu method, filter không chạy hay submit rỗng.
-
-Trước khi bàn giao task, AI **BẮT BUỘC** tự động chạy tuần tự vòng lặp 4 bước sau:
-* **Loop Step 1 (Syntax & Compile Check):**
-  - Kiểm tra cú pháp PHP: `php -l <file_path>` cho mọi file mới tạo/sửa.
-  - Compile Blade Views kiểm tra lỗi tag/cú pháp: `php artisan view:cache` rồi `php artisan view:clear`.
-* **Loop Step 2 (Contract & Route Integrity Check):**
-  - Kiểm tra Route: `php artisan route:list` xác nhận route đã được đăng ký và controller action tồn tại.
-  - Kiểm tra Interface Contract: Xác nhận mọi method gọi từ Controller đã được khai báo đầy đủ trong Interface tương ứng để tránh lỗi Intelephense / Fatal Error `Call to undefined method`.
-* **Loop Step 3 (Runtime Execution Test qua Tinker / CLI):**
-  - Chạy thử logic thực tế bằng CLI: Dùng `php artisan tinker --execute="..."` để test gọi hàm Model/Repository/Service với dữ liệu mẫu (mock data).
-  - Kiểm tra các trường hợp biên (Edge cases): Dữ liệu rỗng (`empty`), mảng rỗng `[]`, ID không tồn tại, ký tự đặc biệt trong slug.
-* **Loop Step 4 (Self-Correction & Loop Retry):**
-  - **NẾU GẶP BẤT KỲ LỖI NÀO:** AI phải tự phân tích log lỗi, tự sửa code ngay lập tức và **QUAY LẠI LOOP STEP 1** để chạy lại toàn bộ quy trình kiểm thử từ đầu.
-  - Chỉ khi **TẤT CẢ 4 BƯỚC ĐỀU PASS 100%**, AI mới được xóa cache (`php artisan optimize:clear`) và thông báo hoàn thành cho người dùng.
-
----
-
-## QUY TẮC SỐ 18 – QUY CHUẨN SEO KỸ THUẬT & DỮ LIỆU CẤU TRÚC (TECHNICAL & ON-PAGE SEO)
-
-Mọi dự án xây dựng từ Base bắt buộc phải đạt điểm chất lượng SEO kỹ thuật tối đa từ Google:
-1. **Sitemap tự động động (Dynamic Sitemap XML):**
-   - Bắt buộc có Controller & Route `/sitemap.xml` động kết nối CSDL (Trang chủ, Trang tĩnh, Danh mục sản phẩm, Sản phẩm chi tiết, Danh mục tin tức, Bài viết chi tiết).
-   - Có đầy đủ thẻ XML: `<loc>`, `<lastmod>`, `<changefreq>`, `<priority>` và bọc trong `Cache::remember()` (TTL 12h - 24h) để phản hồi tức thì, không gây tải MySQL.
-2. **Quy chuẩn `robots.txt` an toàn & tối ưu:**
-   - File `public/robots.txt` bắt buộc khai báo đường dẫn Sitemap: `Sitemap: https://{domain}/sitemap.xml`.
-   - Bắt buộc Disallow các đường dẫn quản trị & bảo mật: `/admintv`, `/admintv/`, `/admintv_logout`, `/admintv_post_login`, `/admin/`, `/admin`, `/filemanager/`, `/laravel-filemanager/`, `/cart`, `/checkout`, `/add-to-cart`, `/update-cart`, `/remove-item`, `/checkout-store`, `/order-success`, và các route POST xử lý nội bộ.
-3. **Cấu trúc Headings & Thẻ tiêu đề trang:**
-   - **Tuyệt đối CẤM** dùng `<h1 style="display: none">` trong layout chung (`master.blade.php`).
-   - Mỗi trang hiển thị bắt buộc có **đúng duy nhất 1 thẻ `<h1>`** ngữ nghĩa đại diện cho nội dung cốt lõi của trang đó:
-     * Trang chủ: `<h1 class="sr-only">{{ $web->name_company }} - {{ $web->name_vn }}</h1>` (dùng class `.sr-only` trợ năng/SEO, không dùng `display: none`).
-     * Chi tiết sản phẩm/tour: `<h1>{{ $product->name }}</h1>`.
-     * Chi tiết tin tức: `<h1>{{ $news->name_vn }}</h1>`.
-   - Thẻ `<title>` bắt buộc chứa từ khóa định vị thương hiệu (dài 50 - 60 ký tự); `<meta name="description">` bắt buộc đủ 140 - 160 ký tự súc tích.
-4. **Dữ liệu có cấu trúc Schema (JSON-LD):**
-   - **Layout chung (`head.blade.php`):** Tự động nhúng Schema `@type: "Organization"` hoặc `"TravelAgency"` / `"LocalBusiness"` lấy từ biến `$web` (tên công ty, logo, địa chỉ, hotline, email).
-   - **Chi tiết sản phẩm/tour:** Tự động nhúng Schema `@type: "Product"` (kèm giá VND, `offers`, `InStock`) và `@type: "BreadcrumbList"` (phân cấp điều hướng).
-   - **Chi tiết tin tức/bài viết:** Tự động nhúng Schema `@type: "NewsArticle"` (tiêu đề, ngày đăng, ngày sửa, ảnh đại diện).
-5. **Chuẩn hóa OpenGraph & Twitter Card:**
-   - Thẻ `og:type` phải động theo từng trang (`website` cho trang chủ, `product` cho sản phẩm, `article` cho bài viết).
-   - Bắt buộc khai báo kích thước ảnh chuẩn `og:image:width: 1200` và `og:image:height: 630`.
-   - Bổ sung đầy đủ bộ thẻ `twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`.
-
----
-
-## QUY TẮC SỐ 19 – TỐI ƯU HIỆU NĂNG TẬN GỐC & QUY CHUẨN CLOUDFLARE EDGE CACHE
-
-Nhằm đưa thời gian phản hồi máy chủ (TTFB) về mức **mili-giây (~50ms - 200ms)** và giảm tải tối đa cho Origin Server:
-1. **Tối ưu hóa tầng ứng dụng (Origin Application Tuning):**
-   - **Thanh lọc cột truy vấn:** Trong các hàm Controller/Repository cho trang chủ và trang danh mục, TUYỆT ĐỐI KHÔNG `select *` hoặc lấy các cột văn bản dài (`content_vn`, `content_en`, `image_detail`). Chỉ chọn đúng các cột hiển thị thẻ preview (`id`, `name`, `slug`, `avatar`, `price`, `stt`).
-   - **Bộ nhớ đệm đa tầng (Multi-tier Cache):** Toàn bộ truy vấn danh mục, slider, tin mới, sản phẩm hot trên trang chủ bắt buộc bọc trong `Cache::remember()`.
-2. **Quy chuẩn 2 Cache Rules của Cloudflare (The 2-Rule Cloudflare Standard):**
-   > ⚠️ **Quy tắc vàng Cloudflare Cache Rules:** Hoạt động theo cơ chế **"Last Match Wins"** (Rule nằm dưới cùng sẽ ghi đè lên các rule nằm phía trên).
-   - **Rule 1 – Bảo vệ Admin & Dữ liệu động (`Bypass Admin`):**
-     * *Match:* `(starts_with(http.request.uri.path, "/admintv") or starts_with(http.request.uri.path, "/admin") or starts_with(http.request.uri.path, "/filemanager") or starts_with(http.request.uri.path, "/laravel-filemanager") or starts_with(http.request.uri.path, "/cart") or starts_with(http.request.uri.path, "/checkout") or starts_with(http.request.uri.path, "/add-to-cart") or starts_with(http.request.uri.path, "/update-cart") or starts_with(http.request.uri.path, "/remove-item") or starts_with(http.request.uri.path, "/order-success"))`
-     * *Action:* `Bypass cache`
-   - **Rule 2 – Tăng tốc toàn bộ Frontend (`Cache Frontend Everything`):**
-     * *Match (Phải có điều kiện loại trừ rõ ràng để tránh bị đè):*
-       `(not starts_with(http.request.uri.path, "/admintv") and not starts_with(http.request.uri.path, "/admin") and not starts_with(http.request.uri.path, "/filemanager") and not starts_with(http.request.uri.path, "/laravel-filemanager") and not starts_with(http.request.uri.path, "/cart") and not starts_with(http.request.uri.path, "/checkout") and not starts_with(http.request.uri.path, "/add-to-cart") and not starts_with(http.request.uri.path, "/update-cart") and not starts_with(http.request.uri.path, "/remove-item") and not starts_with(http.request.uri.path, "/order-success"))`
-     * *Action:* `Eligible for cache`
-     * *Edge TTL:* `Ignore cache-control header and use this TTL` ➔ Đặt `2 hours` hoặc `4 hours`.
-     * *Browser TTL:* `Respect origin TTL` (để tránh tình trạng client bị dính cache trình duyệt khi quản trị viên cập nhật bài).
-   - **Quy trình làm mới Cache khi Admin sửa nội dung:**
-     * Khi cập nhật giá, thêm bài viết hay sản phẩm mới trong Admin, chỉ cần vào Cloudflare: **Caching ➔ Configuration ➔ Purge Everything** (hoặc gọi Cloudflare API) để làm mới toàn trang trong 1 giây.
-
----
-
-## QUY TẮC SỐ 20 – CHUẨN TỐI ƯU GOOGLE PAGESPEED 95-100, TIẾP CẬN (ACCESSIBILITY) & CORE WEB VITALS (PERFORMANCE, ACCESSIBILITY & SEO ARCHITECTURE RULES)
-
-Khi thiết kế giao diện (Blade/HTML), viết CSS/JS và xử lý Backend (Laravel/PHP), BẮT BUỘC tuân thủ nghiêm ngặt 6 trụ cột sau để đảm bảo website đạt **95-100 điểm Google Lighthouse & PageSpeed Insights**:
-
-### 1. Hình ảnh & Core Web Vitals (LCP, CLS):
-- **CẤM DÙNG ẢNH GỐC CHƯA XỬ LÝ:** Tuyệt đối KHÔNG BAO GIỜ lưu ảnh trực tiếp từ camera/điện thoại (>1500px). Backend (`ImageService`) phải tự động resize và nén WebP khi upload:
-  * **Ảnh thẻ card / blog / sản phẩm:** Max width `600px - 800px` (WebP, quality 70-75, dung lượng < 60KB).
-  * **Ảnh Banner / Slider Hero:** Max width `1600px` (WebP, quality 80, dung lượng < 100KB).
-- **100% thẻ `<img>` BẮT BUỘC có kích thước:** Khai báo rõ ràng thuộc tính `width="..."` và `height="..."` cùng CSS `aspect-ratio` để ngăn giật nhảy giao diện (**CLS = 0**).
-- **Phần tử LCP (Ảnh Banner/Hero đầu tiên Above-the-fold):**
-  * Thêm thuộc tính `fetchpriority="high"` vào thẻ `<img>` của Slide đầu tiên.
-  * Preload trước trong `<head>`: `<link rel="preload" as="image" href="..." fetchpriority="high">`.
-- **Mọi ảnh dưới nếp gấp màn hình (Below-the-fold):** BẮT BUỘC có `loading="lazy"` và `decoding="async"`.
-
-### 2. CSS & Dựng Giao Diện (FCP, Render-Blocking):
-- **CẤM Play CDN trên Production:** TUYỆT ĐỐI KHÔNG dùng Play CDN (`tailwind.js` qua thẻ script) trên môi trường production vì gây nghẽn CPU > 1.000ms. BẮT BUỘC biên dịch trước thành file CSS tĩnh thu gọn (`tailwind.min.css` hoặc `theme-style.css`, gzip < 20KB).
-- **Tải bất đồng bộ Icon (Non-blocking):** Thư viện icon nặng (như FontAwesome `all.min.css`) BẮT BUỘC dùng cơ chế tải bất đồng bộ:
-  ```html
-  <link rel="preload" href="all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="all.min.css"></noscript>
-  ```
-- **Font chữ cục bộ (Local Fonts):** Preload file font chính dạng `.woff2` (chứa tập ký tự Latin cơ bản và tiếng Việt) kèm thuộc tính `crossorigin`.
-
-### 3. JavaScript & Tối Ưu Main Thread (TBT, Script Evaluation):
-- **Không chặn luồng chính:** KHÔNG đặt thẻ `<script>` đồng bộ chặn đứng trong `<head>` hoặc giữa thân `<body>`.
-- **Trì hoãn thực thi:** Toàn bộ file JavaScript (`main.js`, `cart.js`, `slider.js`) BẮT BUỘC có thuộc tính `defer` hoặc đặt ở cuối thẻ `<body>`.
-- **Tương tác cực ngắn (< 10 dòng):** Các tương tác vi mô (như toggle menu mobile đơn giản) ưu tiên viết inline ngắn gọn trực tiếp thay vì tạo thêm 1 file `.js` rời gây tốn lượt request mạng.
-
-### 4. Hỗ Trợ Tiếp Cận & Trải Nghiệm Người Dùng (Accessibility >= 95):
-- **Kích thước đích chạm (Tap Target):** Mọi nút bấm (`<button>`), liên kết icon, chấm chuyển slide (pagination dots) BẮT BUỘC có diện tích chạm tối thiểu **`44x44px`** (áp dụng `min-w-[44px] min-h-[44px]` hoặc padding tương ứng).
-- **Thứ bậc tiêu đề (Heading Hierarchy):**
-  * Đúng duy nhất 1 thẻ `<h1>` trên mỗi trang.
-  * Tuân thủ nghiêm thứ tự giảm dần: `<h1>` ➔ `<h2>` ➔ `<h3>` ➔ `<h4>`. TUYỆT ĐỐI KHÔNG nhảy cóc từ `<h2>` xuống `<h4>`.
-- **Nhãn điều khiển (Accessible Labels):** Mọi thẻ `<button>`, `<a>` chứa icon không có chữ BẮT BUỘC phải có thuộc tính `aria-label="..."`.
-- **Mô tả ảnh:** Toàn bộ thẻ `<img>` BẮT BUỘC có thuộc tính `alt="..."` mô tả ngữ nghĩa rõ ràng, không để trống vô nghĩa.
-
-### 5. SEO & Best Practices (100/100):
-- **Chuẩn hóa Open Graph:** Thẻ `<meta property="og:type">` BẮT BUỘC là `"website"` (hoặc `"article"` cho chi tiết bài viết, `"product"` cho sản phẩm). KHÔNG tự ý ghi tên công ty/thương hiệu vào `og:type`.
-- **Thẻ `<title>` chuẩn:** Định dạng: `Tên Brand | Thông điệp cốt lõi / Từ khóa chính` (độ dài 50 - 60 ký tự).
-- **Bảo mật liên kết ngoài:** Mọi thẻ `<a>` mở tab mới (`target="_blank"`) BẮT BUỘC có `rel="noopener noreferrer"`.
-- **Thẻ bắt buộc:** Luôn có `<meta name="viewport" content="width=device-width,initial-scale=1">` và `<link rel="canonical" href="...">`.
-
-### 6. Bộ Nhớ Đệm & Triển Khai (Cache, Cloudflare & Anti-419):
-- **Tự động Busting Cache:** Toàn bộ asset tĩnh (CSS, JS) phải thêm version bằng `?v={{ filemtime(...) }}` để trình duyệt cập nhật tức thì khi deploy.
-- **Tối ưu Cloudflare CDN:** Kích hoạt HTTP/3 (QUIC), nén Brotli, và bật Edge Cache cho static files (`/uploads/*`, `/frontend/*`).
-- **Phòng chống lỗi 419 (CSRF Protection):** TUYỆT ĐỐI KHÔNG cache HTML tĩnh đối với các trang chứa form CSRF token (`/admintv`, `/admin/*`, `/checkout`, `/cart`) để triệt tiêu lỗi `419 Page Expired`.
-
----
-
-## CÁC TÀI LIỆU THAM KHẢO
-
-| File | Nội dung |
-|---|---|
-| [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md) | **Bộ Quy Chuẩn Thiết Kế Giao Diện Nền Tảng: Cấu Trúc Vững Chắc & Tránh "Chất AI"** |
-| [`.agents/codebase-matrix.md`](./codebase-matrix.md) | **Bản đồ ma trận định vị siêu tốc: Nghiệp vụ → Controller → Service → View** |
-| [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) | Ranh giới kiến trúc & quy tắc Zero-Hardcode khi làm Theme |
-| [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) | Quy trình 3 bước chuẩn hóa khởi tạo & tùy biến Theme |
-| [`.agents/frontend-design.md`](./frontend-design.md) | Quy chuẩn thiết kế Frontend (Font, Tailwind, Scroll Animation, UI/UX) |
-| [`.agents/frontend-data-map.md`](./frontend-data-map.md) | Bảng đầy đủ biến động, partials, helper functions |
-| [`.agents/architecture.md`](./architecture.md) | Cấu trúc thư mục, Models, Services, Repositories |
-| [`.agents/new-website-workflow.md`](./new-website-workflow.md) | Quy trình tạo website mới trong 1 phiên chat |
-| [`.agents/memory.md`](./memory.md) | Lịch sử quyết định kiến trúc & UI/UX dài hạn |
+| **Codebase Skeleton Map** | [`.agents/codebase-skeleton.md`](./codebase-skeleton.md) | Tra cứu chữ ký hàm, class, Eloquent relationships trong 0.1s. |
+| **Codebase Summary (Repomix)** | [`.agents/codebase-summary.xml`](./codebase-summary.xml) | Nạp toàn bộ kiến trúc lõi Models, Repositories, Services, Routes. |
+| **Codebase Routing Matrix** | [`.agents/codebase-matrix.md`](./codebase-matrix.md) | Ánh xạ nghiệp vụ ➔ Controller ➔ Service ➔ View. |
+| **Frontend Data Map** | [`.agents/frontend-data-map.md`](./frontend-data-map.md) | Danh mục toàn bộ biến động và Helper ngoài Frontend. |
+| **Architecture Specification** | [`.agents/architecture.md`](./architecture.md) | Chi tiết kiến trúc Layered chuẩn mực của hệ thống. |
