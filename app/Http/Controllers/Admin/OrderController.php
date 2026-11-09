@@ -2,26 +2,29 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\OrderStatus;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 
 class OrderController extends BaseController
 {
     protected $module;
 
-    protected $model;
-
     protected $nameItem;
 
     protected $imageFolder;
 
-    public function __construct($imageFolder = 'order')
+    /**
+     * @var OrderRepositoryInterface
+     */
+    protected $orderRepo;
+
+    public function __construct(OrderRepositoryInterface $orderRepo, $imageFolder = 'order')
     {
         $this->module = 'order';
         $this->nameItem = 'Đơn Hàng';
         $this->imageFolder = $imageFolder;
+        $this->orderRepo = $orderRepo;
 
         parent::__construct($this->module, $imageFolder);
 
@@ -30,38 +33,12 @@ class OrderController extends BaseController
 
     public function index(Request $request)
     {
-        $query = DB::table('tp_order_shipping')
-            ->join('tp_order_status', 'tp_order_shipping.id_order_shipping', '=', 'tp_order_status.shipping_id')
-            ->select(
-                'tp_order_shipping.email',
-                'tp_order_shipping.phone',
-                'tp_order_shipping.f_name_order',
-                'tp_order_shipping.l_name_order',
-                'tp_order_status.total',
-                'tp_order_status.status',
-                'tp_order_status.payment_method',
-                'tp_order_status.uuid_order_status',
-                'tp_order_status.created_at',
-                'tp_order_status.updated_at'
-            )
-            ->orderBy('tp_order_status.created_at', 'desc');
+        $filters = [
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ];
 
-        if ($request->has('search') && !empty($request->input('search'))) {
-            $searchTerm = $request->input('search');
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('tp_order_shipping.email', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('tp_order_shipping.phone', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('tp_order_shipping.f_name_order', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('tp_order_shipping.l_name_order', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('tp_order_status.uuid_order_status', 'LIKE', "%{$searchTerm}%");
-            });
-        }
-
-        if ($request->has('status') && $request->input('status') !== null && $request->input('status') !== '') {
-            $query->where('tp_order_status.status', $request->input('status'));
-        }
-
-        $data['list'] = $query->paginate(10);
+        $data['list'] = $this->orderRepo->getOrdersPaginated($filters, 10);
         $data['nameItem'] = $this->nameItem;
 
         return $this->view_admin('list', $data);
@@ -69,22 +46,13 @@ class OrderController extends BaseController
 
     public function status($uuid, $status, $field)
     {
-        $orderStatus = OrderStatus::where('uuid_order_status', $uuid)->first();
+        $updated = $this->orderRepo->updateStatusByUuid($uuid, $status, $field);
 
-        if (! $orderStatus) {
+        if (! $updated) {
             toast('Không tìm thấy '.$this->nameItem, 'error');
 
             return redirect()->back();
         }
-
-        // Set field directly since status and auth_id are not fillable (security)
-        $orderStatus->$field = $status;
-        $orderStatus->save();
-
-        // Flush dashboard cache so stats update immediately
-        try {
-            app(\App\Services\DashboardService::class)->flushCache();
-        } catch (\Throwable $e) {}
 
         $mess = match ((int) $status) {
             1 => 'Chuyển trạng thái đơn hàng sang: Hoàn thành',
@@ -98,24 +66,7 @@ class OrderController extends BaseController
 
     public function edit($uuid)
     {
-        // Thông tin và địa chỉ người đặt
-        $data['user_order'] = DB::table('tp_order_status')
-            ->join('tp_order_shipping', 'tp_order_status.shipping_id', '=', 'tp_order_shipping.id_order_shipping')
-            ->select(
-                'tp_order_shipping.l_name_order',
-                'tp_order_shipping.f_name_order',
-                'tp_order_shipping.phone',
-                'tp_order_shipping.email',
-                'tp_order_shipping.address',
-                'tp_order_shipping.note',
-                'tp_order_status.payment_method',
-                'tp_order_status.total',
-                'tp_order_status.id_order_status',
-                'tp_order_status.status',
-                'tp_order_status.uuid_order_status'
-            )
-            ->where('tp_order_status.uuid_order_status', $uuid)
-            ->first();
+        $data['user_order'] = $this->orderRepo->getOrderDetailByUuid($uuid);
 
         if (! $data['user_order']) {
             toast('Không tìm thấy '.$this->nameItem, 'error');
@@ -123,17 +74,7 @@ class OrderController extends BaseController
             return back();
         }
 
-        // Danh sách sản phẩm người dùng đặt
-        $data['list'] = DB::table('tp_order_product')
-            ->join('tp_products', 'tp_order_product.product_id', '=', 'tp_products.id_product')
-            ->select(
-                'tp_order_product.*',
-                'tp_products.name_vn',
-                'tp_products.image'
-            )
-            ->where('tp_order_product.order_status_id', $data['user_order']->id_order_status)
-            ->get();
-
+        $data['list'] = $this->orderRepo->getOrderProducts($data['user_order']->id_order_status);
         $data['action'] = 'edit';
         $data['nameItem'] = $this->nameItem;
 
@@ -142,32 +83,16 @@ class OrderController extends BaseController
 
     public function destroy_order($uuid)
     {
-        $orderStatus = DB::table('tp_order_status')->where('uuid_order_status', $uuid)->first();
-        if ($orderStatus) {
-            // Xóa các sản phẩm trong đơn hàng
-            DB::table('tp_order_product')
-                ->where('order_status_id', $orderStatus->id_order_status)
-                ->delete();
-            // Xóa trạng thái đơn hàng
-            DB::table('tp_order_status')
-                ->where('uuid_order_status', $uuid)
-                ->delete();
-            // Xóa thông tin vận chuyển
-            DB::table('tp_order_shipping')
-                ->where('id_order_shipping', $orderStatus->shipping_id)
-                ->delete();
+        $deleted = $this->orderRepo->deleteOrderByUuid($uuid);
 
-            try {
-                app(\App\Services\DashboardService::class)->flushCache();
-            } catch (\Throwable $e) {}
-
+        if ($deleted) {
             toast('Xóa '.$this->nameItem.' thành công', 'success');
 
             return back();
-        } else {
-            toast('Không tìm thấy '.$this->nameItem, 'error');
-
-            return back();
         }
+
+        toast('Không tìm thấy '.$this->nameItem, 'error');
+
+        return back();
     }
 }

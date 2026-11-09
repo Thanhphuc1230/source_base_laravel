@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Eloquent\OrderRepository;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Eloquent\AboutRepository;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\GalleryRepository;
@@ -93,6 +95,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(SiteSettingRepositoryInterface::class, SiteSettingRepository::class);
         $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, DashboardRepository::class);
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
 
         // Services
         $this->app->bind(SlugResolutionService::class, SlugResolutionService::class);
