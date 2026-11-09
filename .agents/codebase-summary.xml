@@ -74,6 +74,7 @@ app/Repositories/Eloquent/MailConfigRepository.php
 app/Repositories/Eloquent/MediaRepository.php
 app/Repositories/Eloquent/MenuRepository.php
 app/Repositories/Eloquent/NewsRepository.php
+app/Repositories/Eloquent/OrderRepository.php
 app/Repositories/Eloquent/PageRepository.php
 app/Repositories/Eloquent/ProductRepository.php
 app/Repositories/Eloquent/ProjectRepository.php
@@ -100,6 +101,7 @@ app/Repositories/Interfaces/MailConfigRepositoryInterface.php
 app/Repositories/Interfaces/MediaRepositoryInterface.php
 app/Repositories/Interfaces/MenuRepositoryInterface.php
 app/Repositories/Interfaces/NewsRepositoryInterface.php
+app/Repositories/Interfaces/OrderRepositoryInterface.php
 app/Repositories/Interfaces/PageRepositoryInterface.php
 app/Repositories/Interfaces/ProductRepositoryInterface.php
 app/Repositories/Interfaces/ProjectRepositoryInterface.php
@@ -1466,6 +1468,138 @@ class MailConfigRepository extends BaseRepository implements MailConfigRepositor
     {
         return parent::find($id, $columns);
     }
+}</file><file path="app/Repositories/Eloquent/OrderRepository.php">&lt;?php
+namespace App\Repositories\Eloquent;
+use App\Models\OrderStatus;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+class OrderRepository extends BaseRepository implements OrderRepositoryInterface
+{
+    public function __construct(OrderStatus $model)
+    {
+        parent::__construct($model);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrdersPaginated(array $filters = [], int $perPage = 10)
+    {
+        $query = DB::table(&apos;tp_order_shipping&apos;)
+            -&gt;join(&apos;tp_order_status&apos;, &apos;tp_order_shipping.id_order_shipping&apos;, &apos;=&apos;, &apos;tp_order_status.shipping_id&apos;)
+            -&gt;select(
+                &apos;tp_order_shipping.email&apos;,
+                &apos;tp_order_shipping.phone&apos;,
+                &apos;tp_order_shipping.f_name_order&apos;,
+                &apos;tp_order_shipping.l_name_order&apos;,
+                &apos;tp_order_status.total&apos;,
+                &apos;tp_order_status.status&apos;,
+                &apos;tp_order_status.payment_method&apos;,
+                &apos;tp_order_status.uuid_order_status&apos;,
+                &apos;tp_order_status.created_at&apos;,
+                &apos;tp_order_status.updated_at&apos;
+            )
+            -&gt;orderBy(&apos;tp_order_status.created_at&apos;, &apos;desc&apos;);
+        if (!empty($filters[&apos;search&apos;])) {
+            $searchTerm = $filters[&apos;search&apos;];
+            $query-&gt;where(function ($q) use ($searchTerm) {
+                $q-&gt;where(&apos;tp_order_shipping.email&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.phone&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.f_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.l_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_status.uuid_order_status&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;);
+            });
+        }
+        if (isset($filters[&apos;status&apos;]) &amp;&amp; $filters[&apos;status&apos;] !== null &amp;&amp; $filters[&apos;status&apos;] !== &apos;&apos;) {
+            $query-&gt;where(&apos;tp_order_status.status&apos;, $filters[&apos;status&apos;]);
+        }
+        return $query-&gt;paginate($perPage);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function findByUuid($uuid, $columns = [&apos;*&apos;])
+    {
+        return $this-&gt;model-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first($columns);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrderDetailByUuid(string $uuid)
+    {
+        return DB::table(&apos;tp_order_status&apos;)
+            -&gt;join(&apos;tp_order_shipping&apos;, &apos;tp_order_status.shipping_id&apos;, &apos;=&apos;, &apos;tp_order_shipping.id_order_shipping&apos;)
+            -&gt;select(
+                &apos;tp_order_shipping.l_name_order&apos;,
+                &apos;tp_order_shipping.f_name_order&apos;,
+                &apos;tp_order_shipping.phone&apos;,
+                &apos;tp_order_shipping.email&apos;,
+                &apos;tp_order_shipping.address&apos;,
+                &apos;tp_order_shipping.note&apos;,
+                &apos;tp_order_status.payment_method&apos;,
+                &apos;tp_order_status.total&apos;,
+                &apos;tp_order_status.id_order_status&apos;,
+                &apos;tp_order_status.status&apos;,
+                &apos;tp_order_status.uuid_order_status&apos;
+            )
+            -&gt;where(&apos;tp_order_status.uuid_order_status&apos;, $uuid)
+            -&gt;first();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrderProducts(int $orderStatusId)
+    {
+        return DB::table(&apos;tp_order_product&apos;)
+            -&gt;join(&apos;tp_products&apos;, &apos;tp_order_product.product_id&apos;, &apos;=&apos;, &apos;tp_products.id_product&apos;)
+            -&gt;select(
+                &apos;tp_order_product.*&apos;,
+                &apos;tp_products.name_vn&apos;,
+                &apos;tp_products.image&apos;
+            )
+            -&gt;where(&apos;tp_order_product.order_status_id&apos;, $orderStatusId)
+            -&gt;get();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;)
+    {
+        $orderStatus = $this-&gt;findByUuid($uuid);
+        if (!$orderStatus) {
+            return null;
+        }
+        $orderStatus-&gt;$field = $status;
+        $orderStatus-&gt;save();
+        try {
+            app(\App\Services\DashboardService::class)-&gt;flushCache();
+        } catch (\Throwable $e) {}
+        return $orderStatus;
+    }
+    /**
+     * @inheritDoc
+     */
+    public function deleteOrderByUuid(string $uuid)
+    {
+        $orderStatus = DB::table(&apos;tp_order_status&apos;)-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first();
+        if (!$orderStatus) {
+            return false;
+        }
+        return DB::transaction(function () use ($orderStatus, $uuid) {
+            DB::table(&apos;tp_order_product&apos;)
+                -&gt;where(&apos;order_status_id&apos;, $orderStatus-&gt;id_order_status)
+                -&gt;delete();
+            DB::table(&apos;tp_order_status&apos;)
+                -&gt;where(&apos;uuid_order_status&apos;, $uuid)
+                -&gt;delete();
+            DB::table(&apos;tp_order_shipping&apos;)
+                -&gt;where(&apos;id_order_shipping&apos;, $orderStatus-&gt;shipping_id)
+                -&gt;delete();
+            try {
+                app(\App\Services\DashboardService::class)-&gt;flushCache();
+            } catch (\Throwable $e) {}
+            return true;
+        });
+    }
 }</file><file path="app/Repositories/Eloquent/PageRepository.php">&lt;?php
 namespace App\Repositories\Eloquent;
 use App\Models\Page;
@@ -2138,6 +2272,56 @@ interface NewsRepositoryInterface extends RepositoryInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getActiveCategories();
+}</file><file path="app/Repositories/Interfaces/OrderRepositoryInterface.php">&lt;?php
+namespace App\Repositories\Interfaces;
+interface OrderRepositoryInterface extends RepositoryInterface
+{
+    /**
+     * Get paginated orders list with shipping details and filters.
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getOrdersPaginated(array $filters = [], int $perPage = 10);
+    /**
+     * Find order status record by UUID.
+     *
+     * @param string $uuid
+     * @param array $columns
+     * @return \App\Models\OrderStatus|null
+     */
+    public function findByUuid($uuid, $columns = [&apos;*&apos;]);
+    /**
+     * Get joined order &amp; shipping info for detail view.
+     *
+     * @param string $uuid
+     * @return object|null
+     */
+    public function getOrderDetailByUuid(string $uuid);
+    /**
+     * Get products in a specific order.
+     *
+     * @param int $orderStatusId
+     * @return \Illuminate\Support\Collection
+     */
+    public function getOrderProducts(int $orderStatusId);
+    /**
+     * Update order status field by UUID.
+     *
+     * @param string $uuid
+     * @param int|string $status
+     * @param string $field
+     * @return \App\Models\OrderStatus|null
+     */
+    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;);
+    /**
+     * Completely remove order, shipping info, and order line items.
+     *
+     * @param string $uuid
+     * @return bool
+     */
+    public function deleteOrderByUuid(string $uuid);
 }</file><file path="app/Repositories/Interfaces/PageRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface PageRepositoryInterface extends RepositoryInterface

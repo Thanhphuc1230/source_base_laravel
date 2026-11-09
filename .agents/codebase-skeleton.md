@@ -1,6 +1,6 @@
 # Codebase Architecture Skeleton Map
 
-> Generated: 2026-11-07 17:46:38
+> Generated: 2026-11-09 01:50:28
 > This document provides a high-speed instant lookup index of all Models, Repositories, Services, Controllers, and public method signatures.
 
 ## Table of Contents
@@ -1749,6 +1749,19 @@
   function getActiveCategories()
   ```
 
+### `interface OrderRepositoryInterface`
+- **Namespace**: `\App\Repositories\Interfaces`
+- **Hierarchy**: `OrderRepositoryInterface implements RepositoryInterface`
+- **Public API Methods**:
+  ```php
+  function getOrdersPaginated(array $filters = [], int $perPage = 10)
+  function findByUuid($uuid, $columns = [])
+  function getOrderDetailByUuid(string $uuid)
+  function getOrderProducts(int $orderStatusId)
+  function updateStatusByUuid(string $uuid, $status, string $field = 'status')
+  function deleteOrderByUuid(string $uuid)
+  ```
+
 ### `interface PageRepositoryInterface`
 - **Namespace**: `\App\Repositories\Interfaces`
 - **Hierarchy**: `PageRepositoryInterface implements RepositoryInterface`
@@ -2073,6 +2086,19 @@
   ```php
   function getFilteredNews(array $filters, $perPage = 10)
   function getActiveCategories()
+  ```
+
+### `class OrderRepository`
+- **Namespace**: `\App\Repositories\Eloquent`
+- **Hierarchy**: `OrderRepository extends BaseRepository implements RepositoryInterface, OrderRepositoryInterface`
+- **Public API Methods**:
+  ```php
+  function getOrdersPaginated(array $filters = [], int $perPage = 10)
+  function findByUuid($uuid, $columns = [])
+  function getOrderDetailByUuid(string $uuid)
+  function getOrderProducts(int $orderStatusId)
+  function updateStatusByUuid(string $uuid, $status, string $field = 'status')
+  function deleteOrderByUuid(string $uuid)
   ```
 
 ### `class PageRepository`

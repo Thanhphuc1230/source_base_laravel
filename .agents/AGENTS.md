@@ -24,6 +24,8 @@ Khi nhận prompt từ người dùng, AI tự động kích hoạt vai trò chu
 | **`theme-rebuild`** | [`.agents/skills/theme-rebuild/SKILL.md`](./skills/theme-rebuild/SKILL.md) | Chuyển đổi toàn bộ chủ đề website sang ngành hàng mới (`site:rebuild`). |
 | **`hardcode-scanner`** | [`.agents/skills/hardcode-scanner/SKILL.md`](./skills/hardcode-scanner/SKILL.md) | Quét tự động mã nguồn Blade Views để phát hiện vi phạm Rule 1. |
 | **`asset-optimizer`** | [`.agents/skills/asset-optimizer/SKILL.md`](./skills/asset-optimizer/SKILL.md) | Audit và thanh lọc thư mục `public/uploads/` đối chiếu cơ sở dữ liệu. |
+| **`module-scaffolder`** | [`.agents/skills/module-scaffolder/SKILL.md`](./skills/module-scaffolder/SKILL.md) | Tự động sinh trọn bộ 6 tầng chuẩn cho module mới (Migration -> Model -> Repo -> Service -> Controller -> Views). |
+| **`query-audit`** | [`.agents/skills/query-audit/SKILL.md`](./skills/query-audit/SKILL.md) | Rà soát lỗi N+1 queries, câu lệnh select * bị cấm hoặc SQL thô trong Controller (Rule 2 & 19). |
 
 ---
 
