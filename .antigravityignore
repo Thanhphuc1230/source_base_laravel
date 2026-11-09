@@ -1,29 +1,37 @@
-# Database & Archives
+# Dependencies
+/vendor/
+/node_modules/
+
+# Database dumps & SQL
 *.sql
 *.sql.gz
-*.rdb
+*.sqlite
+bocxep09_db*.sql
+database/dumps/
 
-# Media & Static Uploads / Admin Assets (Avoid heavy background indexing)
-public/uploads/
+# Media, Assets & Uploads
 /public/uploads/
-public/images/
 /public/images/
-public/admin/
 /public/admin/
+/public/ckeditor/
+/public/storage/
 
-# Storage & Framework Cache / Logs
-storage/framework/cache/
-/storage/framework/cache/
-storage/logs/
+# Laravel Storage & Framework Cache
+/storage/*.key
 /storage/logs/
+/storage/framework/cache/
+/storage/framework/views/
+/storage/framework/sessions/
 
-# Package Lock files
+# Lock files & Large caches
 composer.lock
 package-lock.json
+.phpunit.result.cache
 
-# Dependencies & Outputs
-vendor/
-node_modules/
-repomix-output.xml
+# Environment
+.env
+.env.backup
+.env.production
+
+# Tool generated large outputs
 repomix-output.*
-.agents/codebase-summary.xml

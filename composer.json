@@ -20,6 +20,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.0",
+        "barryvdh/laravel-ide-helper": "*",
         "fakerphp/faker": "^1.23",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
@@ -48,6 +49,8 @@
         }
     },
     "scripts": {
+        "skeleton": "@php tools/generate-codebase-skeleton.php",
+        "ide-helper": "@php artisan ide-helper:generate",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
