@@ -9,7 +9,6 @@ use App\Services\ModelToggleService;
 use App\Traits\DataRemovalTrait;
 use App\Traits\ImageHandlerTrait;
 use App\Traits\SlugHandlerTrait;
-use Illuminate\Support\Facades\DB;
 
 class BaseController extends Controller
 {
@@ -20,8 +19,6 @@ class BaseController extends Controller
     protected $view = null;
 
     protected $module = null;
-
-    public $db;
 
     protected $imageService;
 
@@ -35,7 +32,6 @@ class BaseController extends Controller
     {
         $this->module = $module;
         $this->view = $this->website.'.modules.'.$module;
-        $this->db = DB::table($module);
         // Inject services
         $this->imageService = app(ImageService::class);
         $this->dataRemovalService = app(DataRemovalService::class);

@@ -3,33 +3,32 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Role;
-use App\Models\Permission;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class UserRoleController extends Controller
 {
     protected $nameItem = 'phân quyền người dùng';
+
     protected $nameClass = 'user-role';
+
+    protected RoleRepositoryInterface $roleRepository;
+
+    protected UserRepositoryInterface $userRepository;
+
+    public function __construct(
+        RoleRepositoryInterface $roleRepository,
+        UserRepositoryInterface $userRepository
+    ) {
+        $this->roleRepository = $roleRepository;
+        $this->userRepository = $userRepository;
+    }
 
     public function index(Request $request)
     {
-        $query = User::query();
+        $list = $this->roleRepository->getUsersWithRolesPaginated($request->input('search'), 15);
 
-        // Search functionality
-        if ($request->has('search') && !empty($request->search)) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('fullname', 'LIKE', "%{$search}%")
-                  ->orWhere('username', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
-            });
-        }
-
-        $list = $query->with('roles')->orderBy('id', 'desc')->paginate(15);
-        
         return view('admin.modules.user-role.list', compact('list'))
             ->with('nameItem', $this->nameItem)
             ->with('nameClass', $this->nameClass);
@@ -37,17 +36,15 @@ class UserRoleController extends Controller
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-        $roles = Role::with('permissions')->get();
-        $permissions = Permission::orderBy('group_name')->orderBy('display_name')->get();
+        $user = $this->userRepository->findOrFail($id);
+        $roles = $this->roleRepository->getAllRolesWithPermissions();
+        $permissions = $this->roleRepository->getAllPermissionsOrdered();
         $permissionGroups = $permissions->groupBy('group_name');
         $userRoles = $user->roles->pluck('id')->toArray();
-        
-        // Get user's direct permissions (not through roles)
         $userDirectPermissions = $user->directPermissions->pluck('id')->toArray();
 
         return view('admin.modules.user-role.edit', compact(
-            'user', 'roles', 'permissions', 'permissionGroups', 
+            'user', 'roles', 'permissions', 'permissionGroups',
             'userRoles', 'userDirectPermissions'
         ))
             ->with('nameItem', $this->nameItem)
@@ -56,28 +53,14 @@ class UserRoleController extends Controller
 
     public function updateRoles(Request $request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = $this->userRepository->findOrFail($id);
         $roles = $request->input('roles', []);
         $permissions = $request->input('permissions', []);
 
-        // Sync roles
-        $user->syncRoles($roles);
-
-        // Get permission IDs that are already inherited from the assigned roles
-        $rolePermissionIds = \App\Models\Permission::whereHas('roles', function($q) use ($roles) {
-            $q->whereIn('id', $roles);
-        })->pluck('id')->toArray();
-
-        // Direct permissions are the ones checked but not in the inherited role permissions
-        $directPermissions = array_diff($permissions, $rolePermissionIds);
-
-        // Sync direct permissions
-        $user->syncDirectPermissions($directPermissions);
-
-        // Clear cache to refresh permissions
-        $user->forgetCachedPermissions();
+        $this->roleRepository->syncUserRolesAndPermissions($user, $roles, $permissions);
 
         toast('Cập nhật phân quyền thành công!', 'success');
+
         return redirect()->route('admin.user-role.index');
     }
 
@@ -88,35 +71,31 @@ class UserRoleController extends Controller
 
         if (empty($userIds)) {
             toast('Vui lòng chọn người dùng!', 'error');
+
             return redirect()->back();
         }
 
         if (empty($roles)) {
             toast('Vui lòng chọn vai trò!', 'error');
+
             return redirect()->back();
         }
 
-        $successCount = 0;
-        foreach ($userIds as $userId) {
-            $user = User::find($userId);
-            if ($user) {
-                $user->syncRoles($roles);
-                $successCount++;
-            }
-        }
+        $successCount = $this->roleRepository->bulkSyncUserRoles($userIds, $roles);
 
         if ($successCount > 0) {
-            toast("Cập nhật phân quyền cho " . $successCount . " người dùng thành công!", 'success');
+            toast('Cập nhật phân quyền cho ' . $successCount . ' người dùng thành công!', 'success');
         } else {
             toast('Không có người dùng nào được cập nhật!', 'warning');
         }
+
         return redirect()->route('admin.user-role.index');
     }
 
-    // Role Management Methods
     public function roleIndex()
     {
-        $roles = Role::with('permissions')->orderBy('id')->get();
+        $roles = $this->roleRepository->getAllRolesWithPermissions();
+
         return view('admin.modules.user-role.roles.index', compact('roles'))
             ->with('nameItem', 'quản lý vai trò')
             ->with('nameClass', 'role-management');
@@ -124,9 +103,9 @@ class UserRoleController extends Controller
 
     public function roleCreate()
     {
-        $permissions = Permission::orderBy('group_name')->orderBy('display_name')->get();
+        $permissions = $this->roleRepository->getAllPermissionsOrdered();
         $permissionGroups = $permissions->groupBy('group_name');
-        
+
         return view('admin.modules.user-role.roles.create', compact('permissions', 'permissionGroups'))
             ->with('nameItem', 'tạo vai trò mới')
             ->with('nameClass', 'role-create');
@@ -138,26 +117,27 @@ class UserRoleController extends Controller
             'name' => 'required|string|max:255|unique:tp_roles,name',
             'display_name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'permissions' => 'array'
+            'permissions' => 'array',
         ]);
 
-        $role = Role::create($request->only(['name', 'display_name', 'description']));
-        
+        $role = $this->roleRepository->create($request->only(['name', 'display_name', 'description']));
+
         if ($request->has('permissions')) {
             $role->syncPermissions($request->permissions);
         }
 
         toast('Tạo vai trò thành công!', 'success');
+
         return redirect()->route('admin.user-role.roles.index');
     }
 
     public function roleEdit($id)
     {
-        $role = Role::with('permissions')->findOrFail($id);
-        $permissions = Permission::orderBy('group_name')->orderBy('display_name')->get();
+        $role = $this->roleRepository->findRoleWithPermissionsOrFail($id);
+        $permissions = $this->roleRepository->getAllPermissionsOrdered();
         $permissionGroups = $permissions->groupBy('group_name');
         $rolePermissions = $role->permissions->pluck('id')->toArray();
-        
+
         return view('admin.modules.user-role.roles.edit', compact('role', 'permissions', 'permissionGroups', 'rolePermissions'))
             ->with('nameItem', 'chỉnh sửa vai trò')
             ->with('nameClass', 'role-edit');
@@ -165,17 +145,17 @@ class UserRoleController extends Controller
 
     public function roleUpdate(Request $request, $id)
     {
-        $role = Role::findOrFail($id);
-        
+        $role = $this->roleRepository->findOrFail($id);
+
         $request->validate([
             'name' => 'required|string|max:255|unique:tp_roles,name,' . $id,
             'display_name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'permissions' => 'array'
+            'permissions' => 'array',
         ]);
 
         $role->update($request->only(['name', 'display_name', 'description']));
-        
+
         if ($request->has('permissions')) {
             $role->syncPermissions($request->permissions);
         } else {
@@ -183,21 +163,23 @@ class UserRoleController extends Controller
         }
 
         toast('Cập nhật vai trò thành công!', 'success');
+
         return redirect()->route('admin.user-role.roles.index');
     }
 
     public function roleDestroy($id)
     {
-        $role = Role::findOrFail($id);
-        
-        // Check if role is being used by users
+        $role = $this->roleRepository->findOrFail($id);
+
         if ($role->users()->count() > 0) {
             toast('Không thể xóa vai trò này vì đang được sử dụng!', 'error');
+
             return redirect()->back();
         }
 
         $role->delete();
         toast('Xóa vai trò thành công!', 'success');
+
         return redirect()->route('admin.user-role.roles.index');
     }
 }

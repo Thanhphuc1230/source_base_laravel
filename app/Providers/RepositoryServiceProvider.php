@@ -3,7 +3,11 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\OrderRepository;
+use App\Repositories\Eloquent\RoleRepository;
+use App\Repositories\Eloquent\MailTemplateRepository;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
+use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 use App\Repositories\Eloquent\AboutRepository;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\GalleryRepository;
@@ -42,7 +46,6 @@ use App\Repositories\Interfaces\ContactRepositoryInterface;
 use App\Repositories\Interfaces\FeatureRepositoryInterface;
 use App\Repositories\Interfaces\FeedBackRepositoryInterface;
 use App\Repositories\Interfaces\MailConfigRepositoryInterface;
-use App\Repositories\MailTemplateRepositoryInterface;
 use App\Repositories\Interfaces\MenuRepositoryInterface;
 use App\Repositories\Interfaces\NewsRepositoryInterface;
 use App\Repositories\Interfaces\PageRepositoryInterface;
@@ -57,7 +60,6 @@ use App\Repositories\Interfaces\ServiceRepositoryInterface;
 use App\Repositories\Interfaces\CateProjectRepositoryInterface;
 use App\Repositories\Interfaces\SystemRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
-use App\Repositories\MailTemplateRepository;
 use App\Services\SlugResolutionService;
 use Illuminate\Support\ServiceProvider;
 
@@ -96,6 +98,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ActivityLogRepositoryInterface::class, ActivityLogRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, DashboardRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
 
         // Services
         $this->app->bind(SlugResolutionService::class, SlugResolutionService::class);

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Eloquent;
 
 use App\Models\MailTemplate;
+use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 
 class MailTemplateRepository implements MailTemplateRepositoryInterface
 {
@@ -43,8 +44,10 @@ class MailTemplateRepository implements MailTemplateRepositoryInterface
         $template = $this->getById($id);
         if ($template) {
             $template->update($data);
+
             return $template;
         }
+
         return null;
     }
 
@@ -54,6 +57,7 @@ class MailTemplateRepository implements MailTemplateRepositoryInterface
         if ($template) {
             return $template->delete();
         }
+
         return false;
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\MailTemplateRepositoryInterface;
+use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 
 class MailTemplateService
 {
