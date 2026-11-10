@@ -50,6 +50,7 @@
     },
     "scripts": {
         "skeleton": "@php tools/generate-codebase-skeleton.php",
+        "audit": "@php tools/audit-architecture.php",
         "ide-helper": "@php artisan ide-helper:generate",
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

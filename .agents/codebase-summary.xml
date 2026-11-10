@@ -71,6 +71,7 @@ app/Repositories/Eloquent/FeatureRepository.php
 app/Repositories/Eloquent/FeedBackRepository.php
 app/Repositories/Eloquent/GalleryRepository.php
 app/Repositories/Eloquent/MailConfigRepository.php
+app/Repositories/Eloquent/MailTemplateRepository.php
 app/Repositories/Eloquent/MediaRepository.php
 app/Repositories/Eloquent/MenuRepository.php
 app/Repositories/Eloquent/NewsRepository.php
@@ -78,6 +79,7 @@ app/Repositories/Eloquent/OrderRepository.php
 app/Repositories/Eloquent/PageRepository.php
 app/Repositories/Eloquent/ProductRepository.php
 app/Repositories/Eloquent/ProjectRepository.php
+app/Repositories/Eloquent/RoleRepository.php
 app/Repositories/Eloquent/ServiceRepository.php
 app/Repositories/Eloquent/SiteSettingRepository.php
 app/Repositories/Eloquent/SliderRepository.php
@@ -98,6 +100,7 @@ app/Repositories/Interfaces/FeatureRepositoryInterface.php
 app/Repositories/Interfaces/FeedbackRepositoryInterface.php
 app/Repositories/Interfaces/GalleryRepositoryInterface.php
 app/Repositories/Interfaces/MailConfigRepositoryInterface.php
+app/Repositories/Interfaces/MailTemplateRepositoryInterface.php
 app/Repositories/Interfaces/MediaRepositoryInterface.php
 app/Repositories/Interfaces/MenuRepositoryInterface.php
 app/Repositories/Interfaces/NewsRepositoryInterface.php
@@ -106,13 +109,12 @@ app/Repositories/Interfaces/PageRepositoryInterface.php
 app/Repositories/Interfaces/ProductRepositoryInterface.php
 app/Repositories/Interfaces/ProjectRepositoryInterface.php
 app/Repositories/Interfaces/RepositoryInterface.php
+app/Repositories/Interfaces/RoleRepositoryInterface.php
 app/Repositories/Interfaces/ServiceRepositoryInterface.php
 app/Repositories/Interfaces/SiteSettingRepositoryInterface.php
 app/Repositories/Interfaces/SliderRepositoryInterface.php
 app/Repositories/Interfaces/SystemRepositoryInterface.php
 app/Repositories/Interfaces/UserRepositoryInterface.php
-app/Repositories/MailTemplateRepository.php
-app/Repositories/MailTemplateRepositoryInterface.php
 app/Services/ActivityLogService.php
 app/Services/CacheService.php
 app/Services/CartService.php
@@ -133,6 +135,7 @@ app/Services/ProjectService.php
 app/Services/RateLimitService.php
 app/Services/SearchService.php
 app/Services/ServiceService.php
+app/Services/SitemapService.php
 app/Services/SiteSettingService.php
 app/Services/SlugResolutionService.php
 app/Services/SlugService.php
@@ -501,6 +504,10 @@ class NewsSetting extends Model
         &apos;sort_order&apos; =&gt; &apos;integer&apos;,
     ];
     /**
+     * Request-level memoized map of active news settings.
+     */
+    protected static ?array $activeSettingsMap = null;
+    /**
      * Boot the model.
      */
     protected static function boot()
@@ -511,6 +518,39 @@ class NewsSetting extends Model
                 $model-&gt;uuid = (string) Str::uuid();
             }
         });
+        static::saved(function () {
+            static::$activeSettingsMap = null;
+        });
+        static::deleted(function () {
+            static::$activeSettingsMap = null;
+        });
+    }
+    /**
+     * Load all active news settings into a key =&gt; casted_value map in a single query.
+     */
+    public static function getAllActiveMap(): array
+    {
+        if (static::$activeSettingsMap !== null) {
+            return static::$activeSettingsMap;
+        }
+        try {
+            $rows = static::where(&apos;is_active&apos;, true)-&gt;get([&apos;key&apos;, &apos;value&apos;, &apos;type&apos;]);
+            $map = [];
+            foreach ($rows as $row) {
+                $map[$row-&gt;key] = static::castValue($row-&gt;value, $row-&gt;type);
+            }
+            static::$activeSettingsMap = $map;
+        } catch (\Throwable $e) {
+            static::$activeSettingsMap = [];
+        }
+        return static::$activeSettingsMap;
+    }
+    /**
+     * Flush request-level settings map cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$activeSettingsMap = null;
     }
     /**
      * Get the route key for the model.
@@ -524,11 +564,8 @@ class NewsSetting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where(&apos;key&apos;, $key)-&gt;where(&apos;is_active&apos;, true)-&gt;first();
-        if (! $setting) {
-            return $default;
-        }
-        return static::castValue($setting-&gt;value, $setting-&gt;type);
+        $map = static::getAllActiveMap();
+        return array_key_exists($key, $map) ? $map[$key] : $default;
     }
     /**
      * Cập nhật hoặc tạo mới setting
@@ -1468,137 +1505,57 @@ class MailConfigRepository extends BaseRepository implements MailConfigRepositor
     {
         return parent::find($id, $columns);
     }
-}</file><file path="app/Repositories/Eloquent/OrderRepository.php">&lt;?php
+}</file><file path="app/Repositories/Eloquent/MailTemplateRepository.php">&lt;?php
 namespace App\Repositories\Eloquent;
-use App\Models\OrderStatus;
-use App\Repositories\Interfaces\OrderRepositoryInterface;
-use Illuminate\Support\Facades\DB;
-class OrderRepository extends BaseRepository implements OrderRepositoryInterface
+use App\Models\MailTemplate;
+use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
+class MailTemplateRepository implements MailTemplateRepositoryInterface
 {
-    public function __construct(OrderStatus $model)
+    protected $model;
+    public function __construct(MailTemplate $model)
     {
-        parent::__construct($model);
+        $this-&gt;model = $model;
     }
-    /**
-     * @inheritDoc
-     */
-    public function getOrdersPaginated(array $filters = [], int $perPage = 10)
+    public function getAll()
     {
-        $query = DB::table(&apos;tp_order_shipping&apos;)
-            -&gt;join(&apos;tp_order_status&apos;, &apos;tp_order_shipping.id_order_shipping&apos;, &apos;=&apos;, &apos;tp_order_status.shipping_id&apos;)
-            -&gt;select(
-                &apos;tp_order_shipping.email&apos;,
-                &apos;tp_order_shipping.phone&apos;,
-                &apos;tp_order_shipping.f_name_order&apos;,
-                &apos;tp_order_shipping.l_name_order&apos;,
-                &apos;tp_order_status.total&apos;,
-                &apos;tp_order_status.status&apos;,
-                &apos;tp_order_status.payment_method&apos;,
-                &apos;tp_order_status.uuid_order_status&apos;,
-                &apos;tp_order_status.created_at&apos;,
-                &apos;tp_order_status.updated_at&apos;
-            )
-            -&gt;orderBy(&apos;tp_order_status.created_at&apos;, &apos;desc&apos;);
-        if (!empty($filters[&apos;search&apos;])) {
-            $searchTerm = $filters[&apos;search&apos;];
-            $query-&gt;where(function ($q) use ($searchTerm) {
-                $q-&gt;where(&apos;tp_order_shipping.email&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
-                    -&gt;orWhere(&apos;tp_order_shipping.phone&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
-                    -&gt;orWhere(&apos;tp_order_shipping.f_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
-                    -&gt;orWhere(&apos;tp_order_shipping.l_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
-                    -&gt;orWhere(&apos;tp_order_status.uuid_order_status&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;);
-            });
+        return $this-&gt;model-&gt;all();
+    }
+    public function getById($id)
+    {
+        return $this-&gt;model-&gt;find($id);
+    }
+    public function getByType($type)
+    {
+        return $this-&gt;model-&gt;where(&apos;type&apos;, $type)-&gt;get();
+    }
+    public function getActiveByType($type)
+    {
+        return $this-&gt;model-&gt;where(&apos;type&apos;, $type)-&gt;where(&apos;is_active&apos;, true)-&gt;first();
+    }
+    public function create(array $data)
+    {
+        return $this-&gt;model-&gt;create($data);
+    }
+    public function update($id, array $data)
+    {
+        $template = $this-&gt;getById($id);
+        if ($template) {
+            $template-&gt;update($data);
+            return $template;
         }
-        if (isset($filters[&apos;status&apos;]) &amp;&amp; $filters[&apos;status&apos;] !== null &amp;&amp; $filters[&apos;status&apos;] !== &apos;&apos;) {
-            $query-&gt;where(&apos;tp_order_status.status&apos;, $filters[&apos;status&apos;]);
+        return null;
+    }
+    public function delete($id)
+    {
+        $template = $this-&gt;getById($id);
+        if ($template) {
+            return $template-&gt;delete();
         }
-        return $query-&gt;paginate($perPage);
+        return false;
     }
-    /**
-     * @inheritDoc
-     */
-    public function findByUuid($uuid, $columns = [&apos;*&apos;])
+    public function paginate($perPage = 15)
     {
-        return $this-&gt;model-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first($columns);
-    }
-    /**
-     * @inheritDoc
-     */
-    public function getOrderDetailByUuid(string $uuid)
-    {
-        return DB::table(&apos;tp_order_status&apos;)
-            -&gt;join(&apos;tp_order_shipping&apos;, &apos;tp_order_status.shipping_id&apos;, &apos;=&apos;, &apos;tp_order_shipping.id_order_shipping&apos;)
-            -&gt;select(
-                &apos;tp_order_shipping.l_name_order&apos;,
-                &apos;tp_order_shipping.f_name_order&apos;,
-                &apos;tp_order_shipping.phone&apos;,
-                &apos;tp_order_shipping.email&apos;,
-                &apos;tp_order_shipping.address&apos;,
-                &apos;tp_order_shipping.note&apos;,
-                &apos;tp_order_status.payment_method&apos;,
-                &apos;tp_order_status.total&apos;,
-                &apos;tp_order_status.id_order_status&apos;,
-                &apos;tp_order_status.status&apos;,
-                &apos;tp_order_status.uuid_order_status&apos;
-            )
-            -&gt;where(&apos;tp_order_status.uuid_order_status&apos;, $uuid)
-            -&gt;first();
-    }
-    /**
-     * @inheritDoc
-     */
-    public function getOrderProducts(int $orderStatusId)
-    {
-        return DB::table(&apos;tp_order_product&apos;)
-            -&gt;join(&apos;tp_products&apos;, &apos;tp_order_product.product_id&apos;, &apos;=&apos;, &apos;tp_products.id_product&apos;)
-            -&gt;select(
-                &apos;tp_order_product.*&apos;,
-                &apos;tp_products.name_vn&apos;,
-                &apos;tp_products.image&apos;
-            )
-            -&gt;where(&apos;tp_order_product.order_status_id&apos;, $orderStatusId)
-            -&gt;get();
-    }
-    /**
-     * @inheritDoc
-     */
-    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;)
-    {
-        $orderStatus = $this-&gt;findByUuid($uuid);
-        if (!$orderStatus) {
-            return null;
-        }
-        $orderStatus-&gt;$field = $status;
-        $orderStatus-&gt;save();
-        try {
-            app(\App\Services\DashboardService::class)-&gt;flushCache();
-        } catch (\Throwable $e) {}
-        return $orderStatus;
-    }
-    /**
-     * @inheritDoc
-     */
-    public function deleteOrderByUuid(string $uuid)
-    {
-        $orderStatus = DB::table(&apos;tp_order_status&apos;)-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first();
-        if (!$orderStatus) {
-            return false;
-        }
-        return DB::transaction(function () use ($orderStatus, $uuid) {
-            DB::table(&apos;tp_order_product&apos;)
-                -&gt;where(&apos;order_status_id&apos;, $orderStatus-&gt;id_order_status)
-                -&gt;delete();
-            DB::table(&apos;tp_order_status&apos;)
-                -&gt;where(&apos;uuid_order_status&apos;, $uuid)
-                -&gt;delete();
-            DB::table(&apos;tp_order_shipping&apos;)
-                -&gt;where(&apos;id_order_shipping&apos;, $orderStatus-&gt;shipping_id)
-                -&gt;delete();
-            try {
-                app(\App\Services\DashboardService::class)-&gt;flushCache();
-            } catch (\Throwable $e) {}
-            return true;
-        });
+        return $this-&gt;model-&gt;paginate($perPage);
     }
 }</file><file path="app/Repositories/Eloquent/PageRepository.php">&lt;?php
 namespace App\Repositories\Eloquent;
@@ -1669,6 +1626,80 @@ class PageRepository extends BaseRepository implements PageRepositoryInterface
         })
             -&gt;where(&apos;status&apos;, 1)
             -&gt;first();
+    }
+}</file><file path="app/Repositories/Eloquent/RoleRepository.php">&lt;?php
+namespace App\Repositories\Eloquent;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use App\Repositories\Interfaces\RoleRepositoryInterface;
+class RoleRepository extends BaseRepository implements RoleRepositoryInterface
+{
+    public function __construct(Role $model)
+    {
+        parent::__construct($model);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getUsersWithRolesPaginated(?string $search = null, int $perPage = 15)
+    {
+        $query = User::query()-&gt;with(&apos;roles&apos;);
+        if (! empty($search)) {
+            $query-&gt;where(function ($q) use ($search) {
+                $q-&gt;where(&apos;fullname&apos;, &apos;LIKE&apos;, &quot;%{$search}%&quot;)
+                    -&gt;orWhere(&apos;username&apos;, &apos;LIKE&apos;, &quot;%{$search}%&quot;)
+                    -&gt;orWhere(&apos;email&apos;, &apos;LIKE&apos;, &quot;%{$search}%&quot;);
+            });
+        }
+        return $query-&gt;orderBy(&apos;id&apos;, &apos;desc&apos;)-&gt;paginate($perPage);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getAllRolesWithPermissions()
+    {
+        return $this-&gt;model-&gt;with(&apos;permissions&apos;)-&gt;orderBy(&apos;id&apos;)-&gt;get();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getAllPermissionsOrdered()
+    {
+        return Permission::orderBy(&apos;group_name&apos;)-&gt;orderBy(&apos;display_name&apos;)-&gt;get();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function findRoleWithPermissionsOrFail($id): Role
+    {
+        return $this-&gt;model-&gt;with(&apos;permissions&apos;)-&gt;findOrFail($id);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function syncUserRolesAndPermissions(User $user, array $roleIds, array $permissionIds): void
+    {
+        $user-&gt;syncRoles($roleIds);
+        $rolePermissionIds = Permission::whereHas(&apos;roles&apos;, function ($q) use ($roleIds) {
+            $q-&gt;whereIn(&apos;id&apos;, $roleIds);
+        })-&gt;pluck(&apos;id&apos;)-&gt;toArray();
+        $directPermissions = array_diff($permissionIds, $rolePermissionIds);
+        $user-&gt;syncDirectPermissions($directPermissions);
+        $user-&gt;forgetCachedPermissions();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function bulkSyncUserRoles(array $userIds, array $roleIds): int
+    {
+        $users = User::whereIn(&apos;id&apos;, $userIds)-&gt;get();
+        $successCount = 0;
+        foreach ($users as $user) {
+            $user-&gt;syncRoles($roleIds);
+            $successCount++;
+        }
+        return $successCount;
     }
 }</file><file path="app/Repositories/Eloquent/SiteSettingRepository.php">&lt;?php
 namespace App\Repositories\Eloquent;
@@ -2254,6 +2285,18 @@ interface MailConfigRepositoryInterface
      * @return \App\Models\MailConfig|null
      */
     public function find($id, $columns = [&apos;*&apos;]);
+}</file><file path="app/Repositories/Interfaces/MailTemplateRepositoryInterface.php">&lt;?php
+namespace App\Repositories\Interfaces;
+interface MailTemplateRepositoryInterface
+{
+    public function getAll();
+    public function getById($id);
+    public function getByType($type);
+    public function getActiveByType($type);
+    public function create(array $data);
+    public function update($id, array $data);
+    public function delete($id);
+    public function paginate($perPage = 15);
 }</file><file path="app/Repositories/Interfaces/NewsRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface NewsRepositoryInterface extends RepositoryInterface
@@ -2272,56 +2315,6 @@ interface NewsRepositoryInterface extends RepositoryInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getActiveCategories();
-}</file><file path="app/Repositories/Interfaces/OrderRepositoryInterface.php">&lt;?php
-namespace App\Repositories\Interfaces;
-interface OrderRepositoryInterface extends RepositoryInterface
-{
-    /**
-     * Get paginated orders list with shipping details and filters.
-     *
-     * @param array $filters
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function getOrdersPaginated(array $filters = [], int $perPage = 10);
-    /**
-     * Find order status record by UUID.
-     *
-     * @param string $uuid
-     * @param array $columns
-     * @return \App\Models\OrderStatus|null
-     */
-    public function findByUuid($uuid, $columns = [&apos;*&apos;]);
-    /**
-     * Get joined order &amp; shipping info for detail view.
-     *
-     * @param string $uuid
-     * @return object|null
-     */
-    public function getOrderDetailByUuid(string $uuid);
-    /**
-     * Get products in a specific order.
-     *
-     * @param int $orderStatusId
-     * @return \Illuminate\Support\Collection
-     */
-    public function getOrderProducts(int $orderStatusId);
-    /**
-     * Update order status field by UUID.
-     *
-     * @param string $uuid
-     * @param int|string $status
-     * @param string $field
-     * @return \App\Models\OrderStatus|null
-     */
-    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;);
-    /**
-     * Completely remove order, shipping info, and order line items.
-     *
-     * @param string $uuid
-     * @return bool
-     */
-    public function deleteOrderByUuid(string $uuid);
 }</file><file path="app/Repositories/Interfaces/PageRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface PageRepositoryInterface extends RepositoryInterface
@@ -2347,6 +2340,36 @@ interface PageRepositoryInterface extends RepositoryInterface
      * @return \App\Models\Page|null
      */
     public function getPageBySlug($slug);
+}</file><file path="app/Repositories/Interfaces/RoleRepositoryInterface.php">&lt;?php
+namespace App\Repositories\Interfaces;
+use App\Models\Role;
+use App\Models\User;
+interface RoleRepositoryInterface extends RepositoryInterface
+{
+    /**
+     * Get paginated users with roles for RBAC listing.
+     */
+    public function getUsersWithRolesPaginated(?string $search = null, int $perPage = 15);
+    /**
+     * Get all roles with their permissions eager-loaded.
+     */
+    public function getAllRolesWithPermissions();
+    /**
+     * Get all permissions ordered by group_name and display_name.
+     */
+    public function getAllPermissionsOrdered();
+    /**
+     * Find role with permissions or fail.
+     */
+    public function findRoleWithPermissionsOrFail($id): Role;
+    /**
+     * Sync user roles and direct permissions in a single workflow.
+     */
+    public function syncUserRolesAndPermissions(User $user, array $roleIds, array $permissionIds): void;
+    /**
+     * Bulk sync roles for multiple user IDs without N+1 queries.
+     */
+    public function bulkSyncUserRoles(array $userIds, array $roleIds): int;
 }</file><file path="app/Repositories/Interfaces/SiteSettingRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface SiteSettingRepositoryInterface extends RepositoryInterface
@@ -2472,69 +2495,6 @@ interface UserRepositoryInterface extends RepositoryInterface
      * @return bool
      */
     public function deleteByUuids(array $uuids);
-}</file><file path="app/Repositories/MailTemplateRepository.php">&lt;?php
-namespace App\Repositories;
-use App\Models\MailTemplate;
-class MailTemplateRepository implements MailTemplateRepositoryInterface
-{
-    protected $model;
-    public function __construct(MailTemplate $model)
-    {
-        $this-&gt;model = $model;
-    }
-    public function getAll()
-    {
-        return $this-&gt;model-&gt;all();
-    }
-    public function getById($id)
-    {
-        return $this-&gt;model-&gt;find($id);
-    }
-    public function getByType($type)
-    {
-        return $this-&gt;model-&gt;where(&apos;type&apos;, $type)-&gt;get();
-    }
-    public function getActiveByType($type)
-    {
-        return $this-&gt;model-&gt;where(&apos;type&apos;, $type)-&gt;where(&apos;is_active&apos;, true)-&gt;first();
-    }
-    public function create(array $data)
-    {
-        return $this-&gt;model-&gt;create($data);
-    }
-    public function update($id, array $data)
-    {
-        $template = $this-&gt;getById($id);
-        if ($template) {
-            $template-&gt;update($data);
-            return $template;
-        }
-        return null;
-    }
-    public function delete($id)
-    {
-        $template = $this-&gt;getById($id);
-        if ($template) {
-            return $template-&gt;delete();
-        }
-        return false;
-    }
-    public function paginate($perPage = 15)
-    {
-        return $this-&gt;model-&gt;paginate($perPage);
-    }
-}</file><file path="app/Repositories/MailTemplateRepositoryInterface.php">&lt;?php
-namespace App\Repositories;
-interface MailTemplateRepositoryInterface
-{
-    public function getAll();
-    public function getById($id);
-    public function getByType($type);
-    public function getActiveByType($type);
-    public function create(array $data);
-    public function update($id, array $data);
-    public function delete($id);
-    public function paginate($perPage = 15);
 }</file><file path="app/Services/CacheService.php">&lt;?php
 namespace App\Services;
 use Illuminate\Support\Facades\Cache;
@@ -3064,7 +3024,7 @@ class MailConfigService
     }
 }</file><file path="app/Services/MailTemplateService.php">&lt;?php
 namespace App\Services;
-use App\Repositories\MailTemplateRepositoryInterface;
+use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 class MailTemplateService
 {
     protected $repository;
@@ -3475,6 +3435,81 @@ class SearchService
             -&gt;pluck(&apos;name_vn&apos;)
             -&gt;toArray();
         return [&apos;suggestions&apos; =&gt; $suggestions];
+    }
+}</file><file path="app/Services/SitemapService.php">&lt;?php
+namespace App\Services;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\Tags\Url;
+class SitemapService
+{
+    /**
+     * Render dynamic XML sitemap with 12h caching.
+     */
+    public function generateXml(): string
+    {
+        $cacheTtl = 60 * 60 * 12; // 12 hours
+        return Cache::remember(&apos;dynamic_sitemap_xml&apos;, $cacheTtl, function () {
+            $sitemap = Sitemap::create();
+            // 1. Homepage
+            $sitemap-&gt;add(
+                Url::create(&apos;/&apos;)
+                    -&gt;setPriority(1.0)
+                    -&gt;setChangeFrequency(Url::CHANGE_FREQUENCY_DAILY)
+                    -&gt;setLastModificationDate(Carbon::now())
+            );
+            // 2. Product Categories
+            $this-&gt;appendModuleSlugs($sitemap, &apos;tp_cate_products&apos;, 0.8, Url::CHANGE_FREQUENCY_WEEKLY, true);
+            // 3. Products
+            $this-&gt;appendModuleSlugs($sitemap, &apos;tp_products&apos;, 0.9, Url::CHANGE_FREQUENCY_DAILY, true);
+            // 4. News Categories
+            $this-&gt;appendModuleSlugs($sitemap, &apos;tp_cate_news&apos;, 0.7, Url::CHANGE_FREQUENCY_WEEKLY, false);
+            // 5. News Articles
+            $this-&gt;appendModuleSlugs($sitemap, &apos;tp_news&apos;, 0.8, Url::CHANGE_FREQUENCY_WEEKLY, false);
+            // 6. Static Pages
+            $this-&gt;appendModuleSlugs($sitemap, &apos;tp_pages&apos;, 0.6, Url::CHANGE_FREQUENCY_MONTHLY, false);
+            return $sitemap-&gt;render();
+        });
+    }
+    /**
+     * Append active rows from a module table into Sitemap.
+     */
+    protected function appendModuleSlugs(
+        Sitemap $sitemap,
+        string $table,
+        float $priority,
+        string $frequency,
+        bool $includeEnglish = false
+    ): void {
+        if (! Schema::hasTable($table)) {
+            return;
+        }
+        $rows = DB::table($table)
+            -&gt;where(&apos;status&apos;, 1)
+            -&gt;select(&apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;updated_at&apos;, &apos;created_at&apos;)
+            -&gt;get();
+        foreach ($rows as $row) {
+            $lastmod = Carbon::parse($row-&gt;updated_at ?? $row-&gt;created_at ?? now());
+            if (! empty($row-&gt;slug_vn)) {
+                $sitemap-&gt;add(
+                    Url::create(&apos;/&apos; . ltrim($row-&gt;slug_vn, &apos;/&apos;))
+                        -&gt;setPriority($priority)
+                        -&gt;setChangeFrequency($frequency)
+                        -&gt;setLastModificationDate($lastmod)
+                );
+            }
+            if ($includeEnglish &amp;&amp; ! empty($row-&gt;slug_en)) {
+                $sitemap-&gt;add(
+                    Url::create(&apos;/&apos; . ltrim($row-&gt;slug_en, &apos;/&apos;))
+                        -&gt;setPriority($priority)
+                        -&gt;setChangeFrequency($frequency)
+                        -&gt;setLastModificationDate($lastmod)
+                );
+            }
+        }
     }
 }</file><file path="app/Services/SiteSettingService.php">&lt;?php
 namespace App\Services;
@@ -4388,6 +4423,10 @@ class ProductSetting extends Model
         &apos;sort_order&apos; =&gt; &apos;integer&apos;,
     ];
     /**
+     * Request-level memoized map of active product settings.
+     */
+    protected static ?array $activeSettingsMap = null;
+    /**
      * Boot the model.
      */
     protected static function boot()
@@ -4398,6 +4437,42 @@ class ProductSetting extends Model
                 $model-&gt;uuid = (string) Str::uuid();
             }
         });
+        static::saved(function () {
+            static::$activeSettingsMap = null;
+        });
+        static::deleted(function () {
+            static::$activeSettingsMap = null;
+        });
+    }
+    /**
+     * Load all active settings into a key =&gt; casted_value map in a single query.
+     */
+    public static function getAllActiveMap(): array
+    {
+        if (static::$activeSettingsMap !== null) {
+            return static::$activeSettingsMap;
+        }
+        try {
+            $rows = static::where(&apos;is_active&apos;, true)-&gt;get([&apos;key&apos;, &apos;value&apos;, &apos;type&apos;, &apos;currency_unit&apos;]);
+            $map = [];
+            foreach ($rows as $row) {
+                $map[$row-&gt;key] = static::castValue($row-&gt;value, $row-&gt;type);
+                if (! empty($row-&gt;currency_unit) &amp;&amp; ! isset($map[&apos;__fallback_currency_unit&apos;])) {
+                    $map[&apos;__fallback_currency_unit&apos;] = (string) $row-&gt;currency_unit;
+                }
+            }
+            static::$activeSettingsMap = $map;
+        } catch (\Throwable $e) {
+            static::$activeSettingsMap = [];
+        }
+        return static::$activeSettingsMap;
+    }
+    /**
+     * Flush request-level settings map cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$activeSettingsMap = null;
     }
     /**
      * Get the route key for the model.
@@ -4411,11 +4486,8 @@ class ProductSetting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where(&apos;key&apos;, $key)-&gt;where(&apos;is_active&apos;, true)-&gt;first();
-        if (! $setting) {
-            return $default;
-        }
-        return static::castValue($setting-&gt;value, $setting-&gt;type);
+        $map = static::getAllActiveMap();
+        return array_key_exists($key, $map) ? $map[$key] : $default;
     }
     /**
      * Get system-wide currency unit.
@@ -4423,13 +4495,14 @@ class ProductSetting extends Model
     public static function getCurrencyUnit(): string
     {
         try {
-            $val = static::get(&apos;products_currency_unit&apos;);
-            if (! empty($val)) {
-                return (string) $val;
+            $map = static::getAllActiveMap();
+            if (! empty($map[&apos;products_currency_unit&apos;])) {
+                return (string) $map[&apos;products_currency_unit&apos;];
             }
-            // Fallback to column if exists
-            $row = static::whereNotNull(&apos;currency_unit&apos;)-&gt;first();
-            return $row &amp;&amp; ! empty($row-&gt;currency_unit) ? (string) $row-&gt;currency_unit : &apos;đ&apos;;
+            if (! empty($map[&apos;__fallback_currency_unit&apos;])) {
+                return (string) $map[&apos;__fallback_currency_unit&apos;];
+            }
+            return &apos;đ&apos;;
         } catch (\Throwable $e) {
             return &apos;đ&apos;;
         }
@@ -5325,6 +5398,138 @@ class MenuRepository extends BaseRepository implements MenuRepositoryInterface
             }
         }
     }
+}</file><file path="app/Repositories/Eloquent/OrderRepository.php">&lt;?php
+namespace App\Repositories\Eloquent;
+use App\Models\OrderStatus;
+use App\Repositories\Interfaces\OrderRepositoryInterface;
+use Illuminate\Support\Facades\DB;
+class OrderRepository extends BaseRepository implements OrderRepositoryInterface
+{
+    public function __construct(OrderStatus $model)
+    {
+        parent::__construct($model);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrdersPaginated(array $filters = [], int $perPage = 10)
+    {
+        $query = DB::table(&apos;tp_order_shipping&apos;)
+            -&gt;join(&apos;tp_order_status&apos;, &apos;tp_order_shipping.id_order_shipping&apos;, &apos;=&apos;, &apos;tp_order_status.shipping_id&apos;)
+            -&gt;select(
+                &apos;tp_order_shipping.email&apos;,
+                &apos;tp_order_shipping.phone&apos;,
+                &apos;tp_order_shipping.f_name_order&apos;,
+                &apos;tp_order_shipping.l_name_order&apos;,
+                &apos;tp_order_status.total&apos;,
+                &apos;tp_order_status.status&apos;,
+                &apos;tp_order_status.payment_method&apos;,
+                &apos;tp_order_status.uuid_order_status&apos;,
+                &apos;tp_order_status.created_at&apos;,
+                &apos;tp_order_status.updated_at&apos;
+            )
+            -&gt;orderBy(&apos;tp_order_status.created_at&apos;, &apos;desc&apos;);
+        if (!empty($filters[&apos;search&apos;])) {
+            $searchTerm = $filters[&apos;search&apos;];
+            $query-&gt;where(function ($q) use ($searchTerm) {
+                $q-&gt;where(&apos;tp_order_shipping.email&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.phone&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.f_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_shipping.l_name_order&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;)
+                    -&gt;orWhere(&apos;tp_order_status.uuid_order_status&apos;, &apos;LIKE&apos;, &quot;%{$searchTerm}%&quot;);
+            });
+        }
+        if (isset($filters[&apos;status&apos;]) &amp;&amp; $filters[&apos;status&apos;] !== null &amp;&amp; $filters[&apos;status&apos;] !== &apos;&apos;) {
+            $query-&gt;where(&apos;tp_order_status.status&apos;, $filters[&apos;status&apos;]);
+        }
+        return $query-&gt;paginate($perPage);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function findByUuid($uuid, $columns = [&apos;*&apos;])
+    {
+        return $this-&gt;model-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first($columns);
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrderDetailByUuid(string $uuid)
+    {
+        return DB::table(&apos;tp_order_status&apos;)
+            -&gt;join(&apos;tp_order_shipping&apos;, &apos;tp_order_status.shipping_id&apos;, &apos;=&apos;, &apos;tp_order_shipping.id_order_shipping&apos;)
+            -&gt;select(
+                &apos;tp_order_shipping.l_name_order&apos;,
+                &apos;tp_order_shipping.f_name_order&apos;,
+                &apos;tp_order_shipping.phone&apos;,
+                &apos;tp_order_shipping.email&apos;,
+                &apos;tp_order_shipping.address&apos;,
+                &apos;tp_order_shipping.note&apos;,
+                &apos;tp_order_status.payment_method&apos;,
+                &apos;tp_order_status.total&apos;,
+                &apos;tp_order_status.id_order_status&apos;,
+                &apos;tp_order_status.status&apos;,
+                &apos;tp_order_status.uuid_order_status&apos;
+            )
+            -&gt;where(&apos;tp_order_status.uuid_order_status&apos;, $uuid)
+            -&gt;first();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function getOrderProducts(int $orderStatusId)
+    {
+        return DB::table(&apos;tp_order_product&apos;)
+            -&gt;join(&apos;tp_products&apos;, &apos;tp_order_product.product_id&apos;, &apos;=&apos;, &apos;tp_products.id_product&apos;)
+            -&gt;select(
+                &apos;tp_order_product.*&apos;,
+                &apos;tp_products.name_vn&apos;,
+                &apos;tp_products.image_vn as image&apos;
+            )
+            -&gt;where(&apos;tp_order_product.order_status_id&apos;, $orderStatusId)
+            -&gt;get();
+    }
+    /**
+     * @inheritDoc
+     */
+    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;)
+    {
+        $orderStatus = $this-&gt;findByUuid($uuid);
+        if (!$orderStatus) {
+            return null;
+        }
+        $orderStatus-&gt;$field = $status;
+        $orderStatus-&gt;save();
+        try {
+            app(\App\Services\DashboardService::class)-&gt;flushCache();
+        } catch (\Throwable $e) {}
+        return $orderStatus;
+    }
+    /**
+     * @inheritDoc
+     */
+    public function deleteOrderByUuid(string $uuid)
+    {
+        $orderStatus = DB::table(&apos;tp_order_status&apos;)-&gt;where(&apos;uuid_order_status&apos;, $uuid)-&gt;first();
+        if (!$orderStatus) {
+            return false;
+        }
+        return DB::transaction(function () use ($orderStatus, $uuid) {
+            DB::table(&apos;tp_order_product&apos;)
+                -&gt;where(&apos;order_status_id&apos;, $orderStatus-&gt;id_order_status)
+                -&gt;delete();
+            DB::table(&apos;tp_order_status&apos;)
+                -&gt;where(&apos;uuid_order_status&apos;, $uuid)
+                -&gt;delete();
+            DB::table(&apos;tp_order_shipping&apos;)
+                -&gt;where(&apos;id_order_shipping&apos;, $orderStatus-&gt;shipping_id)
+                -&gt;delete();
+            try {
+                app(\App\Services\DashboardService::class)-&gt;flushCache();
+            } catch (\Throwable $e) {}
+            return true;
+        });
+    }
 }</file><file path="app/Repositories/Interfaces/AboutRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface AboutRepositoryInterface extends RepositoryInterface
@@ -5552,6 +5757,56 @@ interface MenuRepositoryInterface extends RepositoryInterface
      * @return void
      */
     public function updateHierarchy(array $nodes, int $parentId = 0, int $depth = 1): void;
+}</file><file path="app/Repositories/Interfaces/OrderRepositoryInterface.php">&lt;?php
+namespace App\Repositories\Interfaces;
+interface OrderRepositoryInterface extends RepositoryInterface
+{
+    /**
+     * Get paginated orders list with shipping details and filters.
+     *
+     * @param array $filters
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getOrdersPaginated(array $filters = [], int $perPage = 10);
+    /**
+     * Find order status record by UUID.
+     *
+     * @param string $uuid
+     * @param array $columns
+     * @return \App\Models\OrderStatus|null
+     */
+    public function findByUuid($uuid, $columns = [&apos;*&apos;]);
+    /**
+     * Get joined order &amp; shipping info for detail view.
+     *
+     * @param string $uuid
+     * @return object|null
+     */
+    public function getOrderDetailByUuid(string $uuid);
+    /**
+     * Get products in a specific order.
+     *
+     * @param int $orderStatusId
+     * @return \Illuminate\Support\Collection
+     */
+    public function getOrderProducts(int $orderStatusId);
+    /**
+     * Update order status field by UUID.
+     *
+     * @param string $uuid
+     * @param int|string $status
+     * @param string $field
+     * @return \App\Models\OrderStatus|null
+     */
+    public function updateStatusByUuid(string $uuid, $status, string $field = &apos;status&apos;);
+    /**
+     * Completely remove order, shipping info, and order line items.
+     *
+     * @param string $uuid
+     * @return bool
+     */
+    public function deleteOrderByUuid(string $uuid);
 }</file><file path="app/Repositories/Interfaces/ProductRepositoryInterface.php">&lt;?php
 namespace App\Repositories\Interfaces;
 interface ProductRepositoryInterface extends RepositoryInterface
@@ -6297,8 +6552,10 @@ class ModelToggleService
             return response()-&gt;json([&apos;message&apos; =&gt; &apos;Trường cập nhật không hợp lệ&apos;], 403);
         }
         $sanitizedStatus = (int)(bool)$status;
-        $updated = $model::where(&apos;uuid&apos;, $uuid)-&gt;update([$fieldName =&gt; $sanitizedStatus]);
-        if ($updated) {
+        $item = $model::where(&apos;uuid&apos;, $uuid)-&gt;first();
+        if ($item) {
+            $item-&gt;{$fieldName} = $sanitizedStatus;
+            $item-&gt;save();
             $mess = $sanitizedStatus == 1 ? &apos;Kích hoạt&apos; : &apos;Tắt&apos;;
             toast($mess.&apos; thành công&apos;);
             return response()-&gt;json([&apos;message&apos; =&gt; $mess.&apos; &apos;.$fieldName.&apos; thành công&apos;]);
@@ -6666,75 +6923,81 @@ class ServiceService
     }
 }</file><file path="app/Services/SlugResolutionService.php">&lt;?php
 namespace App\Services;
-use App\Repositories\Interfaces\ProductRepositoryInterface;
-use App\Repositories\Interfaces\NewsRepositoryInterface;
-use App\Repositories\Interfaces\CateProductRepositoryInterface;
-use App\Repositories\Interfaces\CateNewRepositoryInterface;
-use App\Repositories\Interfaces\PageRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 class SlugResolutionService
 {
-    protected $productRepository;
-    protected $newsRepository;
-    protected $cateProductRepository;
-    protected $cateNewRepository;
-    protected $pageRepository;
-    public function __construct(
-        ProductRepositoryInterface $productRepository,
-        NewsRepositoryInterface $newsRepository,
-        CateProductRepositoryInterface $cateProductRepository,
-        CateNewRepositoryInterface $cateNewRepository,
-        PageRepositoryInterface $pageRepository
-    ) {
-        $this-&gt;productRepository = $productRepository;
-        $this-&gt;newsRepository = $newsRepository;
-        $this-&gt;cateProductRepository = $cateProductRepository;
-        $this-&gt;cateNewRepository = $cateNewRepository;
-        $this-&gt;pageRepository = $pageRepository;
+    /**
+     * Request-level memoized slug lookups.
+     */
+    protected static array $memoizedSlugs = [];
+    /**
+     * Flush in-memory slug lookup cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$memoizedSlugs = [];
     }
     /**
-     * Tìm content bằng slug với priority chain
-     * Priority: Page &gt; Product &gt; News &gt; CateProduct &gt; CateNews
-     * 
-     * Note: Slug đã được format với ID (vd: san-pham-1) nên đảm bảo unique toàn hệ thống
+     * Resolve content entity by slug with priority chain:
+     * Product &gt; News &gt; CateProduct &gt; CateNews &gt; Service &gt; CateService &gt; Project &gt; CateProject &gt; Page &gt; Brand
      */
     public function findContentBySlug(string $slug): ?array
     {
+        $locale = app()-&gt;getLocale();
+        if (! in_array($locale, [&apos;vn&apos;, &apos;en&apos;], true)) {
+            $locale = &apos;vn&apos;;
+        }
+        $memoKey = &quot;{$locale}:{$slug}&quot;;
+        if (array_key_exists($memoKey, static::$memoizedSlugs)) {
+            return static::$memoizedSlugs[$memoKey];
+        }
         try {
-            // Tìm theo slug trực tiếp - slug đã là unique với format name-id
-            $query = &quot;
-                SELECT &apos;page&apos; as type, id_page as id, slug_vn as slug, name_vn as title
-                FROM tp_pages WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;product&apos; as type, id_product as id, slug_vn as slug, name_vn as title
-                FROM tp_products WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;news&apos; as type, id_new as id, slug_vn as slug, name_vn as title
-                FROM tp_news WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;cate_product&apos; as type, id_cate_product as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_products WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;cate_news&apos; as type, id_cate_new as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_news WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;service&apos; as type, id_service as id, slug_vn as slug, name_vn as title
-                FROM tp_services WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;cate_service&apos; as type, id_cate_service as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_services WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;project&apos; as type, id_project as id, slug_vn as slug, name_vn as title
-                FROM tp_projects WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT &apos;cate_project&apos; as type, id_cate_project as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_projects WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                LIMIT 1
-            &quot;;
-            $params = array_fill(0, 18, $slug);
-            $result = DB::select($query, $params);
-            return $result ? (array) $result[0] : null;
-        } catch (\Exception $e) {
+            $cacheKey = &quot;slug_resolution_{$locale}_&quot; . md5($slug);
+            $cacheTtl = (int) (config(&apos;cache.ttl.slug_resolution&apos;, 3600) / 60) ?: 60;
+            $resolved = CacheService::remember(&apos;frontend&apos;, $cacheKey, $cacheTtl, function () use ($slug, $locale) {
+                $slugColumn = &quot;slug_{$locale}&quot;;
+                $titleColumn = &quot;name_{$locale}&quot;;
+                $query = &quot;
+                    SELECT &apos;product&apos; as type, id_product as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_products WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;news&apos; as type, id_new as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_news WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;cate_product&apos; as type, id_cate_product as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_products WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;cate_news&apos; as type, id_cate_new as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_news WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;service&apos; as type, id_service as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_services WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;cate_service&apos; as type, id_cate_service as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_services WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;project&apos; as type, id_project as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_projects WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;cate_project&apos; as type, id_cate_project as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_projects WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;page&apos; as type, id_page as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_pages WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT &apos;brand&apos; as type, id_brand as id, {$titleColumn} as slug, {$titleColumn} as title
+                    FROM tp_brands WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ? OR name_vn = ?) AND status = 1
+                    LIMIT 1
+                &quot;;
+                $params = array_fill(0, 31, $slug);
+                $result = DB::select($query, $params);
+                return $result ? (array) $result[0] : null;
+            });
+            static::$memoizedSlugs[$memoKey] = $resolved;
+            return $resolved;
+        } catch (\Throwable $e) {
+            Log::error(&quot;Error finding content by slug &apos;{$slug}&apos;: &quot; . $e-&gt;getMessage());
             return null;
         }
     }
@@ -7543,6 +7806,9 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function update(array $data, $id)
     {
+        if ($id instanceof \Ramsey\Uuid\UuidInterface) {
+            $id = (string) $id;
+        }
         // if $id is a uuid (string format) try to find by uuid, otherwise by primary key
         $record = $this-&gt;isUuid($id) ? $this-&gt;findByUuid($id) : $this-&gt;find($id);
         if (! $record) {
@@ -7631,9 +7897,11 @@ abstract class BaseRepository implements RepositoryInterface
      */
     protected function handleUuid(array $data)
     {
-        // Add UUID if not already set
-        if (!isset($data[&apos;uuid&apos;])) {
-            $data[&apos;uuid&apos;] = \Illuminate\Support\Str::uuid();
+        // Add UUID as string if not already set
+        if (! isset($data[&apos;uuid&apos;])) {
+            $data[&apos;uuid&apos;] = (string) \Illuminate\Support\Str::uuid();
+        } else {
+            $data[&apos;uuid&apos;] = (string) $data[&apos;uuid&apos;];
         }
         return $data;
     }
@@ -7642,11 +7910,15 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function delete($id)
     {
-        // support deleting by uuid or by primary id
-        if ($this-&gt;isUuid($id)) {
-            return (bool) $this-&gt;model-&gt;where(&apos;uuid&apos;, $id)-&gt;delete();
+        if ($id instanceof \Ramsey\Uuid\UuidInterface) {
+            $id = (string) $id;
         }
-        return $this-&gt;model-&gt;destroy($id);
+        // support deleting by uuid or by primary id via Eloquent instance so deleted events &amp; cache invalidation fire
+        $record = $this-&gt;isUuid($id) ? $this-&gt;findByUuid($id) : $this-&gt;find($id);
+        if (! $record) {
+            return false;
+        }
+        return (bool) $record-&gt;delete();
     }
     /**
      * @inheritDoc
@@ -7700,7 +7972,12 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function updateOrder($uuid, $order)
     {
-        return $this-&gt;model-&gt;where(&apos;uuid&apos;, $uuid)-&gt;update([&apos;stt&apos; =&gt; $order]);
+        $model = $this-&gt;model-&gt;where(&apos;uuid&apos;, $uuid)-&gt;first();
+        if ($model) {
+            $model-&gt;stt = $order;
+            return $model-&gt;save();
+        }
+        return false;
     }
     /**
      * Delete resources by UUIDs
@@ -7710,7 +7987,14 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function deleteByUuids(array $uuids)
     {
-        return $this-&gt;model-&gt;whereIn(&apos;uuid&apos;, $uuids)-&gt;delete();
+        $items = $this-&gt;model-&gt;whereIn(&apos;uuid&apos;, $uuids)-&gt;get();
+        $deleted = 0;
+        foreach ($items as $item) {
+            if ($item-&gt;delete()) {
+                $deleted++;
+            }
+        }
+        return $deleted &gt; 0;
     }
     /**
      * Find all resources by UUIDs
@@ -7731,6 +8015,9 @@ abstract class BaseRepository implements RepositoryInterface
      */
     protected function isUuid($value)
     {
+        if ($value instanceof \Ramsey\Uuid\UuidInterface) {
+            return true;
+        }
         if (! is_string($value)) {
             return false;
         }
@@ -8074,14 +8361,15 @@ class DataRemovalService
         $modelClass = is_object($model) ? get_class($model) : $model;
         // Lấy các bản ghi cần xóa
         $items = $modelClass::whereIn(&apos;uuid&apos;, $uuids)-&gt;get();
-        // Xóa ảnh trước khi xóa records
+        // Xóa ảnh và xóa từng record qua Eloquent instance để kích hoạt đầy đủ Eloquent deleted event &amp; xóa cache
+        $deletedCount = 0;
         foreach ($items as $item) {
             $this-&gt;deleteAllImages($item, $imageFolder);
-            // Dispatch event per item before deletion for cache invalidation
             $this-&gt;dispatchModelEvent($modelClass, $item, &apos;deleted&apos;);
+            if ($item-&gt;delete()) {
+                $deletedCount++;
+            }
         }
-        // Xóa tất cả records
-        $deletedCount = $modelClass::whereIn(&apos;uuid&apos;, $uuids)-&gt;delete();
         if ($deletedCount &gt; 0) {
             toast(&apos;Xóa &apos;.$deletedCount.&apos; mục thành công.&apos;, &apos;success&apos;);
         } else {
@@ -8685,74 +8973,73 @@ class Project extends Model
 }</file><file path="app/Services/HomeService.php">&lt;?php
 namespace App\Services;
 use App\Models\About;
-use App\Models\Brand;
-use App\Models\Feature;
 use App\Models\CateNew;
 use App\Models\CateProduct;
-use App\Models\Product;
-use App\Models\Slider;
-use App\Models\Gallery;
+use App\Models\Feature;
 use App\Models\News;
-use App\Models\SiteSetting;
+use App\Models\Product;
+use App\Models\Project;
+use App\Models\Slider;
 class HomeService
 {
     /**
-     * Get home page data with caching
-     * 
-     * Note: Individual models use Cachable trait for automatic query caching.
-     * This method groups multiple queries but each query is cached by the trait.
-     * 
+     * Get aggregated home page data with column pruning (Rule 19 compliance) and caching.
+     *
      * @return array
      */
-    public function getHomeData()
+    public function getHomeData(): array
     {
-        $data = [];
-        $data[&apos;sliders&apos;] = Slider::where(&apos;status&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;get();
-        $data[&apos;category_news&apos;] = CateNew::where(&apos;status&apos;, 1)
-            -&gt;where(&apos;home&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;get();
-        // Eager load products with pruned columns (Rule 19 compliance)
-        $previewColumns = [
-            &apos;id_product&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;,
-            &apos;image_vn&apos;, &apos;image_en&apos;, &apos;price&apos;, &apos;price_old&apos;, &apos;category_id&apos;,
-            &apos;hot&apos;, &apos;status&apos;, &apos;stt&apos;, &apos;intro_vn&apos;, &apos;intro_en&apos;, &apos;created_at&apos;
-        ];
-        $data[&apos;category_product&apos;] = CateProduct::with([&apos;products&apos; =&gt; function($q) use ($previewColumns) {
-                $q-&gt;select($previewColumns)-&gt;where(&apos;status&apos;, 1)-&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)-&gt;limit(8);
-            }])
-            -&gt;where(&apos;status&apos;, 1)
-            -&gt;where(&apos;home&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;get();
-        $data[&apos;hot_products&apos;] = Product::select($previewColumns)
-            -&gt;where(&apos;status&apos;, 1)
-            -&gt;where(&apos;hot&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;limit(8)
-            -&gt;get();
-        $data[&apos;latest_news&apos;] = News::with(&apos;cate:id_cate_new,name_vn,name_en,slug_vn,slug_en&apos;)
-            -&gt;select(&apos;id_new&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;image_vn&apos;, &apos;image_en&apos;, &apos;intro_vn&apos;, &apos;intro_en&apos;, &apos;created_at&apos;, &apos;category_id&apos;)
-            -&gt;where(&apos;status&apos;, 1)
-            -&gt;orderBy(&apos;created_at&apos;, &apos;desc&apos;)
-            -&gt;limit(3)
-            -&gt;get();
-        $data[&apos;featured_projects&apos;] = \App\Models\Project::with(&apos;cate&apos;)
-            -&gt;where(&apos;status&apos;, 1)
-            -&gt;where(&apos;home&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;limit(6)
-            -&gt;get();
-        $data[&apos;about_section&apos;] = About::where(&apos;status&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;orderBy(&apos;created_at&apos;, &apos;desc&apos;)
-            -&gt;first();
-        $data[&apos;features&apos;] = Feature::where(&apos;status&apos;, 1)
-            -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
-            -&gt;get();
-        return $data;
+        return CacheService::remember(&apos;frontend&apos;, &apos;home_page_aggregated_data&apos;, 60, function () {
+            $data = [];
+            $data[&apos;sliders&apos;] = Slider::where(&apos;status&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;get();
+            $data[&apos;category_news&apos;] = CateNew::select(&apos;id_cate_new&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;image_vn&apos;, &apos;image_en&apos;, &apos;status&apos;, &apos;home&apos;, &apos;stt&apos;)
+                -&gt;where(&apos;status&apos;, 1)
+                -&gt;where(&apos;home&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;get();
+            $previewColumns = [
+                &apos;id_product&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;,
+                &apos;image_vn&apos;, &apos;image_en&apos;, &apos;price&apos;, &apos;price_old&apos;, &apos;category_id&apos;,
+                &apos;hot&apos;, &apos;status&apos;, &apos;stt&apos;, &apos;intro_vn&apos;, &apos;intro_en&apos;, &apos;created_at&apos;,
+            ];
+            $data[&apos;category_product&apos;] = CateProduct::select(&apos;id_cate_product&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;image_vn&apos;, &apos;image_en&apos;, &apos;parent_id&apos;, &apos;status&apos;, &apos;home&apos;, &apos;stt&apos;)
+                -&gt;with([&apos;products&apos; =&gt; function ($q) use ($previewColumns) {
+                    $q-&gt;select($previewColumns)-&gt;where(&apos;status&apos;, 1)-&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)-&gt;limit(8);
+                }])
+                -&gt;where(&apos;status&apos;, 1)
+                -&gt;where(&apos;home&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;get();
+            $data[&apos;hot_products&apos;] = Product::select($previewColumns)
+                -&gt;where(&apos;status&apos;, 1)
+                -&gt;where(&apos;hot&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;limit(8)
+                -&gt;get();
+            $data[&apos;latest_news&apos;] = News::with(&apos;cate:id_cate_new,name_vn,name_en,slug_vn,slug_en&apos;)
+                -&gt;select(&apos;id_new&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;image_vn&apos;, &apos;image_en&apos;, &apos;intro_vn&apos;, &apos;intro_en&apos;, &apos;created_at&apos;, &apos;category_id&apos;, &apos;status&apos;, &apos;stt&apos;)
+                -&gt;where(&apos;status&apos;, 1)
+                -&gt;orderBy(&apos;created_at&apos;, &apos;desc&apos;)
+                -&gt;limit(3)
+                -&gt;get();
+            $data[&apos;featured_projects&apos;] = Project::with(&apos;cate:id_cate_project,name_vn,name_en,slug_vn,slug_en&apos;)
+                -&gt;select(&apos;id_project&apos;, &apos;uuid&apos;, &apos;name_vn&apos;, &apos;name_en&apos;, &apos;slug_vn&apos;, &apos;slug_en&apos;, &apos;image_vn&apos;, &apos;image_en&apos;, &apos;intro_vn&apos;, &apos;intro_en&apos;, &apos;category_id&apos;, &apos;status&apos;, &apos;home&apos;, &apos;stt&apos;, &apos;created_at&apos;)
+                -&gt;where(&apos;status&apos;, 1)
+                -&gt;where(&apos;home&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;limit(6)
+                -&gt;get();
+            $data[&apos;about_section&apos;] = About::where(&apos;status&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;orderBy(&apos;created_at&apos;, &apos;desc&apos;)
+                -&gt;first();
+            $data[&apos;features&apos;] = Feature::where(&apos;status&apos;, 1)
+                -&gt;orderBy(&apos;stt&apos;, &apos;asc&apos;)
+                -&gt;get();
+            return $data;
+        });
     }
 }</file><file path="routes/web.php">&lt;?php
 use Illuminate\Support\Facades\Route;

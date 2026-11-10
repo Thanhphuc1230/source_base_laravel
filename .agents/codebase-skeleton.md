@@ -1,6 +1,6 @@
 # Codebase Architecture Skeleton Map
 
-> Generated: 2026-11-09 01:50:28
+> Generated: 2026-11-10 04:59:41
 > This document provides a high-speed instant lookup index of all Models, Repositories, Services, Controllers, and public method signatures.
 
 ## Table of Contents
@@ -757,6 +757,8 @@
 - **Fillable**: `uuid`, `key`, `value`, `type`, `group`, `description`, `is_active`, `sort_order`
 - **Public API Methods**:
   ```php
+  static function getAllActiveMap(): array
+  static function flushMemoryCache(): void
   function getRouteKeyName()
   static function get($key, $default = null)
   static function set($key, $value, $type = 'text', $group = 'general', $description = null)
@@ -1111,6 +1113,8 @@
 - **Fillable**: `uuid`, `key`, `value`, `type`, `group`, `description`, `is_active`, `currency_unit`, `sort_order`
 - **Public API Methods**:
   ```php
+  static function getAllActiveMap(): array
+  static function flushMemoryCache(): void
   function getRouteKeyName()
   static function get($key, $default = null)
   static function getCurrencyUnit(): string
@@ -1719,6 +1723,20 @@
   function find($id, $columns = [])
   ```
 
+### `interface MailTemplateRepositoryInterface`
+- **Namespace**: `\App\Repositories\Interfaces`
+- **Public API Methods**:
+  ```php
+  function getAll()
+  function getById($id)
+  function getByType($type)
+  function getActiveByType($type)
+  function create(array $data)
+  function update($id, array $data)
+  function delete($id)
+  function paginate($perPage = 15)
+  ```
+
 ### `interface MediaRepositoryInterface`
 - **Namespace**: `\App\Repositories\Interfaces`
 - **Hierarchy**: `MediaRepositoryInterface implements RepositoryInterface`
@@ -1809,6 +1827,19 @@
   function getModelInstance()
   function generateUniqueSlug(string $name, ?string $uuid = null, ?string $tableName = null, string $slugField = 'slug_vn', ?string $primaryKey = null)
   function createWithAutoSlug(array $data, string $nameField = 'name_vn', string $slugField = 'slug_vn')
+  ```
+
+### `interface RoleRepositoryInterface`
+- **Namespace**: `\App\Repositories\Interfaces`
+- **Hierarchy**: `RoleRepositoryInterface implements RepositoryInterface`
+- **Public API Methods**:
+  ```php
+  function getUsersWithRolesPaginated(?string $search = null, int $perPage = 15)
+  function getAllRolesWithPermissions()
+  function getAllPermissionsOrdered()
+  function findRoleWithPermissionsOrFail($id): App\Models\Role
+  function syncUserRolesAndPermissions(App\Models\User $user, array $roleIds, array $permissionIds): void
+  function bulkSyncUserRoles(array $userIds, array $roleIds): int
   ```
 
 ### `interface ServiceRepositoryInterface`
@@ -2058,6 +2089,21 @@
   function find($id, $columns = [])
   ```
 
+### `class MailTemplateRepository`
+- **Namespace**: `\App\Repositories\Eloquent`
+- **Hierarchy**: `MailTemplateRepository implements MailTemplateRepositoryInterface`
+- **Public API Methods**:
+  ```php
+  function getAll()
+  function getById($id)
+  function getByType($type)
+  function getActiveByType($type)
+  function create(array $data)
+  function update($id, array $data)
+  function delete($id)
+  function paginate($perPage = 15)
+  ```
+
 ### `class MediaRepository`
 - **Namespace**: `\App\Repositories\Eloquent`
 - **Hierarchy**: `MediaRepository extends BaseRepository implements RepositoryInterface, MediaRepositoryInterface`
@@ -2128,6 +2174,19 @@
   ```php
   function getFilteredProjects(array $filters, $perPage = 10)
   function getActiveCategories()
+  ```
+
+### `class RoleRepository`
+- **Namespace**: `\App\Repositories\Eloquent`
+- **Hierarchy**: `RoleRepository extends BaseRepository implements RepositoryInterface, RoleRepositoryInterface`
+- **Public API Methods**:
+  ```php
+  function getUsersWithRolesPaginated(?string $search = null, int $perPage = 15)
+  function getAllRolesWithPermissions()
+  function getAllPermissionsOrdered()
+  function findRoleWithPermissionsOrFail($id): App\Models\Role
+  function syncUserRolesAndPermissions(App\Models\User $user, array $roleIds, array $permissionIds): void
+  function bulkSyncUserRoles(array $userIds, array $roleIds): int
   ```
 
 ### `class ServiceRepository`
@@ -2274,7 +2333,7 @@
 - **Namespace**: `\App\Services`
 - **Public API Methods**:
   ```php
-  function getHomeData()
+  function getHomeData(): array
   ```
 
 ### `class ImageService`
@@ -2408,10 +2467,18 @@
   function getHomepageSettings()
   ```
 
+### `class SitemapService`
+- **Namespace**: `\App\Services`
+- **Public API Methods**:
+  ```php
+  function generateXml(): string
+  ```
+
 ### `class SlugResolutionService`
 - **Namespace**: `\App\Services`
 - **Public API Methods**:
   ```php
+  static function flushMemoryCache(): void
   function findContentBySlug(string $slug): ?array
   ```
 
