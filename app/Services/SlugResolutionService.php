@@ -2,80 +2,93 @@
 
 namespace App\Services;
 
-use App\Repositories\Interfaces\ProductRepositoryInterface;
-use App\Repositories\Interfaces\NewsRepositoryInterface;
-use App\Repositories\Interfaces\CateProductRepositoryInterface;
-use App\Repositories\Interfaces\CateNewRepositoryInterface;
-use App\Repositories\Interfaces\PageRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SlugResolutionService
 {
-    protected $productRepository;
-    protected $newsRepository;
-    protected $cateProductRepository;
-    protected $cateNewRepository;
-    protected $pageRepository;
+    /**
+     * Request-level memoized slug lookups.
+     */
+    protected static array $memoizedSlugs = [];
 
-    public function __construct(
-        ProductRepositoryInterface $productRepository,
-        NewsRepositoryInterface $newsRepository,
-        CateProductRepositoryInterface $cateProductRepository,
-        CateNewRepositoryInterface $cateNewRepository,
-        PageRepositoryInterface $pageRepository
-    ) {
-        $this->productRepository = $productRepository;
-        $this->newsRepository = $newsRepository;
-        $this->cateProductRepository = $cateProductRepository;
-        $this->cateNewRepository = $cateNewRepository;
-        $this->pageRepository = $pageRepository;
+    /**
+     * Flush in-memory slug lookup cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$memoizedSlugs = [];
     }
 
     /**
-     * Tìm content bằng slug với priority chain
-     * Priority: Page > Product > News > CateProduct > CateNews
-     * 
-     * Note: Slug đã được format với ID (vd: san-pham-1) nên đảm bảo unique toàn hệ thống
+     * Resolve content entity by slug with priority chain:
+     * Product > News > CateProduct > CateNews > Service > CateService > Project > CateProject > Page > Brand
      */
     public function findContentBySlug(string $slug): ?array
     {
+        $locale = app()->getLocale();
+        if (! in_array($locale, ['vn', 'en'], true)) {
+            $locale = 'vn';
+        }
+
+        $memoKey = "{$locale}:{$slug}";
+        if (array_key_exists($memoKey, static::$memoizedSlugs)) {
+            return static::$memoizedSlugs[$memoKey];
+        }
+
         try {
-            // Tìm theo slug trực tiếp - slug đã là unique với format name-id
-            $query = "
-                SELECT 'page' as type, id_page as id, slug_vn as slug, name_vn as title
-                FROM tp_pages WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'product' as type, id_product as id, slug_vn as slug, name_vn as title
-                FROM tp_products WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'news' as type, id_new as id, slug_vn as slug, name_vn as title
-                FROM tp_news WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'cate_product' as type, id_cate_product as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_products WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'cate_news' as type, id_cate_new as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_news WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'service' as type, id_service as id, slug_vn as slug, name_vn as title
-                FROM tp_services WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'cate_service' as type, id_cate_service as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_services WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'project' as type, id_project as id, slug_vn as slug, name_vn as title
-                FROM tp_projects WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                UNION ALL
-                SELECT 'cate_project' as type, id_cate_project as id, slug_vn as slug, name_vn as title
-                FROM tp_cate_projects WHERE (slug_vn = ? OR slug_en = ?) AND status = 1
-                LIMIT 1
-            ";
-            $params = array_fill(0, 18, $slug);
+            $cacheKey = "slug_resolution_{$locale}_" . md5($slug);
+            $cacheTtl = (int) (config('cache.ttl.slug_resolution', 3600) / 60) ?: 60;
 
-            $result = DB::select($query, $params);
-            return $result ? (array) $result[0] : null;
+            $resolved = CacheService::remember('frontend', $cacheKey, $cacheTtl, function () use ($slug, $locale) {
+                $slugColumn = "slug_{$locale}";
+                $titleColumn = "name_{$locale}";
 
-        } catch (\Exception $e) {
+                $query = "
+                    SELECT 'product' as type, id_product as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_products WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'news' as type, id_new as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_news WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'cate_product' as type, id_cate_product as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_products WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'cate_news' as type, id_cate_new as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_news WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'service' as type, id_service as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_services WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'cate_service' as type, id_cate_service as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_services WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'project' as type, id_project as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_projects WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'cate_project' as type, id_cate_project as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_cate_projects WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'page' as type, id_page as id, {$slugColumn} as slug, {$titleColumn} as title
+                    FROM tp_pages WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ?) AND status = 1
+                    UNION ALL
+                    SELECT 'brand' as type, id_brand as id, {$titleColumn} as slug, {$titleColumn} as title
+                    FROM tp_brands WHERE ({$slugColumn} = ? OR slug_vn = ? OR slug_en = ? OR name_vn = ?) AND status = 1
+                    LIMIT 1
+                ";
+
+                $params = array_fill(0, 31, $slug);
+                $result = DB::select($query, $params);
+
+                return $result ? (array) $result[0] : null;
+            });
+
+            static::$memoizedSlugs[$memoKey] = $resolved;
+
+            return $resolved;
+        } catch (\Throwable $e) {
+            Log::error("Error finding content by slug '{$slug}': " . $e->getMessage());
+
             return null;
         }
     }

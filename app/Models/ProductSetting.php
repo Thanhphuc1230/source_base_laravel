@@ -29,6 +29,11 @@ class ProductSetting extends Model
     ];
 
     /**
+     * Request-level memoized map of active product settings.
+     */
+    protected static ?array $activeSettingsMap = null;
+
+    /**
      * Boot the model.
      */
     protected static function boot()
@@ -40,6 +45,48 @@ class ProductSetting extends Model
                 $model->uuid = (string) Str::uuid();
             }
         });
+
+        static::saved(function () {
+            static::$activeSettingsMap = null;
+        });
+
+        static::deleted(function () {
+            static::$activeSettingsMap = null;
+        });
+    }
+
+    /**
+     * Load all active settings into a key => casted_value map in a single query.
+     */
+    public static function getAllActiveMap(): array
+    {
+        if (static::$activeSettingsMap !== null) {
+            return static::$activeSettingsMap;
+        }
+
+        try {
+            $rows = static::where('is_active', true)->get(['key', 'value', 'type', 'currency_unit']);
+            $map = [];
+            foreach ($rows as $row) {
+                $map[$row->key] = static::castValue($row->value, $row->type);
+                if (! empty($row->currency_unit) && ! isset($map['__fallback_currency_unit'])) {
+                    $map['__fallback_currency_unit'] = (string) $row->currency_unit;
+                }
+            }
+            static::$activeSettingsMap = $map;
+        } catch (\Throwable $e) {
+            static::$activeSettingsMap = [];
+        }
+
+        return static::$activeSettingsMap;
+    }
+
+    /**
+     * Flush request-level settings map cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$activeSettingsMap = null;
     }
 
     /**
@@ -55,13 +102,9 @@ class ProductSetting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where('key', $key)->where('is_active', true)->first();
+        $map = static::getAllActiveMap();
 
-        if (! $setting) {
-            return $default;
-        }
-
-        return static::castValue($setting->value, $setting->type);
+        return array_key_exists($key, $map) ? $map[$key] : $default;
     }
 
     /**
@@ -70,14 +113,14 @@ class ProductSetting extends Model
     public static function getCurrencyUnit(): string
     {
         try {
-            $val = static::get('products_currency_unit');
-            if (! empty($val)) {
-                return (string) $val;
+            $map = static::getAllActiveMap();
+            if (! empty($map['products_currency_unit'])) {
+                return (string) $map['products_currency_unit'];
             }
-
-            // Fallback to column if exists
-            $row = static::whereNotNull('currency_unit')->first();
-            return $row && ! empty($row->currency_unit) ? (string) $row->currency_unit : 'đ';
+            if (! empty($map['__fallback_currency_unit'])) {
+                return (string) $map['__fallback_currency_unit'];
+            }
+            return 'đ';
         } catch (\Throwable $e) {
             return 'đ';
         }

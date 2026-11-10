@@ -92,6 +92,10 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function update(array $data, $id)
     {
+        if ($id instanceof \Ramsey\Uuid\UuidInterface) {
+            $id = (string) $id;
+        }
+
         // if $id is a uuid (string format) try to find by uuid, otherwise by primary key
         $record = $this->isUuid($id) ? $this->findByUuid($id) : $this->find($id);
 
@@ -194,11 +198,13 @@ abstract class BaseRepository implements RepositoryInterface
      */
     protected function handleUuid(array $data)
     {
-        // Add UUID if not already set
-        if (!isset($data['uuid'])) {
-            $data['uuid'] = \Illuminate\Support\Str::uuid();
+        // Add UUID as string if not already set
+        if (! isset($data['uuid'])) {
+            $data['uuid'] = (string) \Illuminate\Support\Str::uuid();
+        } else {
+            $data['uuid'] = (string) $data['uuid'];
         }
-        
+
         return $data;
     }
 
@@ -207,12 +213,17 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function delete($id)
     {
-        // support deleting by uuid or by primary id
-        if ($this->isUuid($id)) {
-            return (bool) $this->model->where('uuid', $id)->delete();
+        if ($id instanceof \Ramsey\Uuid\UuidInterface) {
+            $id = (string) $id;
         }
 
-        return $this->model->destroy($id);
+        // support deleting by uuid or by primary id via Eloquent instance so deleted events & cache invalidation fire
+        $record = $this->isUuid($id) ? $this->findByUuid($id) : $this->find($id);
+        if (! $record) {
+            return false;
+        }
+
+        return (bool) $record->delete();
     }
 
     /**
@@ -273,7 +284,12 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function updateOrder($uuid, $order)
     {
-        return $this->model->where('uuid', $uuid)->update(['stt' => $order]);
+        $model = $this->model->where('uuid', $uuid)->first();
+        if ($model) {
+            $model->stt = $order;
+            return $model->save();
+        }
+        return false;
     }
 
     /**
@@ -284,7 +300,14 @@ abstract class BaseRepository implements RepositoryInterface
      */
     public function deleteByUuids(array $uuids)
     {
-        return $this->model->whereIn('uuid', $uuids)->delete();
+        $items = $this->model->whereIn('uuid', $uuids)->get();
+        $deleted = 0;
+        foreach ($items as $item) {
+            if ($item->delete()) {
+                $deleted++;
+            }
+        }
+        return $deleted > 0;
     }
 
     /**
@@ -307,6 +330,10 @@ abstract class BaseRepository implements RepositoryInterface
      */
     protected function isUuid($value)
     {
+        if ($value instanceof \Ramsey\Uuid\UuidInterface) {
+            return true;
+        }
+
         if (! is_string($value)) {
             return false;
         }

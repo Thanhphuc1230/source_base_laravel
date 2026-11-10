@@ -45,15 +45,15 @@ class DataRemovalService
         // Lấy các bản ghi cần xóa
         $items = $modelClass::whereIn('uuid', $uuids)->get();
 
-        // Xóa ảnh trước khi xóa records
+        // Xóa ảnh và xóa từng record qua Eloquent instance để kích hoạt đầy đủ Eloquent deleted event & xóa cache
+        $deletedCount = 0;
         foreach ($items as $item) {
             $this->deleteAllImages($item, $imageFolder);
-            // Dispatch event per item before deletion for cache invalidation
             $this->dispatchModelEvent($modelClass, $item, 'deleted');
+            if ($item->delete()) {
+                $deletedCount++;
+            }
         }
-
-        // Xóa tất cả records
-        $deletedCount = $modelClass::whereIn('uuid', $uuids)->delete();
 
         if ($deletedCount > 0) {
             toast('Xóa '.$deletedCount.' mục thành công.', 'success');

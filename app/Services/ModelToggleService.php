@@ -23,9 +23,12 @@ class ModelToggleService
         }
 
         $sanitizedStatus = (int)(bool)$status;
-        $updated = $model::where('uuid', $uuid)->update([$fieldName => $sanitizedStatus]);
+        $item = $model::where('uuid', $uuid)->first();
 
-        if ($updated) {
+        if ($item) {
+            $item->{$fieldName} = $sanitizedStatus;
+            $item->save();
+
             $mess = $sanitizedStatus == 1 ? 'Kích hoạt' : 'Tắt';
             toast($mess.' thành công');
 

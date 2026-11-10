@@ -28,6 +28,11 @@ class NewsSetting extends Model
     ];
 
     /**
+     * Request-level memoized map of active news settings.
+     */
+    protected static ?array $activeSettingsMap = null;
+
+    /**
      * Boot the model.
      */
     protected static function boot()
@@ -39,6 +44,45 @@ class NewsSetting extends Model
                 $model->uuid = (string) Str::uuid();
             }
         });
+
+        static::saved(function () {
+            static::$activeSettingsMap = null;
+        });
+
+        static::deleted(function () {
+            static::$activeSettingsMap = null;
+        });
+    }
+
+    /**
+     * Load all active news settings into a key => casted_value map in a single query.
+     */
+    public static function getAllActiveMap(): array
+    {
+        if (static::$activeSettingsMap !== null) {
+            return static::$activeSettingsMap;
+        }
+
+        try {
+            $rows = static::where('is_active', true)->get(['key', 'value', 'type']);
+            $map = [];
+            foreach ($rows as $row) {
+                $map[$row->key] = static::castValue($row->value, $row->type);
+            }
+            static::$activeSettingsMap = $map;
+        } catch (\Throwable $e) {
+            static::$activeSettingsMap = [];
+        }
+
+        return static::$activeSettingsMap;
+    }
+
+    /**
+     * Flush request-level settings map cache.
+     */
+    public static function flushMemoryCache(): void
+    {
+        static::$activeSettingsMap = null;
     }
 
     /**
@@ -54,13 +98,9 @@ class NewsSetting extends Model
      */
     public static function get($key, $default = null)
     {
-        $setting = static::where('key', $key)->where('is_active', true)->first();
+        $map = static::getAllActiveMap();
 
-        if (! $setting) {
-            return $default;
-        }
-
-        return static::castValue($setting->value, $setting->type);
+        return array_key_exists($key, $map) ? $map[$key] : $default;
     }
 
     /**
