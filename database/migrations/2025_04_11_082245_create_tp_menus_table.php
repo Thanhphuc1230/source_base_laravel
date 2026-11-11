@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_menus', function (Blueprint $table) {
             $table->id('id_menu');
-            $table->uuid();
+            $table->uuid('uuid')->unique();
             $table->string('name_vn');
             $table->string('name_en')->nullable();
             $table->string('link')->nullable();

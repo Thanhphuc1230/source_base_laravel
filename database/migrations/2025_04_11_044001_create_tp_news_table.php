@@ -43,11 +43,14 @@ return new class extends Migration
             $table->index('created_at');
             $table->index(['category_id', 'created_at']);
             $table->index(['category_id', 'status', 'created_at']);
+            $table->index(['category_id', 'status', 'stt']);
 
             // Composite indexes for frontend route & display
             $table->index(['status', 'slug_vn']);
             $table->index(['status', 'slug_en']);
             $table->index(['status', 'stt']);
+            $table->index(['status', 'home']);
+            $table->index(['status', 'home', 'stt']);
             $table->index(['status', 'category_id']);
             $table->index(['views', 'status']);
             $table->index(['created_at', 'status']);

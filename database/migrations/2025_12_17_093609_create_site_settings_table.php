@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('key')->unique(); // 'hero_section', 'trade_partner_section'
             $table->string('type')->default('text'); // text, json, image, editor
             $table->text('value')->nullable(); // Lưu JSON hoặc text
-            $table->string('group')->nullable(); // 'homepage', 'about', 'contact'
+            $table->string('group')->nullable()->index(); // 'homepage', 'about', 'contact'
             $table->text('description')->nullable(); // Mô tả cho admin
             $table->timestamps();
         });

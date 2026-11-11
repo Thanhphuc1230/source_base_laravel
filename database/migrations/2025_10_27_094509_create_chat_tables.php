@@ -24,8 +24,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->index('user_id');
             $table->index(['status', 'last_message_at']);
-            $table->index('uuid');
         });
 
         // Chat messages table
@@ -42,8 +42,8 @@ return new class extends Migration
 
             $table->foreign('session_id')->references('id')->on('tp_chat_sessions')->onDelete('cascade');
             $table->index(['session_id', 'created_at']);
+            $table->index(['session_id', 'is_read']);
             $table->index(['sender_type', 'sender_id']);
-            $table->index('uuid');
             $table->index('session_uuid');
         });
     }

@@ -25,8 +25,11 @@ return new class extends Migration
 
             $table->foreign('shipping_id')->references('id_order_shipping')->on('tp_order_shipping');
 
+            $table->index('shipping_id');
+            $table->index('auth_id');
             $table->index('created_at');
             $table->index(['status', 'created_at']);
+            $table->index(['auth_id', 'status', 'created_at']);
         });
     }
 

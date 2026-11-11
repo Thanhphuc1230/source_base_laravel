@@ -20,11 +20,13 @@ return new class extends Migration
             $table->string('group')->default('general'); // Nhóm setting: display, policy, general
             $table->string('description')->nullable(); // Mô tả setting
             $table->boolean('is_active')->default(true); // Trạng thái hoạt động
+            $table->string('currency_unit', 50)->default('đ')->nullable(); // Đơn vị tiền tệ
             $table->integer('sort_order')->default(0); // Thứ tự sắp xếp
             $table->timestamps();
 
+            $table->index('is_active');
+            $table->index(['is_active', 'sort_order']);
             $table->index(['group', 'is_active']);
-            $table->index('key');
         });
     }
 

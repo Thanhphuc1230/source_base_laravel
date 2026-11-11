@@ -24,6 +24,8 @@ return new class extends Migration
             $table->boolean('is_active')->default(false); // Flag to use DB config or .env
             $table->json('additional_config')->nullable(); // For extra config like mailgun domain, api key, etc.
             $table->timestamps();
+
+            $table->index('is_active');
         });
     }
 

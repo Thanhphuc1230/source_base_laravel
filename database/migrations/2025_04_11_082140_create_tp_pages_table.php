@@ -32,12 +32,12 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->default(0);
             $table->timestamps();
 
-            // Essential indexes only
-            $table->index('slug_vn');              // Required for route resolution
-            $table->index('slug_en');              // Required for route resolution
+            // Essential indexes
             $table->index(['status', 'slug_vn']);   // Route resolution optimization
             $table->index(['status', 'slug_en']);   // Route resolution optimization
-            $table->index(['status', 'stt']);   // Covers: status filtering + ordering
+            $table->index(['status', 'stt']);       // Covers: status filtering + ordering
+            $table->index(['status', 'footer']);    // Covers: footer pages filtering
+            $table->index(['status', 'footer', 'stt']); // Covers: footer pages display ordering
         });
     }
 

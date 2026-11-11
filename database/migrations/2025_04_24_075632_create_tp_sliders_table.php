@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_sliders', function (Blueprint $table) {
             $table->id('id_slider');
-            $table->uuid();
+            $table->uuid('uuid')->unique();
             $table->string('name_vn');
             $table->string('name_en')->nullable();
             $table->text('link')->nullable();

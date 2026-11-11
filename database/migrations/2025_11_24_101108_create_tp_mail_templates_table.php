@@ -20,6 +20,9 @@ return new class extends Migration
             $table->string('type')->default('general'); // order, contact, general, etc.
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index('is_active');
+            $table->index(['type', 'is_active']);
         });
     }
 

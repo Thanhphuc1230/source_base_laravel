@@ -33,11 +33,11 @@ return new class extends Migration
             // Essential indexes for hierarchy
             $table->index('slug_vn');              // Required for route resolution
             $table->index('slug_en');              // Required for route resolution
-            $table->index('uuid');                 // Required for lookups
 
             // Composite indexes for hierarchical queries
             $table->index(['status', 'slug_vn']);   // Route resolution optimization
             $table->index(['status', 'slug_en']);   // Route resolution optimization
+            $table->index(['status', 'home']);      // Home category display
             $table->index(['status', 'parent_id', 'stt']); // Covers: status + hierarchy + ordering
             $table->index(['parent_id', 'stt']);          // Covers: hierarchy navigation
         });

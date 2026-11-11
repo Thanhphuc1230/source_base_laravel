@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_feedback', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid');
+            $table->uuid('uuid')->unique();
             $table->string('name');
             $table->text('message');
             $table->string('image');
@@ -22,7 +22,6 @@ return new class extends Migration
             $table->timestamps();
 
             // Essential indexes
-            $table->index('uuid');              // Required for lookups
             $table->index(['status', 'stt']);   // Covers: status filtering + ordering
         });
     }

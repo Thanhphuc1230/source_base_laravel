@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_galleries', function (Blueprint $table) {
             $table->id('id_gallery');
-            $table->uuid();
+            $table->uuid('uuid')->unique();
             $table->string('name_vn');
             $table->boolean('status')->default(true);
             $table->string('image');

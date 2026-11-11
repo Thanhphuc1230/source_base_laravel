@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('tp_order_shipping', function (Blueprint $table) {
             $table->id('id_order_shipping');
-            $table->uuid('uuid_order_shipping');
+            $table->uuid('uuid_order_shipping')->unique();
             $table->string('f_name_order');
             $table->string('l_name_order');
             $table->string('phone', 20);
@@ -24,6 +24,10 @@ return new class extends Migration
             $table->string('note')->nullable();
             $table->boolean('status')->default(false);
             $table->timestamps();
+
+            $table->index('phone');
+            $table->index('email');
+            $table->index('created_at');
         });
     }
 

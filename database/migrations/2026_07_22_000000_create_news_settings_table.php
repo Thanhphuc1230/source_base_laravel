@@ -23,8 +23,9 @@ return new class extends Migration
             $table->integer('sort_order')->default(0); // Thứ tự sắp xếp
             $table->timestamps();
 
+            $table->index('is_active');
+            $table->index(['is_active', 'sort_order']);
             $table->index(['group', 'is_active']);
-            $table->index('key');
         });
     }
 

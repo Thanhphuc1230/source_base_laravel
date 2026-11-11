@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tp_features', function (Blueprint $table) {
             $table->id('id_feature');
-            $table->uuid();
+            $table->uuid('uuid')->unique();
             $table->string('title_vn');
             $table->string('title_en')->nullable();
             $table->text('content_vn');
