@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Font;
 use Illuminate\Database\Seeder;
 
 class FontSeeder extends Seeder
@@ -43,19 +43,21 @@ class FontSeeder extends Seeder
                 'is_active' => true,
                 'sort_order' => 4
             ],
-            // Sample upload font (bạn có thể thêm file vào public/fronts/)
             [
                 'name' => 'Sample Font',
                 'family' => "'Sample Font', sans-serif",
                 'type' => 'upload',
-                'file_path' => 'fronts/sample-font.ttf', // Thêm file vào public/fronts/
+                'file_path' => 'fronts/sample-font.ttf',
                 'is_active' => true,
                 'sort_order' => 5
             ],
         ];
 
         foreach ($fonts as $font) {
-            \App\Models\Font::create($font);
+            Font::firstOrCreate(
+                ['name' => $font['name']],
+                $font
+            );
         }
     }
 }

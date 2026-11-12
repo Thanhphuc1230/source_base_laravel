@@ -30,7 +30,6 @@ class SliderSeeder extends Seeder
                 'image_mobile_vn' => $slide1,
                 'image_mobile_en' => $slide1,
                 'stt' => 1,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Đỉnh Cao Chế Tác Đồng Hồ Thụy Sĩ',
@@ -42,7 +41,6 @@ class SliderSeeder extends Seeder
                 'image_mobile_vn' => $slide2,
                 'image_mobile_en' => $slide2,
                 'stt' => 2,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Đặc Quyền Sở Hữu Phiên Bản Giới Hạn',
@@ -54,12 +52,14 @@ class SliderSeeder extends Seeder
                 'image_mobile_vn' => $slide3,
                 'image_mobile_en' => $slide3,
                 'stt' => 3,
-                'uuid' => Str::uuid()->toString(),
             ],
         ];
 
         foreach ($sliders as $slider) {
-            Slider::create($slider);
+            Slider::firstOrCreate(
+                ['name_vn' => $slider['name_vn']],
+                array_merge($slider, ['uuid' => Str::uuid()->toString()])
+            );
         }
     }
 }

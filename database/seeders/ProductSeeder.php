@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -133,31 +134,34 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($watches as $idx => $item) {
-            $imagePath = $downloader->fetchAndSaveImage($item['keyword'], 800, 800) ?? ('uploads/demo/watch_' . ($idx + 1) . '.webp');
+            $slugVn = Str::slug($item['name_vn']);
+            if (! Product::where('slug_vn', $slugVn)->exists()) {
+                $imagePath = $downloader->fetchAndSaveImage($item['keyword'], 800, 800) ?? ('uploads/demo/watch_' . ($idx + 1) . '.webp');
 
-            $productRepo->createWithAutoSlug([
-                'name_vn' => $item['name_vn'],
-                'name_en' => $item['name_en'],
-                'intro_vn' => $item['intro_vn'],
-                'intro_en' => $item['intro_en'],
-                'price' => $item['price'],
-                'price_old' => $item['price_old'],
-                'content_vn' => $item['content_vn'],
-                'content_en' => $item['content_en'],
-                'image_vn' => $imagePath,
-                'image_en' => $imagePath,
-                'image_detail' => null,
-                'status' => true,
-                'hot' => $item['hot'],
-                'stt' => $idx + 1,
-                'keyword_vn' => 'dong ho cao cap, ' . $item['name_vn'],
-                'keyword_en' => 'luxury watch, ' . $item['name_en'],
-                'description_vn' => $item['intro_vn'],
-                'description_en' => $item['intro_en'],
-                'category_id' => $item['category_id'],
-                'brand_id' => $item['brand_id'],
-                'uuid' => Str::uuid()->toString(),
-            ]);
+                $productRepo->createWithAutoSlug([
+                    'name_vn' => $item['name_vn'],
+                    'name_en' => $item['name_en'],
+                    'intro_vn' => $item['intro_vn'],
+                    'intro_en' => $item['intro_en'],
+                    'price' => $item['price'],
+                    'price_old' => $item['price_old'],
+                    'content_vn' => $item['content_vn'],
+                    'content_en' => $item['content_en'],
+                    'image_vn' => $imagePath,
+                    'image_en' => $imagePath,
+                    'image_detail' => null,
+                    'status' => true,
+                    'hot' => $item['hot'],
+                    'stt' => $idx + 1,
+                    'keyword_vn' => 'dong ho cao cap, ' . $item['name_vn'],
+                    'keyword_en' => 'luxury watch, ' . $item['name_en'],
+                    'description_vn' => $item['intro_vn'],
+                    'description_en' => $item['intro_en'],
+                    'category_id' => $item['category_id'],
+                    'brand_id' => $item['brand_id'],
+                    'uuid' => Str::uuid()->toString(),
+                ]);
+            }
         }
     }
 }

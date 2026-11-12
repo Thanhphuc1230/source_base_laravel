@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\News;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -46,26 +47,29 @@ class NewsSeeder extends Seeder
         ];
 
         foreach ($articles as $idx => $art) {
-            $imagePath = $downloader->fetchAndSaveImage($art['keyword'], 800, 500) ?? ('uploads/demo/news_' . ($idx + 1) . '.webp');
+            $slugVn = Str::slug($art['name_vn']);
+            if (! News::where('slug_vn', $slugVn)->exists()) {
+                $imagePath = $downloader->fetchAndSaveImage($art['keyword'], 800, 500) ?? ('uploads/demo/news_' . ($idx + 1) . '.webp');
 
-            $newsRepo->createWithAutoSlug([
-                'name_vn' => $art['name_vn'],
-                'name_en' => $art['name_en'],
-                'image_vn' => $imagePath,
-                'image_en' => $imagePath,
-                'intro_vn' => $art['intro_vn'],
-                'intro_en' => $art['intro_en'],
-                'content_vn' => $art['content_vn'],
-                'content_en' => $art['content_en'],
-                'category_id' => $art['category_id'],
-                'status' => true,
-                'stt' => $idx + 1,
-                'keyword_vn' => 'tin tuc, dong ho, ' . $art['name_vn'],
-                'keyword_en' => 'news, watch, ' . $art['name_en'],
-                'description_vn' => $art['intro_vn'],
-                'description_en' => $art['intro_en'],
-                'uuid' => Str::uuid()->toString(),
-            ]);
+                $newsRepo->createWithAutoSlug([
+                    'name_vn' => $art['name_vn'],
+                    'name_en' => $art['name_en'],
+                    'image_vn' => $imagePath,
+                    'image_en' => $imagePath,
+                    'intro_vn' => $art['intro_vn'],
+                    'intro_en' => $art['intro_en'],
+                    'content_vn' => $art['content_vn'],
+                    'content_en' => $art['content_en'],
+                    'category_id' => $art['category_id'],
+                    'status' => true,
+                    'stt' => $idx + 1,
+                    'keyword_vn' => 'tin tuc, dong ho, ' . $art['name_vn'],
+                    'keyword_en' => 'news, watch, ' . $art['name_en'],
+                    'description_vn' => $art['intro_vn'],
+                    'description_en' => $art['intro_en'],
+                    'uuid' => Str::uuid()->toString(),
+                ]);
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\System;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class SystemSeeder extends Seeder
 {
@@ -15,7 +15,7 @@ class SystemSeeder extends Seeder
         $topic = config('demo.current_topic', 'watches');
 
         if ($topic === 'watches') {
-            DB::table('tp_systems')->insert([
+            $data = [
                 'email' => 'contact@auraluxurywatches.com',
                 'active_languages' => '["vi","en"]',
                 'address_vn' => '188 Đồng Khởi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
@@ -29,7 +29,6 @@ class SystemSeeder extends Seeder
                 'twitter' => 'https://twitter.com/auraluxury',
                 'instagram' => 'https://instagram.com/auraluxury',
                 'zalo' => 'https://zalo.me/0909888999',
-
                 'favicon' => '',
                 'logo' => '',
                 'name_vn' => 'AURA LUXURY WATCHES',
@@ -38,11 +37,9 @@ class SystemSeeder extends Seeder
                 'description_en' => 'AURA LUXURY WATCHES - Authentic Swiss & Haute Horlogerie Timepieces',
                 'keyword_vn' => 'dong ho cao cap, dong ho thuy si, rolex, patek philippe, hublot, omega',
                 'keyword_en' => 'luxury watches, swiss watches, rolex, patek philippe, hublot, omega',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            ];
         } else {
-            DB::table('tp_systems')->insert([
+            $data = [
                 'email' => 'info@basetravel.com',
                 'active_languages' => '["vi","en"]',
                 'address_vn' => 'Lầu 5, Tòa nhà Travel, TP. Hồ Chí Minh',
@@ -56,7 +53,6 @@ class SystemSeeder extends Seeder
                 'twitter' => 'https://twitter.com/basetravel',
                 'instagram' => 'https://instagram.com/basetravel',
                 'zalo' => 'https://zalo.me/0909090909',
-
                 'favicon' => '',
                 'logo' => '',
                 'name_vn' => 'BASE TRAVEL',
@@ -65,9 +61,12 @@ class SystemSeeder extends Seeder
                 'description_en' => 'BASE TRAVEL - Leading Prestigious Travel Tours',
                 'keyword_vn' => 'base travel, du lich, tour du lich',
                 'keyword_en' => 'base travel, travel, travel tours',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            ];
+        }
+
+        $system = System::first();
+        if (! $system) {
+            System::create($data);
         }
     }
 }

@@ -24,6 +24,6 @@ class AnalyticSeeder extends Seeder
             ];
         }
 
-        DB::table('tp_analytics')->insert($data);
+        DB::table('tp_analytics')->insertOrIgnore($data);
     }
 }

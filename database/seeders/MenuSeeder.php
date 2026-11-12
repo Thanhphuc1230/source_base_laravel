@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Menu;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class MenuSeeder extends Seeder
@@ -17,7 +17,6 @@ class MenuSeeder extends Seeder
     {
         $menus = [
             [
-                'uuid' => Str::uuid(),
                 'name_vn' => 'Trang Chủ',
                 'name_en' => 'Home',
                 'link' => '',
@@ -28,7 +27,6 @@ class MenuSeeder extends Seeder
                 'stt' => 0,
             ],
             [
-                'uuid' => Str::uuid(),
                 'name_vn' => 'Giới thiệu',
                 'name_en' => 'About us',
                 'link' => '',
@@ -39,7 +37,6 @@ class MenuSeeder extends Seeder
                 'stt' => 0,
             ],
             [
-                'uuid' => Str::uuid(),
                 'name_vn' => 'Sản Phẩm',
                 'name_en' => 'Product',
                 'link' => '',
@@ -50,7 +47,6 @@ class MenuSeeder extends Seeder
                 'stt' => 0,
             ],
             [
-                'uuid' => Str::uuid(),
                 'name_vn' => 'Tin Tức',
                 'name_en' => 'News',
                 'link' => '',
@@ -61,7 +57,6 @@ class MenuSeeder extends Seeder
                 'stt' => 0,
             ],
             [
-                'uuid' => Str::uuid(),
                 'name_vn' => 'Liên Hệ',
                 'name_en' => 'Contact',
                 'link' => 'lien-he.html',
@@ -73,6 +68,11 @@ class MenuSeeder extends Seeder
             ],
         ];
 
-        DB::table('tp_menus')->insert($menus);
+        foreach ($menus as $m) {
+            if (! Menu::where('slug', $m['slug'])->exists()) {
+                $m['uuid'] = Str::uuid()->toString();
+                Menu::create($m);
+            }
+        }
     }
 }

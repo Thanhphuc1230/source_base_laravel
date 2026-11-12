@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Brand;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,6 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 1,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Patek Philippe',
@@ -33,7 +33,6 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 2,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Audemars Piguet',
@@ -44,7 +43,6 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 3,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Omega',
@@ -55,7 +53,6 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 4,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Hublot',
@@ -66,7 +63,6 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 5,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'name_vn' => 'Cartier',
@@ -77,10 +73,14 @@ class BrandSeeder extends Seeder
                 'image_en' => '',
                 'status' => 1,
                 'stt' => 6,
-                'uuid' => Str::uuid()->toString(),
             ],
         ];
 
-        \Illuminate\Support\Facades\DB::table('tp_brands')->insert($brands);
+        foreach ($brands as $brand) {
+            Brand::firstOrCreate(
+                ['slug_vn' => $brand['slug_vn']],
+                array_merge($brand, ['uuid' => Str::uuid()->toString()])
+            );
+        }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Feature;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class FeatureSeeder extends Seeder
@@ -22,7 +22,6 @@ class FeatureSeeder extends Seeder
                 'image' => 'fa-solid fa-award',
                 'status' => 1,
                 'stt' => 1,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'title_vn' => 'Bảo Hành Quốc Tế 5 Năm',
@@ -32,7 +31,6 @@ class FeatureSeeder extends Seeder
                 'image' => 'fa-solid fa-shield-halved',
                 'status' => 1,
                 'stt' => 2,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'title_vn' => 'Thẩm Định Độc Lập',
@@ -42,7 +40,6 @@ class FeatureSeeder extends Seeder
                 'image' => 'fa-solid fa-gem',
                 'status' => 1,
                 'stt' => 3,
-                'uuid' => Str::uuid()->toString(),
             ],
             [
                 'title_vn' => 'Giao Hàng Bảo Mật VIP',
@@ -52,12 +49,14 @@ class FeatureSeeder extends Seeder
                 'image' => 'fa-solid fa-truck-fast',
                 'status' => 1,
                 'stt' => 4,
-                'uuid' => Str::uuid()->toString(),
             ],
         ];
 
         foreach ($features as $feature) {
-            Feature::create($feature);
+            Feature::firstOrCreate(
+                ['title_vn' => $feature['title_vn']],
+                array_merge($feature, ['uuid' => Str::uuid()->toString()])
+            );
         }
     }
 }

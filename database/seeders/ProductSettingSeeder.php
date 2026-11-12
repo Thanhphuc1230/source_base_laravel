@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\ProductSetting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class ProductSettingSeeder extends Seeder
 {
@@ -87,10 +88,11 @@ class ProductSettingSeeder extends Seeder
             ],
         ];
 
-        ProductSetting::truncate();
-
         foreach ($settings as $setting) {
-            ProductSetting::create($setting);
+            ProductSetting::firstOrCreate(
+                ['key' => $setting['key']],
+                array_merge($setting, ['uuid' => Str::uuid()->toString()])
+            );
         }
     }
 }

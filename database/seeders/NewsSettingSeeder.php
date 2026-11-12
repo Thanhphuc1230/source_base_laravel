@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\NewsSetting;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class NewsSettingSeeder extends Seeder
 {
@@ -87,10 +88,11 @@ class NewsSettingSeeder extends Seeder
             ],
         ];
 
-        NewsSetting::truncate();
-
         foreach ($settings as $setting) {
-            NewsSetting::create($setting);
+            NewsSetting::firstOrCreate(
+                ['key' => $setting['key']],
+                array_merge($setting, ['uuid' => Str::uuid()->toString()])
+            );
         }
     }
 }

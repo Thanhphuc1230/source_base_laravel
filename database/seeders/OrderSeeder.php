@@ -17,6 +17,11 @@ class OrderSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có đơn hàng mẫu rồi thì bỏ qua không tạo trùng lặp
+        if (OrderStatus::count() > 0) {
+            return;
+        }
+
         $products = Product::where('status', true)->get();
         if ($products->isEmpty()) {
             return;
