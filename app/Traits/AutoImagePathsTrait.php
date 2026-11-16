@@ -59,6 +59,16 @@ trait AutoImagePathsTrait
             return $value;
         }
 
+        $r2Url = config('filesystems.disks.r2.url');
+        if (!empty($r2Url)) {
+            $baseR2 = rtrim($r2Url, '/');
+            if (str_starts_with($value, 'uploads/')) {
+                return "{$baseR2}/{$value}";
+            }
+            $folder = $this->getFolderFromModel();
+            return "{$baseR2}/uploads/{$folder}/{$value}";
+        }
+
         if (str_starts_with($value, 'uploads/')) {
             return asset($value);
         }

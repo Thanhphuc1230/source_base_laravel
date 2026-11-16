@@ -65,6 +65,9 @@ class ImageService
 
                 $relativePath = "uploads/{$subPath}/{$fileName}";
 
+                // Auto sync to Cloudflare R2 if configured
+                $this->syncToR2($relativePath);
+
                 // Auto register into Media table
                 try {
                     $fullPath = public_path($relativePath);
@@ -165,12 +168,47 @@ class ImageService
         }
 
         $filePath = $this->getPhysicalPath($fileName, $imageFolder);
+        $deleted = false;
 
         if (File::exists($filePath)) {
-            return File::delete($filePath);
+            $deleted = File::delete($filePath);
         }
 
-        return false;
+        // Tự động xóa trên Cloudflare R2 nếu được cấu hình
+        if (!empty(config('filesystems.disks.r2.bucket'))) {
+            try {
+                $cleanPath = $fileName;
+                if (filter_var($fileName, FILTER_VALIDATE_URL)) {
+                    $cleanPath = ltrim(parse_url($fileName, PHP_URL_PATH) ?? '', '/');
+                }
+                $r2Path = str_starts_with($cleanPath, 'uploads/') ? $cleanPath : "uploads/{$imageFolder}/{$cleanPath}";
+                \Illuminate\Support\Facades\Storage::disk('r2')->delete($r2Path);
+            } catch (\Throwable $e) {
+                // Suppress R2 delete errors
+            }
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * Đồng bộ tệp tin lên Cloudflare R2 nếu được cấu hình
+     */
+    protected function syncToR2(string $relativePath): void
+    {
+        try {
+            if (!empty(config('filesystems.disks.r2.bucket'))) {
+                $fullPath = public_path($relativePath);
+                if (File::exists($fullPath)) {
+                    \Illuminate\Support\Facades\Storage::disk('r2')->put(
+                        $relativePath,
+                        file_get_contents($fullPath)
+                    );
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("R2 Upload failed for {$relativePath}: " . $e->getMessage());
+        }
     }
 
     /**
@@ -410,7 +448,9 @@ class ImageService
             $this->ensureDirectoryExists($subPath);
             $videoName = 'video_' . \Illuminate\Support\Str::random(10) . '_' . time() . '.' . $ext;
             $file->move(public_path("uploads/{$subPath}"), $videoName);
-            return "uploads/{$subPath}/{$videoName}";
+            $videoPath = "uploads/{$subPath}/{$videoName}";
+            $this->syncToR2($videoPath);
+            return $videoPath;
         }
 
         $fileName = $this->generateFileName($file, $options);
@@ -422,7 +462,9 @@ class ImageService
             $file->move(public_path("uploads/{$subPath}"), $fileName);
         }
 
-        return "uploads/{$subPath}/{$fileName}";
+        $filePath = "uploads/{$subPath}/{$fileName}";
+        $this->syncToR2($filePath);
+        return $filePath;
     }
 
     /**

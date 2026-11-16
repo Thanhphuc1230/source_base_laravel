@@ -1,4 +1,4 @@
-name: Deploy Laravel App to HestiaCP
+name: Deploy Laravel App & Purge Cloudflare Cache
 
 on:
   push:
@@ -56,3 +56,13 @@ jobs:
             php artisan view:cache
             
             echo "✅ Triển khai website thành công!"
+
+      - name: Purge Cloudflare Edge Cache
+        if: "${{ secrets.CLOUDFLARE_ZONE_ID != '' && secrets.CLOUDFLARE_API_TOKEN != '' }}"
+        run: |
+          echo "🧹 Đang xóa Edge Cache trên Cloudflare..."
+          curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything":true}'
+          echo "✅ Đã gửi yêu cầu Purge Cache Cloudflare!"
