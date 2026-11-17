@@ -20,6 +20,10 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
     php artisan migrate --force
 fi
 
+# Ensure storage permissions for www-data
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
 echo "Launching Supervisor (Nginx + PHP-FPM)..."
 mkdir -p /var/log/supervisor /var/run
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
