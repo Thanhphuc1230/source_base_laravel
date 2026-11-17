@@ -44,6 +44,7 @@
 
     @include('admin.partials.media-picker-modal')
     @include('admin.partials.js')
+    @include('admin.partials.validation-scripts')
     @stack('scripts')
 
     <script>

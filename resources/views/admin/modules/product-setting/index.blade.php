@@ -23,6 +23,8 @@
             </div>
             <!-- end page title -->
 
+            @include('admin.partials.error-banner')
+
             <form action="{{ route('admin.product-setting.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">

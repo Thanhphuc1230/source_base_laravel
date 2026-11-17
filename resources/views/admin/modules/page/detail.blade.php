@@ -12,7 +12,7 @@
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a>Trang</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.' . $nameClass . '.index') }}">Trang đơn</a></li>
                                 <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} trang
                                 </li>
                             </ol>
@@ -22,6 +22,9 @@
                 </div>
             </div>
             <!-- end page title -->
+
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
@@ -33,15 +36,18 @@
                                 @include('admin.partials.localized-fields', [
                                     'fields' => [
                                         ['base' => 'name', 'label' => 'Tiêu đề', 'col' => 'col-md-12'],
-                                        ['base' => 'content', 'label' => 'Nội dung', 'col' => 'col-md-12', 'rows' => 6, 'type' => 'textarea', 'ckeditor' => true],
+                                        ['base' => 'content', 'label' => 'Nội dung', 'col' => 'col-md-12', 'rows' => 10, 'type' => 'textarea', 'ckeditor' => true],
                                     ],
                                     'model' => $page ?? null,
                                 ])
                             </div>
                         </div>
                         <!-- end card -->
-                       
+
                         <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Hình ảnh trang</h5>
+                            </div>
                             <div class="card-body">
                                 <div class="row">
                                     @foreach ($adminLanguages as $locale)
@@ -49,7 +55,7 @@
                                             'locale' => $locale,
                                             'imageFolder' => $imageFolder,
                                             'model' => $page ?? null,
-                                            'dimensions' => '1200x500 px (Banner trang)',
+                                            'dimensions' => '800x600 px (Tỉ lệ 4:3)',
                                         ])
                                     @endforeach
                                 </div>
@@ -75,17 +81,17 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="choices-publish-status-input" class="form-label">Trạng thái</label>
+                                    <label for="choices-publish-status-input" class="form-label font-weight-semibold">Trạng thái</label>
 
-                                    <select class="form-select" name="status">
+                                    <select class="form-select @error('status') is-invalid @enderror" name="status">
                                         <option value="1"
-                                            {{ (old('status') ?: $page->status ?? '') == 1 ? 'selected' : '' }}>Bật
+                                            {{ old('status', $page->status ?? 1) == 1 ? 'selected' : '' }}>Bật
                                         </option>
                                         <option value="0"
-                                            {{ (old('status') ?: $page->status ?? '') == 0 ? 'selected' : '' }}>Ẩn</option>
+                                            {{ old('status', $page->status ?? 1) == 0 ? 'selected' : '' }}>Ẩn</option>
                                     </select>
                                     @error('status')
-                                        <span class="text-danger">{{ $message }}</span>
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                     @enderror
                                 </div>
 

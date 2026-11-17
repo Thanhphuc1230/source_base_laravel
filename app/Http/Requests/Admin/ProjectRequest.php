@@ -12,8 +12,8 @@ class ProjectRequest extends BaseAdminRequest
         return [
             'name_vn' => 'required|string|max:255',
             'name_en' => 'nullable|string|max:255',
-            'intro_vn' => 'required|string|max:255',
-            'intro_en' => 'nullable|string|max:255',
+            'intro_vn' => 'required|string|max:1000',
+            'intro_en' => 'nullable|string|max:1000',
             'content_vn' => 'required|string',
             'content_en' => 'nullable|string',
             'category_id' => 'required|exists:tp_cate_projects,id_cate_project',
@@ -25,26 +25,30 @@ class ProjectRequest extends BaseAdminRequest
             'image_en' => $this->imageRule(false),
             'keyword_vn' => 'required|string|max:255',
             'keyword_en' => 'nullable|string|max:255',
-            'description_vn' => 'required|string|max:255',
-            'description_en' => 'nullable|string|max:255',
+            'description_vn' => 'required|string|max:1000',
+            'description_en' => 'nullable|string|max:1000',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name_vn.required' => 'Vui lòng nhập tên dự án',
+            'name_vn.required' => 'Vui lòng nhập tên dự án (Tiếng Việt)',
             'name_vn.max' => 'Tên dự án không được quá 255 ký tự',
-            'intro_vn.required' => 'Vui lòng nhập mô tả ngắn dự án',
-            'content_vn.required' => 'Vui lòng nhập nội dung dự án',
+            'intro_vn.required' => 'Vui lòng nhập mô tả ngắn dự án (Tiếng Việt)',
+            'intro_vn.max' => 'Mô tả ngắn dự án không được quá 1000 ký tự',
+            'content_vn.required' => 'Vui lòng nhập nội dung chi tiết dự án (Tiếng Việt)',
             'category_id.required' => 'Vui lòng chọn danh mục dự án',
             'category_id.exists' => 'Danh mục dự án không tồn tại',
             'status.required' => 'Vui lòng chọn trạng thái',
+            'status.in' => 'Trạng thái không hợp lệ',
             'stt.required' => 'Vui lòng nhập số thứ tự',
             'stt.integer' => 'Số thứ tự phải là số nguyên',
-            'image_vn.required' => 'Vui lòng chọn hình ảnh dự án',
-            'keyword_vn.required' => 'Vui lòng nhập từ khóa tiếng Việt',
-            'description_vn.required' => 'Vui lòng nhập mô tả tiếng Việt',
+            'stt.min' => 'Số thứ tự không được nhỏ hơn 0',
+            'image_vn.required' => 'Vui lòng chọn hình ảnh dự án (Tiếng Việt)',
+            'keyword_vn.required' => 'Vui lòng nhập từ khóa SEO (Tiếng Việt)',
+            'description_vn.required' => 'Vui lòng nhập mô tả SEO (Tiếng Việt)',
+            'description_vn.max' => 'Mô tả SEO không được quá 1000 ký tự',
         ];
     }
 }

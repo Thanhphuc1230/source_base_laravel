@@ -22,6 +22,9 @@
                 </div>
             </div>
             <!-- end page title -->
+
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.mail-config.' . ($action == 'create' ? 'store' : 'update'), ['id' => $config->id ?? '']) }}"
                 method="POST"
@@ -43,23 +46,23 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="host" class="form-label">SMTP Host <span class="text-danger">*</span></label>
+                                            <label for="host" class="form-label font-weight-semibold">SMTP Host <span class="text-danger">*</span></label>
                                             <input type="text" name="host" id="host" class="form-control @error('host') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $config->host : old('host', 'smtp.gmail.com') }}" 
+                                                   value="{{ old('host', $config->host ?? 'smtp.gmail.com') }}" 
                                                    placeholder="smtp.gmail.com" required>
                                             @error('host')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="port" class="form-label">SMTP Port <span class="text-danger">*</span></label>
+                                            <label for="port" class="form-label font-weight-semibold">SMTP Port <span class="text-danger">*</span></label>
                                             <input type="number" name="port" id="port" class="form-control @error('port') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $config->port : old('port', 587) }}" required>
+                                                   value="{{ old('port', $config->port ?? 587) }}" required>
                                             @error('port')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -68,26 +71,26 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="username" class="form-label">Email đăng nhập <span class="text-danger">*</span></label>
+                                            <label for="username" class="form-label font-weight-semibold">Email đăng nhập <span class="text-danger">*</span></label>
                                             <input type="email" name="username" id="username" class="form-control @error('username') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $config->username : old('username') }}" 
+                                                   value="{{ old('username', $config->username ?? '') }}" 
                                                    placeholder="your-email@gmail.com" required>
                                             @error('username')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="password" class="form-label">App Password @if($action == 'create')<span class="text-danger">*</span>@endif</label>
+                                            <label for="password" class="form-label font-weight-semibold">App Password @if($action == 'create')<span class="text-danger">*</span>@endif</label>
                                             <input type="password" name="password" id="password"
                                                    class="form-control @error('password') is-invalid @enderror"
                                                    placeholder="@if($action == 'edit')Để trống nếu không đổi@else Nhập App Password @endif"
                                                    autocomplete="new-password"
                                                    @if($action == 'create') required @endif>
                                             @error('password')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                             @if($action == 'edit')
                                                 <small class="text-muted">Để trống để giữ nguyên mật khẩu</small>
@@ -99,23 +102,23 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="encryption" class="form-label">Mã hóa <span class="text-danger">*</span></label>
-                                            <select name="encryption" id="encryption" class="form-control @error('encryption') is-invalid @enderror" required>
-                                                <option value="tls" {{ ($action == 'edit' ? $config->encryption : old('encryption', 'tls')) == 'tls' ? 'selected' : '' }}>TLS (Port 587)</option>
-                                                <option value="ssl" {{ ($action == 'edit' ? $config->encryption : old('encryption')) == 'ssl' ? 'selected' : '' }}>SSL (Port 465)</option>
+                                            <label for="encryption" class="form-label font-weight-semibold">Mã hóa <span class="text-danger">*</span></label>
+                                            <select name="encryption" id="encryption" class="form-select @error('encryption') is-invalid @enderror" required>
+                                                <option value="tls" {{ old('encryption', $config->encryption ?? 'tls') == 'tls' ? 'selected' : '' }}>TLS (Port 587)</option>
+                                                <option value="ssl" {{ old('encryption', $config->encryption ?? 'tls') == 'ssl' ? 'selected' : '' }}>SSL (Port 465)</option>
                                             </select>
                                             @error('encryption')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="is_active" class="form-label">Trạng thái</label>
+                                            <label for="is_active" class="form-label font-weight-semibold">Trạng thái</label>
                                             <div class="form-check form-switch form-switch-success mt-2">
                                                 <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1"
-                                                       {{ ($action == 'edit' ? $config->is_active : old('is_active', 1)) ? 'checked' : '' }}>
+                                                       {{ old('is_active', $config->is_active ?? 1) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="is_active">Kích hoạt</label>
                                             </div>
                                         </div>
@@ -125,22 +128,22 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="from_address" class="form-label">Email gửi <span class="text-danger">*</span></label>
+                                            <label for="from_address" class="form-label font-weight-semibold">Email gửi <span class="text-danger">*</span></label>
                                             <input type="email" name="from_address" id="from_address" class="form-control @error('from_address') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $config->from_address : old('from_address') }}" required>
+                                                   value="{{ old('from_address', $config->from_address ?? '') }}" required>
                                             @error('from_address')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="from_name" class="form-label">Tên người gửi <span class="text-danger">*</span></label>
+                                            <label for="from_name" class="form-label font-weight-semibold">Tên người gửi <span class="text-danger">*</span></label>
                                             <input type="text" name="from_name" id="from_name" class="form-control @error('from_name') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $config->from_name : old('from_name') }}" required>
+                                                   value="{{ old('from_name', $config->from_name ?? '') }}" required>
                                             @error('from_name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>

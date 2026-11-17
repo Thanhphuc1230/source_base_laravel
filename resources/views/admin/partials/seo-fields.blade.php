@@ -16,12 +16,29 @@
         $languages['en'] = ['label' => 'Tiếng Anh (EN)', 'flag' => 'usa.png'];
     }
     $seoTabSuffix = uniqid('seo_');
+
+    // Xác định tab SEO nào chứa lỗi để tự động active tab đó
+    $seoTabErrors = [];
+    $firstSeoErrorLocale = null;
+    foreach ($languages as $locale => $info) {
+        $seoTabErrors[$locale] = false;
+        if ($errors->has('keyword_' . $locale) || $errors->has('description_' . $locale)) {
+            $seoTabErrors[$locale] = true;
+            if ($firstSeoErrorLocale === null) {
+                $firstSeoErrorLocale = $locale;
+            }
+        }
+    }
+    $activeSeoLocale = $firstSeoErrorLocale ?? array_key_first($languages);
 @endphp
 
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-header bg-light d-flex align-items-center justify-content-between py-3 border-0">
         <h5 class="card-title mb-0 font-weight-bold d-flex align-items-center">
             <i class="ri-google-fill text-danger me-2 fs-18"></i> Cấu hình SEO & Xem trước Google
+            @if ($errors->has('keyword_vn') || $errors->has('keyword_en') || $errors->has('description_vn') || $errors->has('description_en'))
+                <span class="badge bg-danger ms-2">Có lỗi nhập liệu</span>
+            @endif
         </h5>
         <span class="badge bg-success-subtle text-success border border-success-subtle">Chuẩn SEO Google</span>
     </div>
@@ -69,7 +86,7 @@
         <ul class="nav nav-tabs nav-tabs-custom nav-success mb-3" role="tablist">
             @foreach ($languages as $locale => $info)
                 <li class="nav-item">
-                    <a class="nav-link {{ $loop->first ? 'active' : '' }}" 
+                    <a class="nav-link {{ $locale === $activeSeoLocale ? 'active' : '' }}" 
                        data-bs-toggle="tab" 
                        href="#locale-seo-{{ $locale }}-{{ $seoTabSuffix }}" 
                        role="tab">
@@ -78,6 +95,9 @@
                              class="me-1 align-middle" 
                              style="width: 18px; height: 12px; object-fit: cover; border-radius: 2px; margin-top: -2px;">
                         {{ $info['label'] }}
+                        @if (!empty($seoTabErrors[$locale]))
+                            <span class="badge bg-danger ms-1">Lỗi</span>
+                        @endif
                     </a>
                 </li>
             @endforeach
@@ -86,7 +106,7 @@
         <!-- Tab panes cho SEO Fields -->
         <div class="tab-content tab-content-localized">
             @foreach ($languages as $locale => $info)
-                <div class="tab-pane {{ $loop->first ? 'active' : '' }}" 
+                <div class="tab-pane {{ $locale === $activeSeoLocale ? 'active' : '' }}" 
                      id="locale-seo-{{ $locale }}-{{ $seoTabSuffix }}" 
                      role="tabpanel">
                     
@@ -100,7 +120,9 @@
                                   name="keyword_{{ $locale }}"
                                   rows="2"
                                   placeholder="Nhập các từ khóa cách nhau bởi dấu phẩy (vd: noi that phong khach, sofa cao cap)">{{ old('keyword_'.$locale, data_get($model, 'keyword_'.$locale, '')) }}</textarea>
-                        @error('keyword_'.$locale)<span class="text-danger small">{{ $message }}</span>@enderror
+                        @error('keyword_'.$locale)
+                            <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <!-- Mô tả SEO (Meta Description) -->
@@ -113,7 +135,9 @@
                                   name="description_{{ $locale }}"
                                   rows="3"
                                   placeholder="Mô tả ngắn gọn, hấp dẫn dưới 160 ký tự">{{ old('description_'.$locale, data_get($model, 'description_'.$locale, '')) }}</textarea>
-                        @error('description_'.$locale)<span class="text-danger small">{{ $message }}</span>@enderror
+                        @error('description_'.$locale)
+                            <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                        @enderror
                         <small class="text-muted d-block mt-1">Đoạn mô tả ngắn gọn tóm tắt nội dung bài viết, chuẩn SEO từ 120 - 160 ký tự.</small>
                     </div>
                 </div>
@@ -168,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const len = descInput.value.length;
 
         if (previewDesc) {
-            previewDesc.textContent = val || 'Đoạn mô tả ngắn hiển thị trên kết quả tìm kiếm Google...';
+            previewDesc.textContent = val || 'Đoạn mô tả ngắn hiển thị trên kết quả tìm kiếm Google giúp người dùng hiểu rõ nội dung và tăng tỷ lệ nhấp chuột (CTR)...';
         }
 
         if (descCounter) {
@@ -177,10 +201,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 descCounter.className = 'badge bg-secondary';
             } else if (len >= 120 && len <= 160) {
                 descCounter.className = 'badge bg-success';
-            } else if (len < 120) {
-                descCounter.className = 'badge bg-warning text-dark';
-            } else {
+            } else if (len > 160) {
                 descCounter.className = 'badge bg-danger';
+            } else {
+                descCounter.className = 'badge bg-warning text-dark';
             }
         }
     }
@@ -189,12 +213,10 @@ document.addEventListener('DOMContentLoaded', function () {
         titleInput.addEventListener('input', updateTitle);
         updateTitle();
     }
-
     if (slugInput) {
         slugInput.addEventListener('input', updateSlug);
         updateSlug();
     }
-
     if (descInput) {
         descInput.addEventListener('input', updateDesc);
         updateDesc();

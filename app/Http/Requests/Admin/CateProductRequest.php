@@ -20,8 +20,9 @@ class CateProductRequest extends BaseAdminRequest
             'slug_en' => ['nullable', 'max:255'],
             'keyword_vn' => 'required|max:255',
             'keyword_en' => 'nullable|max:255',
-            'description_vn' => 'required',
-            'description_en' => 'nullable',
+            'description_vn' => 'required|string|max:1000',
+            'description_en' => 'nullable|string|max:1000',
+            'parent_id' => 'nullable|integer',
             'image_vn' => $this->imageRule(false),
             'image_en' => $this->imageRule(false),
         ];

@@ -22,6 +22,9 @@
                 </div>
             </div>
             <!-- end page title -->
+
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.mail-template.' . ($action == 'create' ? 'store' : 'update'), ['id' => $template->id ?? '']) }}"
                 method="POST">
@@ -40,49 +43,49 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="name" class="form-label">Tên template <span class="text-danger">*</span></label>
+                                            <label for="name" class="form-label font-weight-semibold">Tên template <span class="text-danger">*</span></label>
                                             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
-                                                   value="{{ $action == 'edit' ? $template->name : old('name') }}" required>
+                                                   value="{{ old('name', $template->name ?? '') }}" placeholder="Nhập tên template" required>
                                             @error('name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="mb-3">
-                                            <label for="type" class="form-label">Loại template <span class="text-danger">*</span></label>
-                                            <select name="type" id="type" class="form-control @error('type') is-invalid @enderror" required>
+                                            <label for="type" class="form-label font-weight-semibold">Loại template <span class="text-danger">*</span></label>
+                                            <select name="type" id="type" class="form-select @error('type') is-invalid @enderror" required>
                                                 <option value="">Chọn loại template</option>
                                                 @foreach($types as $key => $value)
-                                                    <option value="{{ $key }}" {{ ($action == 'edit' ? $template->type : old('type')) == $key ? 'selected' : '' }}>
+                                                    <option value="{{ $key }}" {{ old('type', $template->type ?? '') == $key ? 'selected' : '' }}>
                                                         {{ $value }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                             @error('type')
-                                                <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="subject" class="form-label">Tiêu đề email <span class="text-danger">*</span></label>
+                                    <label for="subject" class="form-label font-weight-semibold">Tiêu đề email <span class="text-danger">*</span></label>
                                     <input type="text" name="subject" id="subject" class="form-control @error('subject') is-invalid @enderror"
-                                           value="{{ $action == 'edit' ? $template->subject : old('subject') }}" required>
+                                           value="{{ old('subject', $template->subject ?? '') }}" placeholder="Nhập tiêu đề email" required>
                                     @error('subject')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                     @enderror
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="content" class="form-label">Nội dung template <span class="text-danger">*</span></label>
+                                    <label for="content" class="form-label font-weight-semibold">Nội dung template <span class="text-danger">*</span></label>
                                     <textarea name="content" id="content" data-ckeditor="true"
                                               class="form-control @error('content') is-invalid @enderror"
-                                              rows="15" required>{{ $action == 'edit' ? $template->content : old('content') }}</textarea>
+                                              rows="15">{{ old('content', $template->content ?? '') }}</textarea>
                                     @error('content')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                     @enderror
                                     <small class="form-text text-muted">
                                         Sử dụng biến trong nội dung: {customer_name}, {order_id}, {order_total}, v.v.
@@ -90,19 +93,22 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="variables" class="form-label">Danh sách biến (mỗi biến trên một dòng)</label>
-                                    <textarea name="variables[]" id="variables" class="form-control" rows="5" placeholder="customer_name&#10;order_id&#10;order_total&#10;...">{{ $action == 'edit' && $template->variables ? implode("\n", $template->variables) : old('variables') }}</textarea>
+                                    <label for="variables" class="form-label font-weight-semibold">Danh sách biến (mỗi biến trên một dòng)</label>
+                                    <textarea name="variables[]" id="variables" class="form-control @error('variables') is-invalid @enderror" rows="5" placeholder="customer_name&#10;order_id&#10;order_total&#10;...">{{ old('variables', isset($template->variables) && is_array($template->variables) ? implode("\n", $template->variables) : '') }}</textarea>
+                                    @error('variables')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                     <small class="form-text text-muted">
                                         Các biến sẽ được sử dụng trong template. Mỗi biến trên một dòng.
                                     </small>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="is_active" class="form-label">Trạng thái</label>
+                                    <label for="is_active" class="form-label font-weight-semibold">Trạng thái</label>
                                     <div class="form-check form-switch form-switch-success">
                                         <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1"
-                                               {{ ($action == 'edit' ? $template->is_active : old('is_active', 1)) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="is_active">Kích hoạt template</label>
+                                               {{ old('is_active', $template->is_active ?? 1) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="is_active">Kích hoạt</label>
                                     </div>
                                 </div>
                             </div><!-- end card body -->
@@ -127,39 +133,10 @@
                                 </div>
                             </div><!-- end card body -->
                         </div><!-- end card -->
-
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Hướng dẫn sử dụng</h5>
-                            </div><!-- end card header -->
-
-                            <div class="card-body">
-                                <h6>Biến có sẵn cho đơn hàng:</h6>
-                                <ul class="list-unstyled">
-                                    <li><code>{customer_name}</code> - Tên khách hàng</li>
-                                    <li><code>{order_id}</code> - Mã đơn hàng</li>
-                                    <li><code>{order_total}</code> - Tổng tiền</li>
-                                    <li><code>{order_status}</code> - Trạng thái đơn hàng</li>
-                                    <li><code>{order_date}</code> - Ngày đặt hàng</li>
-                                </ul>
-
-                                <h6 class="mt-3">Biến có sẵn cho liên hệ:</h6>
-                                <ul class="list-unstyled">
-                                    <li><code>{contact_name}</code> - Tên người liên hệ</li>
-                                    <li><code>{contact_email}</code> - Email liên hệ</li>
-                                    <li><code>{contact_phone}</code> - Số điện thoại</li>
-                                    <li><code>{contact_message}</code> - Nội dung tin nhắn</li>
-                                    <li><code>{contact_date}</code> - Ngày liên hệ</li>
-                                </ul>
-                            </div><!-- end card body -->
-                        </div><!-- end card -->
                     </div><!-- end col -->
                 </div><!-- end row -->
             </form>
         </div>
     </div>
-@endsection
-
-@section('scripts')
     @include('admin.partials.ckeditor')
 @endsection

@@ -12,7 +12,7 @@
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a>Sản phẩm</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.product.index') }}">Sản phẩm</a></li>
                                 <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} sản phẩm
                                 </li>
                             </ol>
@@ -22,6 +22,9 @@
                 </div>
             </div>
             <!-- end page title -->
+
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.' . ($nameClass ?? $imageFolder ?? 'product') . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
@@ -49,12 +52,18 @@
                                         <a class="nav-link active" data-bs-toggle="tab" href="#addproduct-general-info"
                                             role="tab" aria-selected="true">
                                             Thông tin tổng quan
+                                            @if($errors->has('price') || $errors->has('price_old'))
+                                                <span class="badge bg-danger ms-1">Lỗi</span>
+                                            @endif
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <a class="nav-link text-primary fw-bold" data-bs-toggle="tab" href="#addproduct-attributes"
                                             role="tab" aria-selected="false">
                                             <i class="ri-equalizer-line me-1"></i> Thuộc tính & Phân loại (Kích thước, Màu sắc)
+                                            @if($errors->has('product_attributes') || $errors->has('product_variants'))
+                                                <span class="badge bg-danger ms-1">Lỗi</span>
+                                            @endif
                                         </a>
                                     </li>
                                 </ul>
@@ -66,29 +75,31 @@
                                         <div class="row">
                                             <div class="col-lg-6 col-sm-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="product-price-input">Giá tiền(nhập 0 sẽ
-                                                        hiện liên hệ)</label>
-                                                    <div class="input-group has-validation mb-3">
+                                                    <label class="form-label font-weight-semibold" for="product-price-input">Giá tiền (nhập 0 sẽ hiện liên hệ)</label>
+                                                    <div class="input-group has-validation mb-1">
                                                         <span class="input-group-text" id="product-price-addon">{{ currency_unit() }}</span>
                                                         <input type="number"
                                                             class="form-control @error('price') is-invalid @enderror"
-                                                            placeholder="Enter price" name="price"
+                                                            placeholder="Nhập giá sản phẩm" name="price"
                                                             value="{{ old('price', $page->price ?? '') }}">
                                                     </div>
                                                     @error('price')
-                                                        <span class="text-danger">{{ $message }}</span>
+                                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                                     @enderror
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-sm-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="product-discount-input">Giá cũ</label>
-                                                    <div class="input-group mb-3">
+                                                    <label class="form-label font-weight-semibold" for="product-discount-input">Giá cũ</label>
+                                                    <div class="input-group mb-1">
                                                         <span class="input-group-text" id="product-price-addon">{{ currency_unit() }}</span>
-                                                        <input type="text" class="form-control"
-                                                            placeholder="Enter discount" name="price_old"
+                                                        <input type="text" class="form-control @error('price_old') is-invalid @enderror"
+                                                            placeholder="Nhập giá cũ" name="price_old"
                                                             value="{{ old('price_old', $page->price_old ?? '') }}">
                                                     </div>
+                                                    @error('price_old')
+                                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <!-- end col -->
@@ -125,7 +136,7 @@
                                     <div class="mb-3">
                                         <label for="compnayNameinput" class="form-label fw-bold">Bộ sưu tập Media chi tiết (Hình ảnh & Video clip xen kẽ) <span class="text-muted fw-normal">(Khuyến nghị: 800x800 px - 1200x1200 px tỉ lệ 1:1)</span></label>
                                         @error('image_detail')
-                                            <span class="text-danger">{{ $message }}</span>
+                                            <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                         @enderror
                                         @include('admin.partials.multiImage')
 
@@ -208,28 +219,34 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="choices-publish-status-input" class="form-label">Trạng thái</label>
+                                    <label for="choices-publish-status-input" class="form-label font-weight-semibold">Trạng thái</label>
 
-                                    <select class="form-select" name="status">
+                                    <select class="form-select @error('status') is-invalid @enderror" name="status">
                                         <option value="1"
-                                            {{ (old('status') ?: $page->status ?? '') == 1 ? 'selected' : '' }}>Bật
+                                            {{ old('status', $page->status ?? 1) == 1 ? 'selected' : '' }}>Bật
                                         </option>
                                         <option value="0"
-                                            {{ (old('status') ?: $page->status ?? '') == 0 ? 'selected' : '' }}>Ẩn</option>
+                                            {{ old('status', $page->status ?? 1) == 0 ? 'selected' : '' }}>Ẩn</option>
                                     </select>
+                                    @error('status')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <div class="mb-3">
-                                    <label for="choices-publish-status-input" class="form-label">Nổi bật</label>
 
-                                    <select class="form-select" name="hot">
+                                <div class="mb-3">
+                                    <label for="choices-publish-hot-input" class="form-label font-weight-semibold">Nổi bật</label>
+
+                                    <select class="form-select @error('hot') is-invalid @enderror" name="hot">
                                         <option value="0"
-                                            {{ (old('hot') ?: $page->hot ?? '') == 0 ? 'selected' : '' }}>
+                                            {{ old('hot', $page->hot ?? 0) == 0 ? 'selected' : '' }}>
                                             Ẩn</option>
                                         <option value="1"
-                                            {{ (old('hot') ?: $page->hot ?? '') == 1 ? 'selected' : '' }}>
+                                            {{ old('hot', $page->hot ?? 0) == 1 ? 'selected' : '' }}>
                                             Bật</option>
-
                                     </select>
+                                    @error('hot')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 @include('admin.partials.publishing-fields', ['model' => $page ?? null, 'col' => 'col-md-12'])
@@ -256,16 +273,20 @@
                                 <h5 class="card-title mb-0">Chủ đề sản phẩm</h5>
                             </div>
                             <div class="card-body">
-                                <select class="form-select" id="choices-category-input" name="category_id">
+                                <select class="form-select @error('category_id') is-invalid @enderror" id="choices-category-input" name="category_id">
+                                    <option value="">-- Chọn danh mục sản phẩm --</option>
                                     @php
                                         renderCategoryOptions(
                                             $category,
                                             0,
-                                            old('category_id') ?: $page->category_id ?? null,
+                                            old('category_id', $page->category_id ?? ''),
                                             'id_cate_product',
                                         );
                                     @endphp
                                 </select>
+                                @error('category_id')
+                                    <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                @enderror
                             </div>
                             <!-- end card body -->
                         </div>
@@ -276,17 +297,20 @@
                                 <h5 class="card-title mb-0">Thương hiệu</h5>
                             </div>
                             <div class="card-body">
-                                <select class="form-select" id="choices-brand-input" name="brand_id">
+                                <select class="form-select @error('brand_id') is-invalid @enderror" id="choices-brand-input" name="brand_id">
                                     <option value="">-- Chọn thương hiệu --</option>
                                     @if (isset($brands))
                                         @foreach ($brands as $b)
                                             <option value="{{ $b->id_brand }}"
-                                                {{ (old('brand_id') ?: $page->brand_id ?? '') == $b->id_brand ? 'selected' : '' }}>
+                                                {{ old('brand_id', $page->brand_id ?? '') == $b->id_brand ? 'selected' : '' }}>
                                                 {{ $b->name_vn }}
                                             </option>
                                         @endforeach
                                     @endif
                                 </select>
+                                @error('brand_id')
+                                    <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                @enderror
                             </div>
                             <!-- end card body -->
                         </div>

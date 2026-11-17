@@ -1,6 +1,6 @@
 @extends('admin.master')
 @section('module', $nameItem)
-@section('action', 'Add')
+@section('action', $action == 'create' ? 'Thêm' : 'Chỉnh sửa')
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -13,6 +13,7 @@
                         </div><!-- end card header -->
 
                         <div class="card-body">
+                            @include('admin.partials.error-banner')
                             <div class="live-preview">
                                 <form
                                     action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
@@ -31,21 +32,24 @@
                                         ])
 
                                         <div class="col-md-12 mb-3">
-                                            <label for="parent_id" class="form-label">Danh mục cha</label>
-                                            <select id="parent_id" class="form-select mb-3" aria-label="Default select example"
+                                            <label for="parent_id" class="form-label font-weight-semibold">Danh mục cha</label>
+                                            <select id="parent_id" class="form-select @error('parent_id') is-invalid @enderror mb-1" aria-label="Default select example"
                                                 name="parent_id">
                                                 <option value="0"
-                                                    {{ (old('parent_id') ?: $page->parent_id ?? '') == 0 ? 'selected' : '' }} style="font-weight: bold;">
-                                                    Trang chính</option>
+                                                    {{ old('parent_id', $page->parent_id ?? 0) == 0 ? 'selected' : '' }} style="font-weight: bold;">
+                                                    Trang chính (Cấp cao nhất)</option>
                                                 @php
                                                     renderCategoryOptions(
                                                         $category,
                                                         0,
-                                                        old('parent_id') ?: $page->parent_id ?? null,
+                                                        old('parent_id', $page->parent_id ?? 0),
                                                         'id_cate_product',
                                                     );
                                                 @endphp
                                             </select>
+                                            @error('parent_id')
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                            @enderror
                                         </div>
 
                                         @include('admin.partials.localized-fields', [
@@ -100,7 +104,9 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        $('#parent_id').select2();
+        if (typeof $ !== 'undefined' && $.fn.select2) {
+            $('#parent_id').select2();
+        }
     });
 </script>
 @endpush

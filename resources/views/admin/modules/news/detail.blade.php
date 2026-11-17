@@ -12,8 +12,8 @@
 
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a>Trang</a></li>
-                                <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} trang
+                                <li class="breadcrumb-item"><a href="{{ route('admin.' . $nameClass . '.index') }}">Bài viết</a></li>
+                                <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} bài viết
                                 </li>
                             </ol>
                         </div>
@@ -22,6 +22,9 @@
                 </div>
             </div>
             <!-- end page title -->
+
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
@@ -79,15 +82,18 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="choices-publish-status-input" class="form-label">Trạng thái</label>
+                                    <label for="choices-publish-status-input" class="form-label font-weight-semibold">Trạng thái</label>
 
-                                    <select class="form-select" name="status">
+                                    <select class="form-select @error('status') is-invalid @enderror" name="status">
                                         <option value="1"
-                                            {{ (old('status') ?: $page->status ?? '') == 1 ? 'selected' : '' }}>Bật
+                                            {{ old('status', $page->status ?? 1) == 1 ? 'selected' : '' }}>Bật
                                         </option>
                                         <option value="0"
-                                            {{ (old('status') ?: $page->status ?? '') == 0 ? 'selected' : '' }}>Ẩn</option>
+                                            {{ old('status', $page->status ?? 1) == 0 ? 'selected' : '' }}>Ẩn</option>
                                     </select>
+                                    @error('status')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 @include('admin.partials.publishing-fields', ['model' => $page ?? null, 'col' => 'col-md-12'])
@@ -101,17 +107,21 @@
 
                                 @include('admin.partials.preview-link', ['model' => $page ?? null])
                                 <div class="mb-3">
-                                    <label for="category_id" class="form-label">Chủ đề tin tức</label>
-                                    <select class="form-select" id="choices-category-input" name="category_id">
+                                    <label for="choices-category-input" class="form-label font-weight-semibold">Chủ đề tin tức</label>
+                                    <select class="form-select @error('category_id') is-invalid @enderror" id="choices-category-input" name="category_id">
+                                        <option value="">-- Chọn chủ đề tin tức --</option>
                                         @php
                                             renderCategoryOptions(
                                                 $category,
                                                 0,
-                                                old('category_id') ?: $page->category_id ?? null,
+                                                old('category_id', $page->category_id ?? ''),
                                                 'id_cate_new',
                                             );
                                         @endphp
                                     </select>
+                                    @error('category_id')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                             <!-- end card body -->

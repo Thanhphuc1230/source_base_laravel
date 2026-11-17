@@ -11,13 +11,15 @@
                         <h4 class="mb-sm-0">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} {{ $nameItem }}</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a>Trang</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.' . $nameClass . '.index') }}">Tính năng</a></li>
                                 <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }}</li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </div>
+
+            @include('admin.partials.error-banner')
 
             <form action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
@@ -55,10 +57,12 @@
                                             </button>
                                         </div>
                                         <input type="file" id="image" name="image" class="d-none @error('image') is-invalid @enderror" onchange="if(this.files[0]){ document.getElementById('feature_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('feature_preview_box').classList.remove('d-none'); }">
-                                        <input type="hidden" id="feature_image_hidden" name="image" value="{{ $page->image ?? '' }}">
-                                        @error('image')<span class="text-danger small d-block mb-2">{{ $message }}</span>@enderror
-                                        <div id="feature_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}">
-                                            <img id="feature_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="preview" style="max-height: 80px; max-width: 120px; object-fit: contain;">
+                                        <input type="hidden" id="feature_image_hidden" name="image" value="{{ old('image', $page->image ?? '') }}">
+                                        @error('image')
+                                            <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+                                        @enderror
+                                        <div id="feature_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty(old('image', $page->image ?? '')) ? 'd-none' : '' }} {{ $errors->has('image') ? 'border-danger' : '' }}">
+                                            <img id="feature_preview_img" src="{{ !empty(old('image', $page->image ?? '')) ? (str_starts_with(old('image', $page->image ?? ''), 'http') ? old('image', $page->image ?? '') : asset(old('image', $page->image ?? ''))) : '' }}" alt="preview" style="max-height: 80px; max-width: 120px; object-fit: contain;">
                                         </div>
                                     </div>
 
@@ -83,16 +87,21 @@
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="stt" class="form-label">Số thứ tự hiển thị</label>
-                                    <input type="number" id="stt" name="stt" class="form-control"
-                                        placeholder="Nhập số thứ tự" value="{{ old('stt', $page->stt ?? '0') }}">
-                                    @error('stt')<span class="text-danger">{{ $message }}</span>@enderror
+                                    <label for="stt" class="form-label font-weight-semibold">Số thứ tự hiển thị</label>
+                                    <input type="number" id="stt" name="stt" class="form-control @error('stt') is-invalid @enderror"
+                                        placeholder="Nhập số thứ tự" value="{{ old('stt', $page->stt ?? '1') }}">
+                                    @error('stt')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="created_at" class="form-label">Ngày đăng</label>
-                                    <input type="datetime-local" id="created_at" name="created_at" class="form-control"
+                                    <label for="created_at" class="form-label font-weight-semibold">Ngày đăng</label>
+                                    <input type="datetime-local" id="created_at" name="created_at" class="form-control @error('created_at') is-invalid @enderror"
                                         value="{{ old('created_at', isset($page->created_at) ? \Carbon\Carbon::parse($page->created_at)->format('Y-m-d\TH:i') : now()->format('Y-m-d\TH:i')) }}">
+                                    @error('created_at')
+                                        <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

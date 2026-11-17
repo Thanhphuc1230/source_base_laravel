@@ -1,6 +1,6 @@
 @extends('admin.master')
 @section('module', $nameItem)
-@section('action', 'Add')
+@section('action', $action == 'create' ? 'Thêm' : 'Chỉnh sửa')
 @section('content')
     <div class="page-content">
         <div class="container-fluid">
@@ -13,6 +13,7 @@
                         </div><!-- end card header -->
 
                         <div class="card-body">
+                            @include('admin.partials.error-banner')
                             <div class="live-preview">
                                 <form
                                     action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"

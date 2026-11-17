@@ -22,7 +22,8 @@
 @if ($shouldRender)
 @php
     $fieldName = $base . '_' . $locale;
-    $currentImage = data_get($model, $fieldName);
+    // Đảm bảo lấy đúng old input nếu có validate fail
+    $currentImage = old($fieldName, data_get($model, $fieldName));
     $inputUuid = 'file_' . $fieldName;
     $hiddenUuid = 'hidden_' . $fieldName;
     $clearUuid = 'clear_' . $fieldName;
@@ -30,7 +31,7 @@
     $containerUuid = 'container_' . $fieldName;
 
     $imageSrc = '';
-    if (!empty($currentImage)) {
+    if (!empty($currentImage) && is_string($currentImage)) {
         $imageSrc = str_starts_with($currentImage, 'http') ? $currentImage : asset($currentImage);
     }
 @endphp
@@ -42,11 +43,11 @@
 
     <!-- Hidden Inputs -->
     <input type="file" id="{{ $inputUuid }}" name="{{ $fieldName }}" class="d-none @error($fieldName) is-invalid @enderror" accept="image/*">
-    <input type="hidden" id="{{ $hiddenUuid }}" name="{{ $fieldName }}" value="{{ $currentImage ?? '' }}">
+    <input type="hidden" id="{{ $hiddenUuid }}" name="{{ $fieldName }}" value="{{ is_string($currentImage) ? $currentImage : '' }}">
     <input type="hidden" id="{{ $clearUuid }}" name="{{ $fieldName }}_clear" value="0">
 
-    <!-- Action Toolbar (Rule 13: 38px controls) -->
-    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+    <!-- Action Toolbar (Rule 13: 38px controls) with error highlight -->
+    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap p-2 rounded {{ $errors->has($fieldName) ? 'border border-danger bg-danger-subtle bg-opacity-25' : '' }}">
         <button type="button" class="btn btn-sm btn-primary rounded-2 px-3 shadow-xs d-inline-flex align-items-center gap-1.5" style="height: 38px;" onclick="selectMediaFor_{{ $fieldName }}()">
             <i class="ri-image-2-line fs-15"></i>
             <span class="fw-semibold">Chọn từ Thư viện</span>
@@ -61,11 +62,11 @@
     </div>
 
     @error($fieldName)
-        <div class="text-danger small mb-2">{{ $message }}</div>
+        <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
     @enderror
 
     <!-- Image Preview Box -->
-    <div id="{{ $previewUuid }}_box" class="border rounded-2 p-2 bg-light text-center position-relative d-inline-block {{ empty($currentImage) ? 'd-none' : '' }}" style="max-width: 280px; min-width: 180px;">
+    <div id="{{ $previewUuid }}_box" class="border rounded-2 p-2 bg-light text-center position-relative d-inline-block {{ empty($currentImage) ? 'd-none' : '' }} {{ $errors->has($fieldName) ? 'border-danger' : '' }}" style="max-width: 280px; min-width: 180px;">
         <img id="{{ $previewUuid }}_img" src="{{ $imageSrc }}" alt="Preview" class="img-fluid rounded-1" style="max-height: 180px; object-fit: contain;">
         <span class="position-absolute top-0 end-0 m-1.5 badge bg-dark bg-opacity-75 text-xs text-uppercase" id="{{ $previewUuid }}_badge">Ảnh đã chọn</span>
     </div>

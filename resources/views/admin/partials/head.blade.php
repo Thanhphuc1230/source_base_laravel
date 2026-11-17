@@ -35,6 +35,21 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
+        /* Validation UI Standards (Rule 04 & Admin Error Highlighting) */
+        textarea.is-invalid + .cke,
+        textarea.is-invalid + .tox-tinymce {
+            border: 1.5px solid #dc3545 !important;
+            border-radius: 4px;
+        }
+        .is-invalid-feedback {
+            display: block;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+            font-weight: 600;
+        }
     </style>
     {{-- ckeditor --}}
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>

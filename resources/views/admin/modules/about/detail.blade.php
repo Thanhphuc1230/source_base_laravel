@@ -20,6 +20,8 @@
             </div>
             <!-- end page title -->
 
+            @include('admin.partials.error-banner')
+
             <form
                 action="{{ route('admin.' . $nameClass . ($action == 'create' ? '.store' : '.update'), ['uuid' => $page->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
@@ -30,17 +32,23 @@
                             <div class="card-header">
                                 <ul class="nav nav-tabs-custom card-header-tabs border-bottom-0" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link active" data-bs-toggle="tab" href="#tab-vi"
+                                        <a class="nav-link {{ $errors->has('name_vn') || $errors->has('intro_vn') || $errors->has('content_vn') || !$errors->has('name_en') && !$errors->has('intro_en') && !$errors->has('content_en') ? 'active' : '' }}" data-bs-toggle="tab" href="#tab-vi"
                                             role="tab" aria-selected="true">
                                             <img src="{{ asset('uploads/icon/vietnam.png') }}" alt="vi" class="me-1 align-middle" style="width: 18px; height: 12px; object-fit: cover; border-radius: 2px; margin-top: -2px;">
                                             Tiếng Việt
+                                            @if($errors->has('name_vn') || $errors->has('intro_vn') || $errors->has('content_vn'))
+                                                <span class="badge bg-danger ms-1">Lỗi</span>
+                                            @endif
                                         </a>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <a class="nav-link" data-bs-toggle="tab" href="#tab-en"
+                                        <a class="nav-link {{ ($errors->has('name_en') || $errors->has('intro_en') || $errors->has('content_en')) && !($errors->has('name_vn') || $errors->has('intro_vn') || $errors->has('content_vn')) ? 'active' : '' }}" data-bs-toggle="tab" href="#tab-en"
                                             role="tab" aria-selected="false">
                                             <img src="{{ asset('uploads/icon/usa.png') }}" alt="en" class="me-1 align-middle" style="width: 18px; height: 12px; object-fit: cover; border-radius: 2px; margin-top: -2px;">
                                             Tiếng Anh (EN)
+                                            @if($errors->has('name_en') || $errors->has('intro_en') || $errors->has('content_en'))
+                                                <span class="badge bg-danger ms-1">Lỗi</span>
+                                            @endif
                                         </a>
                                     </li>
                                 </ul>
@@ -50,7 +58,7 @@
                             <div class="card-body">
                                 <div class="tab-content">
                                     <!-- Tiếng Việt tab -->
-                                    <div class="tab-pane active" id="tab-vi" role="tabpanel">
+                                    <div class="tab-pane {{ $errors->has('name_vn') || $errors->has('intro_vn') || $errors->has('content_vn') || !$errors->has('name_en') && !$errors->has('intro_en') && !$errors->has('content_en') ? 'active' : '' }}" id="tab-vi" role="tabpanel">
                                         <div class="mb-3">
                                             <label for="name_vn" class="form-label">Tiêu đề (VN) <span class="text-danger">*</span></label>
                                             <input type="text" id="name_vn" name="name_vn" 
@@ -84,7 +92,7 @@
                                     <!-- end tab-pane -->
 
                                     <!-- Tiếng Anh tab -->
-                                    <div class="tab-pane" id="tab-en" role="tabpanel">
+                                    <div class="tab-pane {{ ($errors->has('name_en') || $errors->has('intro_en') || $errors->has('content_en')) && !($errors->has('name_vn') || $errors->has('intro_vn') || $errors->has('content_vn')) ? 'active' : '' }}" id="tab-en" role="tabpanel">
                                         <div class="mb-3">
                                             <label for="name_en" class="form-label">Tiêu đề (EN)</label>
                                             <input type="text" id="name_en" name="name_en" 
@@ -233,12 +241,12 @@
                                         </button>
                                     </div>
                                     <input type="file" id="image" name="image" class="d-none @error('image') is-invalid @enderror" accept="image/*" onchange="if(this.files[0]){ document.getElementById('about_preview_img').src = URL.createObjectURL(this.files[0]); document.getElementById('about_preview_box').classList.remove('d-none'); }">
-                                    <input type="hidden" id="image_hidden" name="image" value="{{ $page->image ?? '' }}">
+                                    <input type="hidden" id="image_hidden" name="image" value="{{ old('image', $page->image ?? '') }}">
                                     @error('image')
-                                        <span class="text-danger small d-block mb-2">{{ $message }}</span>
+                                        <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
                                     @enderror
-                                    <div id="about_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($page->image) ? 'd-none' : '' }}" style="max-width: 280px;">
-                                        <img id="about_preview_img" src="{{ !empty($page->image) ? asset($page->image) : '' }}" alt="Preview" style="max-height: 180px; object-fit: contain;" class="img-fluid rounded-1">
+                                    <div id="about_preview_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty(old('image', $page->image ?? '')) ? 'd-none' : '' }} {{ $errors->has('image') ? 'border-danger' : '' }}" style="max-width: 280px;">
+                                        <img id="about_preview_img" src="{{ !empty(old('image', $page->image ?? '')) ? (str_starts_with(old('image', $page->image ?? ''), 'http') ? old('image', $page->image ?? '') : asset(old('image', $page->image ?? ''))) : '' }}" alt="Preview" style="max-height: 180px; object-fit: contain;" class="img-fluid rounded-1">
                                     </div>
                                 </div>
                                 <div class="mb-3">

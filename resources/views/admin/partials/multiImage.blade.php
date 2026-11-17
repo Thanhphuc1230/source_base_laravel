@@ -1,9 +1,9 @@
 <div class="media-detail-uploader">
-    <input type="file" id="imageDetailFileInput" name="image_detail[]" multiple accept="image/*,video/mp4,video/webm,video/quicktime" class="d-none">
-    <input type="hidden" id="selected_detail_images_input" name="selected_detail_images" value="[]">
+    <input type="file" id="imageDetailFileInput" name="image_detail[]" multiple accept="image/*,video/mp4,video/webm,video/quicktime" class="d-none @error('image_detail') is-invalid @enderror @error('image_detail.*') is-invalid @enderror">
+    <input type="hidden" id="selected_detail_images_input" name="selected_detail_images" value="{{ old('selected_detail_images', '[]') }}">
 
     <!-- Action Toolbar (Rule 13: 38px controls) -->
-    <div id="multi-image-drop-area" class="border border-2 border-dashed p-4 text-center bg-light transition-all mb-3" style="cursor: pointer; border-color: #cbd5e1 !important; border-radius: 8px;">
+    <div id="multi-image-drop-area" class="border border-2 border-dashed p-4 text-center bg-light transition-all mb-3 {{ $errors->has('image_detail') || $errors->has('image_detail.*') || $errors->has('selected_detail_images') ? 'border-danger bg-danger-subtle bg-opacity-25' : '' }}" style="cursor: pointer; border-color: {{ $errors->has('image_detail') || $errors->has('image_detail.*') ? '#dc3545' : '#cbd5e1' }} !important; border-radius: 8px;">
         <div class="py-2">
             <div class="mb-2">
                 <i class="ri-folder-upload-line text-primary" style="font-size: 2.2rem;"></i>
@@ -22,6 +22,16 @@
             </div>
         </div>
     </div>
+
+    @error('image_detail')
+        <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+    @enderror
+    @error('image_detail.*')
+        <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+    @enderror
+    @error('selected_detail_images')
+        <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+    @enderror
 
     <!-- Container for freshly selected files preview -->
     <div id="new-images-preview-grid" class="row g-2 mt-2" style="display: none;"></div>
@@ -130,9 +140,36 @@ function syncStagedLibraryMedia() {
     const dropArea = document.getElementById('multi-image-drop-area');
     const fileInput = document.getElementById('imageDetailFileInput');
     const previewGrid = document.getElementById('new-images-preview-grid');
+    const hiddenInput = document.getElementById('selected_detail_images_input');
     
     // Manage staged files from PC via DataTransfer
     let dt = new DataTransfer();
+
+    // Khôi phục media đã chọn từ old('selected_detail_images')
+    if (hiddenInput && hiddenInput.value) {
+        try {
+            const oldPaths = JSON.parse(hiddenInput.value);
+            if (Array.isArray(oldPaths) && oldPaths.length > 0) {
+                oldPaths.forEach(path => {
+                    if (path && typeof path === 'string') {
+                        const fileName = path.split('/').pop();
+                        const isVid = /\.(mp4|webm|mov|ogg)$/i.test(path);
+                        const url = path.startsWith('http') ? path : '/' + path.replace(/^\/+/, '');
+                        stagedLibraryMedia.push({
+                            path: path,
+                            url: url,
+                            name: fileName,
+                            is_video: isVid,
+                            extension: fileName.split('.').pop()
+                        });
+                    }
+                });
+                renderCombinedPreview();
+            }
+        } catch (e) {
+            console.error('Lỗi khi khôi phục old selected_detail_images:', e);
+        }
+    }
 
     if (!dropArea || !fileInput || !previewGrid) return;
 

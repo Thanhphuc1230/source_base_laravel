@@ -20,6 +20,8 @@
             </div>
             <!-- end page title -->
 
+            @include('admin.partials.error-banner')
+
             <form action="{{ route('admin.user.' . ($action == 'create' ? 'store' : 'update'), ['uuid' => $user->uuid ?? '']) }}"
                 method="POST" enctype="multipart/form-data">
                 @csrf
@@ -44,7 +46,7 @@
                                                 value="{{ old('fullname', $user->fullname ?? '') }}"
                                                 placeholder="Nhập họ và tên" required>
                                             @error('fullname')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -56,7 +58,7 @@
                                                 value="{{ old('username', $user->username ?? '') }}"
                                                 placeholder="Nhập tên đăng nhập" required>
                                             @error('username')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -71,7 +73,7 @@
                                                 value="{{ old('email', $user->email ?? '') }}"
                                                 placeholder="Nhập email" required>
                                             @error('email')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -83,7 +85,7 @@
                                                 value="{{ old('phone', $user->phone ?? '') }}"
                                                 placeholder="0xxxxxxxxx hoặc +84xxxxxxxxx">
                                             @error('phone')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -98,7 +100,7 @@
                                                 class="form-control @error('password') is-invalid @enderror" name="password"
                                                 placeholder="Nhập mật khẩu" required>
                                             @error('password')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -109,7 +111,7 @@
                                                 class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation"
                                                 placeholder="Nhập lại mật khẩu" required>
                                             @error('password_confirmation')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -125,10 +127,9 @@
                                                 <option value="1" {{ old('level', $user->level ?? '') == 1 ? 'selected' : '' }}>Quản trị viên (Level 1)</option>
                                                 <option value="2" {{ old('level', $user->level ?? '') == 2 ? 'selected' : '' }}>Quản lý (Level 2)</option>
                                                 <option value="3" {{ old('level', $user->level ?? '') == 3 ? 'selected' : '' }}>Nhân viên (Level 3)</option>
-                                                <option value="4" {{ old('level', $user->level ?? '') == 4 ? 'selected' : '' }}>Người xem (Level 4)</option>
                                             </select>
                                             @error('level')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -137,11 +138,11 @@
                                             <label class="form-label fw-semibold" for="status">Trạng thái <span class="text-danger">*</span></label>
                                             <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>
                                                 <option value="">Chọn trạng thái</option>
-                                                <option value="1" {{ old('status', isset($user) ? (string)$user->status : '') === '1' ? 'selected' : '' }}>Hoạt động</option>
-                                                <option value="0" {{ old('status', isset($user) ? (string)$user->status : '') === '0' ? 'selected' : '' }}>Không hoạt động</option>
+                                                <option value="1" {{ old('status', isset($user) ? (string)$user->status : '1') === '1' ? 'selected' : '' }}>Hoạt động</option>
+                                                <option value="0" {{ old('status', isset($user) ? (string)$user->status : '1') === '0' ? 'selected' : '' }}>Không hoạt động</option>
                                             </select>
                                             @error('status')
-                                                <span class="text-danger small">{{ $message }}</span>
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
                                             @enderror
                                         </div>
                                     </div>
@@ -159,28 +160,33 @@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-header bg-light">
-                                <h5 class="card-title mb-0 text-dark">Phân quyền vai trò</h5>
+                                <h5 class="card-title mb-0 text-dark">Phân quyền chức vụ</h5>
                             </div>
                             <div class="card-body">
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold mb-2">Chọn vai trò cho tài khoản này:</label>
-                                    <div class="roles-selection-list" style="max-height: 350px; overflow-y: auto;">
-                                        @foreach($roles as $role)
-                                        <div class="form-check form-check-primary mb-2 p-2 rounded border border-dashed transition-all hover-shadow-sm">
-                                            <input class="form-check-input ms-1 me-2" type="checkbox" name="roles[]" value="{{ $role->id }}"
-                                                id="role-{{ $role->id }}"
-                                                {{ in_array($role->id, old('roles', $userRoles ?? [])) ? 'checked' : '' }}>
-                                            <label class="form-check-label ps-4 fw-medium text-dark" for="role-{{ $role->id }}" style="cursor: pointer; width: 100%;">
-                                                {{ $role->display_name }}
-                                                <span class="d-block text-muted" style="font-size: 0.75em;">{{ $role->name }}</span>
+                                <p class="text-muted small">Chọn vai trò thích hợp để cấp quyền cho tài khoản người dùng này.</p>
+                                @error('roles')
+                                    <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+                                @enderror
+                                @if(isset($roles) && count($roles) > 0)
+                                    @php
+                                        $selectedRoles = old('roles', isset($user) ? $user->roles->pluck('id')->toArray() : []);
+                                    @endphp
+                                    @foreach($roles as $role)
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input @error('roles') is-invalid @enderror" type="checkbox" name="roles[]" 
+                                                   value="{{ $role->id }}" id="role_{{ $role->id }}"
+                                                   {{ in_array($role->id, $selectedRoles) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="role_{{ $role->id }}">
+                                                <span class="fw-semibold">{{ $role->name }}</span>
+                                                @if(!empty($role->description))
+                                                    <span class="d-block text-muted text-xs">{{ $role->description }}</span>
+                                                @endif
                                             </label>
                                         </div>
-                                        @endforeach
-                                    </div>
-                                    @error('roles')
-                                        <span class="text-danger small d-block mt-2">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                    @endforeach
+                                @else
+                                    <p class="text-muted fst-italic">Chưa có vai trò nào được thiết lập.</p>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -189,15 +195,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-<style>
-    .hover-shadow-sm:hover {
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        border-color: #adb5bd !important;
-    }
-    .transition-all {
-        transition: all 0.2s ease-in-out;
-    }
-</style>
-@endpush

@@ -19,6 +19,8 @@
                 </div>
             </div>
 
+            @include('admin.partials.error-banner')
+
             <form action="{{ route('admin.system.update', ['id' => $system->id_system]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
@@ -59,10 +61,12 @@
                                 <div class="row">
                                     @foreach(['phone' => 'Số điện thoại', 'email' => 'Email', 'email_alert' => 'Email nhận thông báo'] as $key => $label)
                                         <div class="col-md-4 mb-3">
-                                            <label for="{{ $key }}" class="form-label">{{ $label }}</label>
-                                            <input type="text" id="{{ $key }}" name="{{ $key }}" class="form-control"
+                                            <label for="{{ $key }}" class="form-label font-weight-semibold">{{ $label }}</label>
+                                            <input type="text" id="{{ $key }}" name="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
                                                 placeholder="{{ $label }}" value="{{ old($key, $system->$key) }}">
-                                            @error($key)<span class="text-danger">{{ $message }}</span>@enderror
+                                            @error($key)
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     @endforeach
                                 </div>
@@ -87,10 +91,12 @@
                                 <div class="row">
                                     @foreach(['facebook' => 'Facebook', 'twitter' => 'Twitter/X', 'youtube' => 'Youtube', 'instagram' => 'Instagram', 'zalo' => 'Zalo'] as $key => $label)
                                         <div class="col-md-4 mb-3">
-                                            <label for="{{ $key }}" class="form-label">{{ $label }}</label>
-                                            <input type="text" id="{{ $key }}" name="{{ $key }}" class="form-control"
+                                            <label for="{{ $key }}" class="form-label font-weight-semibold">{{ $label }}</label>
+                                            <input type="text" id="{{ $key }}" name="{{ $key }}" class="form-control @error($key) is-invalid @enderror"
                                                 placeholder="Đường dẫn {{ $label }}" value="{{ old($key, $system->$key) }}">
-                                            @error($key)<span class="text-danger">{{ $message }}</span>@enderror
+                                            @error($key)
+                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     @endforeach
                                 </div>
@@ -123,10 +129,13 @@
                                                     <span class="text-xs">Tải từ máy</span>
                                                 </button>
                                             </div>
-                                            <input type="file" id="{{ $key }}" name="{{ $key }}" class="d-none" onchange="if(this.files[0]){ document.getElementById('{{ $key }}_preview').src = URL.createObjectURL(this.files[0]); document.getElementById('{{ $key }}_box').classList.remove('d-none'); }">
-                                            <input type="hidden" id="{{ $key }}_hidden" name="{{ $key }}" value="{{ $system->$key ?? '' }}">
-                                            <div id="{{ $key }}_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty($system->$key) ? 'd-none' : '' }}">
-                                                <img id="{{ $key }}_preview" src="{{ !empty($system->$key) ? asset($system->$key) : '' }}" alt="{{ $key }}" style="max-height: 80px; max-width: {{ $config['width'] }}; object-fit: contain;">
+                                            <input type="file" id="{{ $key }}" name="{{ $key }}" class="d-none @error($key) is-invalid @enderror" onchange="if(this.files[0]){ document.getElementById('{{ $key }}_preview').src = URL.createObjectURL(this.files[0]); document.getElementById('{{ $key }}_box').classList.remove('d-none'); }">
+                                            <input type="hidden" id="{{ $key }}_hidden" name="{{ $key }}" value="{{ old($key, $system->$key ?? '') }}">
+                                            @error($key)
+                                                <div class="invalid-feedback d-block fw-semibold mb-2">{{ $message }}</div>
+                                            @enderror
+                                            <div id="{{ $key }}_box" class="mt-2 p-2 border rounded bg-light d-inline-block {{ empty(old($key, $system->$key ?? '')) ? 'd-none' : '' }} {{ $errors->has($key) ? 'border-danger' : '' }}">
+                                                <img id="{{ $key }}_preview" src="{{ !empty(old($key, $system->$key ?? '')) ? (str_starts_with(old($key, $system->$key ?? ''), 'http') ? old($key, $system->$key ?? '') : asset(old($key, $system->$key ?? ''))) : '' }}" alt="{{ $key }}" style="max-height: 80px; max-width: {{ $config['width'] }}; object-fit: contain;">
                                             </div>
                                             @error($key)<span class="text-danger small d-block">{{ $message }}</span>@enderror
                                         </div>

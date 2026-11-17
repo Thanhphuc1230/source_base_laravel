@@ -23,6 +23,8 @@
             </div>
             <!-- end page title -->
 
+            @include('admin.partials.error-banner')
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card">
