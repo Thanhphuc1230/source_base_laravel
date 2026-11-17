@@ -1,0 +1,10 @@
+.git
+.agents
+.github
+node_modules
+vendor
+.env
+.env.*
+tests
+*.md
+docker-compose*.yml
