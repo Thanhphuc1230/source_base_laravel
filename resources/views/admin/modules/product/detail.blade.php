@@ -294,11 +294,11 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h5 class="card-title mb-0">Thương hiệu</h5>
+                                <h5 class="card-title mb-0">Thương hiệu sản phẩm</h5>
                             </div>
                             <div class="card-body">
                                 <select class="form-select @error('brand_id') is-invalid @enderror" id="choices-brand-input" name="brand_id">
-                                    <option value="">-- Chọn thương hiệu --</option>
+                                    <option value="">-- Chọn thương hiệu sản phẩm --</option>
                                     @if (isset($brands))
                                         @foreach ($brands as $b)
                                             <option value="{{ $b->id_brand }}"

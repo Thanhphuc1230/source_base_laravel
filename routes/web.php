@@ -33,6 +33,7 @@ Route::prefix('admin')
         require __DIR__.'/admin/project.php';
         require __DIR__.'/admin/slider.php';
         require __DIR__.'/admin/brand.php';
+        require __DIR__.'/admin/partner.php';
         require __DIR__.'/admin/feedback.php';
         require __DIR__.'/admin/feature.php';
         require __DIR__.'/admin/menu.php';

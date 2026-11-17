@@ -2,74 +2,85 @@
 
 namespace Database\Seeders;
 
+use App\Models\CateNew;
 use App\Models\News;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class NewsSeeder extends Seeder
 {
+    /**
+     * Run the database seeds for Interior News & Articles.
+     */
     public function run(): void
     {
+        // Nếu đã có bài viết tin tức thì không tạo lại
+        if (News::query()->exists()) {
+            return;
+        }
+
         $newsRepo = app(\App\Repositories\Interfaces\NewsRepositoryInterface::class);
-        $downloader = app(\App\Services\DemoImageDownloaderService::class);
+        $categoryId = CateNew::value('id_cate_new') ?? 1;
 
         $articles = [
             [
-                'name_vn' => 'Nghệ Thuật Chế Tác Đồng Hồ Cơ Khí Thụy Sĩ - Đỉnh Cao Của Sự Tinh Xảo',
-                'name_en' => 'The Art of Swiss Mechanical Watchmaking - Pinnacle of Precision',
-                'keyword' => 'swiss watchmaker movement',
-                'intro_vn' => 'Hành trình hàng trăm năm lịch sử đằng sau những cỗ máy thời gian triệu đô được chế tác thủ công.',
-                'intro_en' => 'Centuries of heritage and craftsmanship behind million-dollar handcrafted timepieces.',
-                'content_vn' => '<p>Mỗi chiếc đồng hồ Thụy Sĩ là một tác phẩm nghệ thuật phức tạp bao gồm hàng trăm chi tiết siêu nhỏ được mài giũa, đánh bóng và lắp ráp hoàn toàn thủ công bởi các bậc thầy nghệ nhân hàng đầu vùng Thung lũng Joux.</p>',
-                'content_en' => '<p>Every Swiss timepiece is an intricate work of art comprising hundreds of microscopic components, hand-finished and assembled by master horologists in the Vallée de Joux.</p>',
-                'category_id' => 1,
+                'name_vn' => 'Xu Hướng Thiết Kế Nội Thất Hiện Đại Sang Trọng (Modern Luxury) Năm 2026',
+                'name_en' => 'Modern Luxury Interior Design Trends for 2026',
+                'slug_vn' => 'xu-huong-thiet-ke-noi-that-hien-dai-sang-trong-2026',
+                'intro_vn' => 'Khám phá sự giao thoa tinh tế giữa vật liệu đá tự nhiên, kim loại mạ PVD và gỗ óc chó kiến tạo không gian sống đỉnh cao.',
+                'intro_en' => 'Explore the sophisticated harmony of natural stone, PVD metallic accents and rich walnut wood.',
+                'content_vn' => '<p>Phong cách Modern Luxury năm 2026 tập trung vào trải nghiệm cảm xúc và sự tối giản tinh tế. Không gian rộng mở, trần cao kết hợp ánh sáng hắt gián tiếp và những món đồ nội thất may đo theo kích thước riêng tạo nên đẳng cấp độc bản cho gia chủ.</p>',
+                'content_en' => '<p>Modern Luxury emphasizes emotional wellbeing and refined minimalism. Open layouts, high ceilings paired with indirect ambient lighting create unmatched elegance.</p>',
+                'keyword_vn' => 'xu huong noi that 2026, modern luxury, thiet ke noi that cao cap',
+                'keyword_en' => 'interior trends 2026, modern luxury, luxury interior design',
+                'image_vn' => 'uploads/demo/news_interior_1.webp',
+                'image_en' => 'uploads/demo/news_interior_1.webp',
+                'category_id' => $categoryId,
+                'status' => true,
+                'hot' => true,
+                'stt' => 1,
             ],
             [
-                'name_vn' => 'Top 5 Chiếc Đồng Hồ Xa Xỉ Được Săn Đón Nhất Mọi Thời Đại',
-                'name_en' => 'Top 5 Most Coveted Luxury Watches of All Time',
-                'keyword' => 'luxury watch collection rolex patek',
-                'intro_vn' => 'Khám phá những cái tên huyền thoại giữ giá và tăng trưởng vượt bậc trên thị trường sưu tầm quốc tế.',
-                'intro_en' => 'Discover legendary timepieces that retain and appreciate exponentially in value.',
-                'content_vn' => '<p>Từ Patek Philippe Nautilus, Rolex Daytona đến Audemars Piguet Royal Oak - đây không chỉ là phụ kiện thời trang mà còn là tài sản tích sản đẳng cấp của giới siêu giàu toàn cầu.</p>',
-                'content_en' => '<p>From Patek Philippe Nautilus to Rolex Daytona and Audemars Piguet Royal Oak - these are not merely accessories, but prestigious alternative investment assets.</p>',
-                'category_id' => 1,
+                'name_vn' => 'Kinh Nghiệm Chọn Gỗ Tự Nhiên & Gỗ Công Nghiệp An Cường Chuẩn Bền Đẹp',
+                'name_en' => 'Essential Guide to Choosing Solid Wood vs An Cuong Engineered Wood',
+                'slug_vn' => 'kinh-nghiem-chon-go-tu-nhien-va-go-an-cuong',
+                'intro_vn' => 'So sánh chi tiết ưu nhược điểm, độ bền và mức chi phí giữa gỗ sồi, gỗ óc chó và gỗ MDF lõi xanh chống ẩm.',
+                'intro_en' => 'Detailed comparison on durability, aesthetics and cost efficiency between solid oak, walnut and MDF.',
+                'content_vn' => '<p>Gỗ tự nhiên mang vẻ đẹp độc bản của các đường vân và độ bền hàng chục năm, rất thích hợp cho sofa, bàn ăn và giường ngủ. Trong khi đó, gỗ công nghiệp MDF chống ẩm An Cường phủ Melamine hoặc Acrylic lại là lựa chọn số 1 cho hệ tủ bếp, tủ quần áo phẳng hiện đại với chi phí tối ưu.</p>',
+                'content_en' => '<p>Solid wood provides organic beauty and generational longevity ideal for dining sets and beds. Moisture-resistant MDF with Melamine is the premier choice for modern built-in cabinetry.</p>',
+                'keyword_vn' => 'go an cuong, go soi nga, go oc cho, kinh nghiem lam noi that',
+                'keyword_en' => 'an cuong wood, solid oak, walnut wood, furniture materials',
+                'image_vn' => 'uploads/demo/news_interior_2.webp',
+                'image_en' => 'uploads/demo/news_interior_2.webp',
+                'category_id' => $categoryId,
+                'status' => true,
+                'hot' => true,
+                'stt' => 2,
             ],
             [
-                'name_vn' => 'Hướng Dẫn Sử Dụng & Bảo Quản Đồng Hồ Cơ Automatic Đúng Cách',
-                'name_en' => 'Ultimate Guide to Caring & Maintaining Automatic Watches',
-                'keyword' => 'automatic watch winder leather',
-                'intro_vn' => 'Những lưu ý quan trọng về cách lên cót, tránh nhiễm từ và bảo dưỡng định kỳ giúp đồng hồ luôn bền đẹp.',
-                'intro_en' => 'Essential tips on winding, anti-magnetism and regular servicing to keep your timepiece pristine.',
-                'content_vn' => '<p>Đồng hồ cơ cần được đeo hoặc đặt trong hộp xoay tự động (watch winder) để giữ cho dầu bôi trơn luôn hoạt động trơn tru. Tránh đặt đồng hồ gần loa thùng, tủ lạnh hoặc máy tính để chống nhiễm từ trường.</p>',
-                'content_en' => '<p>Mechanical watches need regular winding or storage in a watch winder. Keep away from high magnetic sources such as speakers and electronic devices.</p>',
-                'category_id' => 1,
+                'name_vn' => 'Bí Quyết Phối Màu & Bố Trí Ánh Sáng Cho Phòng Khách Rộng Rãi, Sang Trọng',
+                'name_en' => 'Secrets to Color Palette & Architectural Lighting for Living Rooms',
+                'slug_vn' => 'bi-quyet-phoi-mau-va-anh-sang-phong-khach',
+                'intro_vn' => 'Áp dụng quy tắc màu 60-30-10 và hệ thống chiếu sáng 3 lớp giúp không gian phòng khách bừng sáng và ấm cúng.',
+                'intro_en' => 'Applying the 60-30-10 color rule and 3-tier lighting architecture to elevate living rooms.',
+                'content_vn' => '<p>Ánh sáng là linh hồn của kiến trúc nội thất. Kết hợp hài hòa giữa ánh sáng tổng thể (ambient), ánh sáng chức năng (task) và ánh sáng điểm nhấn (accent) sẽ làm nổi bật kết cấu bề mặt của đá marble, da thật và từng đường vân gỗ.</p>',
+                'content_en' => '<p>Lighting is the soul of interior architecture. A balanced blend of ambient, task and accent lighting accentuates textures of marble, leather and fine wood grains.</p>',
+                'keyword_vn' => 'chieu sang noi that, phoi mau phong khach, anh sang noi that',
+                'keyword_en' => 'living room lighting, interior color palette, architecture light',
+                'image_vn' => 'uploads/demo/news_interior_3.webp',
+                'image_en' => 'uploads/demo/news_interior_3.webp',
+                'category_id' => $categoryId,
+                'status' => true,
+                'hot' => false,
+                'stt' => 3,
             ],
         ];
 
-        foreach ($articles as $idx => $art) {
-            $slugVn = Str::slug($art['name_vn']);
-            if (! News::where('slug_vn', $slugVn)->exists()) {
-                $imagePath = $downloader->fetchAndSaveImage($art['keyword'], 800, 500) ?? ('uploads/demo/news_' . ($idx + 1) . '.webp');
-
-                $newsRepo->createWithAutoSlug([
-                    'name_vn' => $art['name_vn'],
-                    'name_en' => $art['name_en'],
-                    'image_vn' => $imagePath,
-                    'image_en' => $imagePath,
-                    'intro_vn' => $art['intro_vn'],
-                    'intro_en' => $art['intro_en'],
-                    'content_vn' => $art['content_vn'],
-                    'content_en' => $art['content_en'],
-                    'category_id' => $art['category_id'],
-                    'status' => true,
-                    'stt' => $idx + 1,
-                    'keyword_vn' => 'tin tuc, dong ho, ' . $art['name_vn'],
-                    'keyword_en' => 'news, watch, ' . $art['name_en'],
-                    'description_vn' => $art['intro_vn'],
-                    'description_en' => $art['intro_en'],
-                    'uuid' => Str::uuid()->toString(),
-                ]);
+        foreach ($articles as $art) {
+            if (News::where('slug_vn', $art['slug_vn'])->exists()) {
+                continue;
             }
+            $newsRepo->createWithAutoSlug($art);
         }
     }
 }

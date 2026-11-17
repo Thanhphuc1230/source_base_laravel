@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 class BrandSeeder extends Seeder
 {
     /**
-     * Run the database seeds for Interior / Furniture Brands.
+     * Run the database seeds for Interior / Furniture Product Brands (Thương hiệu sản phẩm).
      */
     public function run(): void
     {
@@ -26,16 +26,6 @@ class BrandSeeder extends Seeder
                 'stt' => 1,
             ],
             [
-                'name_vn' => 'Gỗ An Cường',
-                'name_en' => 'An Cuong Wood',
-                'slug_vn' => 'an-cuong',
-                'slug_en' => 'an-cuong-wood',
-                'image_vn' => '',
-                'image_en' => '',
-                'status' => 1,
-                'stt' => 2,
-            ],
-            [
                 'name_vn' => 'BoConcept',
                 'name_en' => 'BoConcept Denmark',
                 'slug_vn' => 'boconcept',
@@ -43,7 +33,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 3,
+                'stt' => 2,
             ],
             [
                 'name_vn' => 'Ashley Furniture',
@@ -53,7 +43,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 4,
+                'stt' => 3,
             ],
             [
                 'name_vn' => 'Nội Thất Hòa Phát',
@@ -63,7 +53,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 5,
+                'stt' => 4,
             ],
             [
                 'name_vn' => 'Phố Xinh',
@@ -73,7 +63,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 6,
+                'stt' => 5,
             ],
             [
                 'name_vn' => 'Kims Full House',
@@ -83,17 +73,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 7,
-            ],
-            [
-                'name_vn' => 'Gỗ Minh Long',
-                'name_en' => 'Minh Long Wood',
-                'slug_vn' => 'minh-long',
-                'slug_en' => 'minh-long-wood',
-                'image_vn' => '',
-                'image_en' => '',
-                'status' => 1,
-                'stt' => 8,
+                'stt' => 6,
             ],
             [
                 'name_vn' => 'JYSK',
@@ -103,7 +83,7 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
-                'stt' => 9,
+                'stt' => 7,
             ],
             [
                 'name_vn' => 'AConcept',
@@ -113,11 +93,31 @@ class BrandSeeder extends Seeder
                 'image_vn' => '',
                 'image_en' => '',
                 'status' => 1,
+                'stt' => 8,
+            ],
+            [
+                'name_vn' => 'B&B Italia',
+                'name_en' => 'B&B Italia Luxury Furniture',
+                'slug_vn' => 'bb-italia',
+                'slug_en' => 'bb-italia-luxury',
+                'image_vn' => '',
+                'image_en' => '',
+                'status' => 1,
+                'stt' => 9,
+            ],
+            [
+                'name_vn' => 'Poliform',
+                'name_en' => 'Poliform Contemporary Living',
+                'slug_vn' => 'poliform',
+                'slug_en' => 'poliform-contemporary',
+                'image_vn' => '',
+                'image_en' => '',
+                'status' => 1,
                 'stt' => 10,
             ],
         ];
 
-        // Xóa các thương hiệu cũ (đồng hồ) không phù hợp
+        // Xóa hoàn toàn các thương hiệu cũ (Rolex, Patek Philippe, v.v.)
         Brand::query()->delete();
 
         $createdBrands = [];
@@ -126,9 +126,12 @@ class BrandSeeder extends Seeder
             $createdBrands[] = $created;
         }
 
-        // Cập nhật lại brand_id cho các sản phẩm hiện có nếu cần
+        // Cập nhật lại brand_id cho các sản phẩm nội thất hiện có
         if (!empty($createdBrands)) {
-            $brandIds = array_column($createdBrands, 'id_brand');
+            $brandIds = array_map(function ($b) {
+                return $b->id_brand;
+            }, $createdBrands);
+
             $products = Product::all();
             foreach ($products as $index => $prod) {
                 $assignedBrandId = $brandIds[$index % count($brandIds)];

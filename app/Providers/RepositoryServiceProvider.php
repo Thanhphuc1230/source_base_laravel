@@ -9,6 +9,7 @@ use App\Repositories\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 use App\Repositories\Eloquent\AboutRepository;
+use App\Repositories\Eloquent\PartnerRepository;
 use App\Repositories\Eloquent\BrandRepository;
 use App\Repositories\Eloquent\GalleryRepository;
 use App\Repositories\Eloquent\CateNewRepository;
@@ -36,6 +37,7 @@ use App\Repositories\Eloquent\ActivityLogRepository;
 use App\Repositories\Eloquent\DashboardRepository;
 use App\Repositories\Interfaces\AboutRepositoryInterface;
 use App\Repositories\Interfaces\SiteSettingRepositoryInterface;
+use App\Repositories\Interfaces\PartnerRepositoryInterface;
 use App\Repositories\Interfaces\BrandRepositoryInterface;
 use App\Repositories\Interfaces\GalleryRepositoryInterface;
 use App\Repositories\Interfaces\CateNewRepositoryInterface;
@@ -73,6 +75,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(AboutRepositoryInterface::class, AboutRepository::class);
+        $this->app->bind(PartnerRepositoryInterface::class, PartnerRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, BrandRepository::class);
         $this->app->bind(FeatureRepositoryInterface::class, FeatureRepository::class);
         $this->app->bind(GalleryRepositoryInterface::class, GalleryRepository::class);

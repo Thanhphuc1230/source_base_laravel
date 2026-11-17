@@ -13,6 +13,11 @@ class NewsSettingSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có cấu hình tin tức thì không tạo lại
+        if (NewsSetting::query()->exists()) {
+            return;
+        }
+
         $settings = [
             [
                 'key' => 'news_pagination',

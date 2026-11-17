@@ -367,37 +367,4 @@
         });
     });
 </script>
-<style>
-    .role-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-    }
-    .role-card.border-primary {
-        background-color: rgba(37, 64, 143, 0.03) !important;
-    }
-    .hover-shadow-sm:hover {
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        border-color: #adb5bd !important;
-    }
-    .form-check-success .form-check-input:checked {
-        background-color: #0ab39c;
-        border-color: #0ab39c;
-    }
-    .text-success-light {
-        color: #0ab39c !important;
-    }
-    .bg-primary-subtle-light {
-        background-color: rgba(37, 64, 143, 0.03) !important;
-        border-color: #25408f !important;
-    }
-    .transition-all {
-        transition: all 0.2s ease-in-out;
-    }
-    .permission-group-row td {
-        padding: 0.75rem;
-    }
-    .table > :not(caption) > * > * {
-        padding: 0.75rem;
-    }
-</style>
 @endpush

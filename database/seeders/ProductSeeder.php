@@ -2,166 +2,180 @@
 
 namespace Database\Seeders;
 
+use App\Models\CateProduct;
+use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
 {
+    /**
+     * Run the database seeds for Furniture Products.
+     */
     public function run(): void
     {
+        // Nếu đã có sản phẩm thì không ghi đè dữ liệu cũ
+        if (Product::query()->exists()) {
+            return;
+        }
+
         $productRepo = app(\App\Repositories\Interfaces\ProductRepositoryInterface::class);
-        $downloader = app(\App\Services\DemoImageDownloaderService::class);
 
-        $watches = [
-            // Category 1: Đồng hồ Nam (Rolex, AP, Omega)
+        $catLiving = CateProduct::where('slug_vn', 'LIKE', '%phong-khach%')->value('id_cate_product') ?? 1;
+        $catBed = CateProduct::where('slug_vn', 'LIKE', '%phong-ngu%')->value('id_cate_product') ?? 2;
+        $catDining = CateProduct::where('slug_vn', 'LIKE', '%bep%')->orWhere('slug_vn', 'LIKE', '%ban-an%')->value('id_cate_product') ?? 3;
+        $catOffice = CateProduct::where('slug_vn', 'LIKE', '%lam-viec%')->value('id_cate_product') ?? 4;
+        $catDecor = CateProduct::where('slug_vn', 'LIKE', '%decor%')->value('id_cate_product') ?? 5;
+
+        $brand1 = Brand::value('id_brand') ?? 1;
+        $brand2 = Brand::skip(1)->value('id_brand') ?? $brand1;
+        $brand3 = Brand::skip(2)->value('id_brand') ?? $brand1;
+
+        $products = [
+            // 1. Sofa Văng Da Bò Ý
             [
-                'name_vn' => 'Rolex Submariner Date 41mm Vàng Vàng 18k Mặt Đen',
-                'name_en' => 'Rolex Submariner Date 41mm 18k Yellow Gold Black Dial',
-                'intro_vn' => 'Tuyệt tác đồng hồ lặn biểu tượng với vỏ vàng vàng 18k nguyên khối và vành Cerachrom đen sang trọng.',
-                'intro_en' => 'The ultimate reference in diving watches, crafted in solid 18k yellow gold with black Cerachrom bezel.',
-                'price' => 950000000,
-                'price_old' => 1050000000,
-                'content_vn' => '<p>Rolex Submariner Date là biểu tượng vĩnh cửu của sự đẳng cấp và chính xác. Được chế tác từ vàng vàng 18k nguyên khối, trang bị bộ máy Calibre 3235 thế hệ mới với khả năng dự trữ năng lượng 70 giờ và khả năng chống nước 300m.</p>',
-                'content_en' => '<p>The Rolex Submariner Date is an enduring icon of prestige and precision. Crafted in solid 18k yellow gold, powered by the new-generation Calibre 3235 with 70-hour power reserve and 300m water resistance.</p>',
-                'keyword' => 'rolex watch gold',
-                'category_id' => 1,
-                'brand_id' => 1,
+                'name_vn' => 'Sofa Văng Da Bò Ý Cao Cấp Monaco',
+                'name_en' => 'Monaco Luxury Italian Leather Sofa',
+                'slug_vn' => 'sofa-vang-da-bo-y-cao-cap-monaco',
+                'intro_vn' => 'Thiết kế chuẩn phong cách Bắc Âu hiện đại, bọc da bò thật nhập khẩu Ý mềm mịn và đệm mút D40 êm ái.',
+                'intro_en' => 'Modern Scandinavian elegance upholstered in genuine Italian leather with plush D40 high-density foam.',
+                'price' => 28500000,
+                'price_old' => 32000000,
+                'quantity' => 20,
+                'content_vn' => '<p>Sofa Văng Da Bò Monaco là sự kết tinh giữa tay nghề thủ công điêu luyện và chất liệu da bò tự nhiên cao cấp từ Ý. Khung gỗ sồi đã qua tẩm sấy chống mối mọt cong vênh, hệ lò xo túi độc lập mang lại độ đàn hồi tối đa và sự thư giãn tuyệt đối cho gia chủ.</p>',
+                'content_en' => '<p>Monaco Leather Sofa exemplifies masterful craftsmanship paired with authentic Italian full-grain leather. Built on kiln-dried solid oak frame with pocket coil suspension for ultimate comfort.</p>',
+                'keyword_vn' => 'sofa da y, sofa vang phong khach, sofa cao cap',
+                'keyword_en' => 'italian leather sofa, modern sofa, living room furniture',
+                'category_id' => $catLiving,
+                'brand_id' => $brand1,
+                'image_vn' => 'uploads/demo/sofa_monaco.webp',
+                'image_en' => 'uploads/demo/sofa_monaco.webp',
                 'hot' => true,
+                'home' => true,
+                'status' => true,
+                'stt' => 1,
             ],
+            // 2. Giường Ngủ Master Gỗ Sồi
             [
-                'name_vn' => 'Patek Philippe Nautilus 5711/1R Vàng Hồng 18k',
-                'name_en' => 'Patek Philippe Nautilus 5711/1R 18k Rose Gold',
-                'intro_vn' => 'Thiết kế huyền thoại bát giác bo tròn thanh lịch bậc nhất thế giới thời gian cao cấp.',
-                'intro_en' => 'The legendary rounded octagonal bezel design representing the pinnacle of luxury sports watches.',
-                'price' => 2850000000,
-                'price_old' => 3100000000,
-                'content_vn' => '<p>Patek Philippe Nautilus 5711/1R là đỉnh cao của sự thèm muốn từ giới mộ điệu. Vỏ và dây đeo vàng hồng 18k hoàn thiện chải xước xen kẽ đánh bóng hoàn hảo cùng mặt số nâu dập nổi ngang đặc trưng.</p>',
-                'content_en' => '<p>Patek Philippe Nautilus 5711/1R is the pinnacle of haute horlogerie desire. 18k rose gold case and bracelet with alternating satin and polished finishes paired with a signature horizontal embossed brown dial.</p>',
-                'keyword' => 'patek philippe nautilus watch',
-                'category_id' => 1,
-                'brand_id' => 2,
+                'name_vn' => 'Giường Ngủ Master Gỗ Sồi Nga Tự Nhiên Scandinavia',
+                'name_en' => 'Scandinavia Master Solid Oak Bed',
+                'slug_vn' => 'giuong-ngu-master-go-soi-nga-scandinavia',
+                'intro_vn' => 'Gỗ sồi Nga nguyên khối tuyển chọn vân tự nhiên tuyệt đẹp, đầu giường bọc da Microfiber thanh lịch.',
+                'intro_en' => 'Handcrafted from solid Russian white oak featuring natural grain patterns and upholstered headboard.',
+                'price' => 22000000,
+                'price_old' => 25500000,
+                'quantity' => 15,
+                'content_vn' => '<p>Giường ngủ Master Scandinavia được gia công 100% từ gỗ sồi Nga tự nhiên loại 1. Kết cấu mộng âm dương truyền thống chịu tải trọng tới 800kg. Đầu giường bọc đệm da cao cấp giúp tựa lưng đọc sách thoải mái mỗi tối.</p>',
+                'content_en' => '<p>Scandinavia Master Bed is crafted from 100% natural grade-A Russian white oak. Mortise and tenon joinery supports up to 800kg, paired with a luxurious padded headboard for reading comfort.</p>',
+                'keyword_vn' => 'giuong ngu go soi, giuong master, giuong ngu hien dai',
+                'keyword_en' => 'solid oak bed, master bedroom bed, modern wooden bed',
+                'category_id' => $catBed,
+                'brand_id' => $brand2,
+                'image_vn' => 'uploads/demo/bed_scandinavia.webp',
+                'image_en' => 'uploads/demo/bed_scandinavia.webp',
                 'hot' => true,
+                'home' => true,
+                'status' => true,
+                'stt' => 2,
             ],
+            // 3. Bộ Bàn Ăn 6 Ghế Ceramic
             [
-                'name_vn' => 'Audemars Piguet Royal Oak Chronograph 41mm Thép Không Gỉ',
-                'name_en' => 'Audemars Piguet Royal Oak Chronograph 41mm Stainless Steel',
-                'intro_vn' => 'Biểu tượng kinh điển của Gerald Genta với mặt số xanh Grande Tapisserie hút hồn.',
-                'intro_en' => 'Gerald Genta iconic masterpiece featuring the mesmerizing blue Grande Tapisserie dial.',
-                'price' => 1150000000,
-                'price_old' => 1250000000,
-                'content_vn' => '<p>Audemars Piguet Royal Oak Chronograph mang ngôn ngữ thiết kế góc cạnh mạnh mẽ với 8 đinh ốc lục giác bằng vàng trắng. Bộ máy Chronograph tự động Calibre 4401 in-house tích hợp cơ chế Flyback chuẩn xác.</p>',
-                'content_en' => '<p>Audemars Piguet Royal Oak Chronograph embodies bold architectural lines with 8 white gold hexagonal screws. In-house Calibre 4401 automatic chronograph movement with flyback function.</p>',
-                'keyword' => 'audemars piguet royal oak',
-                'category_id' => 1,
-                'brand_id' => 3,
+                'name_vn' => 'Bộ Bàn Ăn 6 Ghế Mặt Đá Ceramic Chống Xước Milano',
+                'name_en' => 'Milano 6-Seater Ceramic Dining Table Set',
+                'slug_vn' => 'bo-ban-an-6-ghe-mat-da-ceramic-milano',
+                'intro_vn' => 'Mặt đá phiến Ceramic nhiệt độ cao chống trầy xước, chịu nhiệt 1200 độ C cùng chân sắt sơn tĩnh điện vuốt côn.',
+                'intro_en' => 'Heat and scratch-resistant ceramic stone tabletop with elegant tapered black powder-coated steel legs.',
+                'price' => 18500000,
+                'price_old' => 21000000,
+                'quantity' => 25,
+                'content_vn' => '<p>Bộ bàn ăn Milano gồm 1 bàn mặt đá Ceramic kích thước 1m6 và 6 ghế ăn bọc da PU cao cấp. Mặt đá dày 12mm chịu lực va đập vượt trội, không thấm ố dầu mỡ, dễ dàng lau chùi chỉ với khăn ẩm.</p>',
+                'content_en' => '<p>Milano dining set includes a 1.6m ceramic tabletop table and 6 upholstered PU leather chairs. 12mm thick stone surface resists heat, scratches and oil stains effortlessly.</p>',
+                'keyword_vn' => 'ban an mat da, bo ban an 6 ghe, ban an ceramic',
+                'keyword_en' => 'ceramic dining table, 6 chair dining set, modern dining table',
+                'category_id' => $catDining,
+                'brand_id' => $brand3,
                 'hot' => true,
+                'home' => true,
+                'status' => true,
+                'stt' => 3,
             ],
+            // 4. Tủ Quần Áo Cánh Kính
             [
-                'name_vn' => 'Omega Speedmaster Moonwatch Professional Co-Axial Master Chronometer',
-                'name_en' => 'Omega Speedmaster Moonwatch Professional Co-Axial Master Chronometer',
-                'intro_vn' => 'Huyền thoại đồng hồ đầu tiên từng chinh phục mặt trăng cùng phi hành gia NASA.',
-                'intro_en' => 'The legendary timepiece that went to the Moon with NASA Apollo astronauts.',
-                'price' => 215000000,
-                'price_old' => 240000000,
-                'content_vn' => '<p>Omega Speedmaster Moonwatch trang bị bộ máy lên cót tay Calibre 3861 với công nghệ thoát đồng trục Co-Axial và chứng nhận Master Chronometer chống từ trường lên tới 15.000 Gauss.</p>',
-                'content_en' => '<p>Omega Speedmaster Moonwatch powered by manual-winding Calibre 3861 with Co-Axial escapement and Master Chronometer certification resistant to 15,000 Gauss magnetic fields.</p>',
-                'keyword' => 'omega speedmaster watch',
-                'category_id' => 1,
-                'brand_id' => 4,
+                'name_vn' => 'Tủ Quần Áo Cánh Kính Cao Cấp Hiện Đại Grand View',
+                'name_en' => 'Grand View Luxury Glass Door Wardrobe',
+                'slug_vn' => 'tu-quan-ao-canh-kinh-hien-dai-grand-view',
+                'intro_vn' => 'Khung nhôm định hình mạ Anode xám khói, kính cường lực màu trà sang trọng tích hợp đèn LED cảm ứng.',
+                'intro_en' => 'Smoked anodized aluminum frames with tempered bronze glass and integrated smart sensor LED lighting.',
+                'price' => 35000000,
+                'price_old' => 39500000,
+                'quantity' => 10,
+                'content_vn' => '<p>Tủ áo cánh kính Grand View là điểm nhấn xa hoa cho phòng ngủ Master. Thùng tủ gỗ MDF chống ẩm An Cường phủ Melamine, hệ cánh kính cường lực 5mm viền nhôm siêu mảnh cùng ray trượt giảm chấn êm ái.</p>',
+                'content_en' => '<p>Grand View glass wardrobe brings boutique hotel luxury home. Moisture-resistant An Cuong MDF carcass, 5mm bronze tempered glass with ultra-slim aluminum profiles and soft-close hardware.</p>',
+                'keyword_vn' => 'tu quan ao canh kinh, tu ao led, tu ao hien dai',
+                'keyword_en' => 'glass wardrobe, luxury closet, modern wardrobe',
+                'category_id' => $catBed,
+                'brand_id' => $brand1,
+                'image_vn' => 'uploads/demo/wardrobe_glass.webp',
+                'image_en' => 'uploads/demo/wardrobe_glass.webp',
                 'hot' => false,
+                'home' => true,
+                'status' => true,
+                'stt' => 4,
             ],
-
-            // Category 2: Đồng hồ Nữ (Rolex Datejust, Cartier, Hublot)
+            // 5. Bàn Trà Đôi Mặt Đá Marble
             [
-                'name_vn' => 'Rolex Datejust 31 Nữ Vàng Trắng Đính Kim Cương Mặt Khảm Xà Cừ',
-                'name_en' => 'Rolex Datejust 31 Women Diamond Mother of Pearl Dial',
-                'intro_vn' => 'Tuyệt phẩm kiêu sa dành riêng cho phái đẹp với mặt số xà cừ tự nhiên và cọc số kim cương.',
-                'intro_en' => 'A dazzling jewel for ladies featuring natural mother-of-pearl dial and sparkling diamond hour markers.',
-                'price' => 480000000,
-                'price_old' => 530000000,
-                'content_vn' => '<p>Rolex Datejust 31 là hiện thân của vẻ đẹp vượt thời gian. Vành bezel nạm kim cương tinh xảo, kính Sapphire phóng đại Cyclops tại góc 3 giờ và dây đeo Jubilee 5 mắt duyên dáng.</p>',
-                'content_en' => '<p>Rolex Datejust 31 is the epitome of classic feminine elegance. Brilliant diamond-set bezel, Cyclops magnifying lens over the date at 3 o’clock, and supple 5-link Jubilee bracelet.</p>',
-                'keyword' => 'rolex datejust diamond watch',
-                'category_id' => 2,
-                'brand_id' => 1,
-                'hot' => true,
-            ],
-            [
-                'name_vn' => 'Cartier Santos-Dumont Nữ Vàng Hồng 18k Dây Da Cá Sấu',
-                'name_en' => 'Cartier Santos-Dumont Women 18k Rose Gold Alligator Strap',
-                'intro_vn' => 'Nét thanh lịch Paris hoa lệ với núm vặn đính đá Sapphire cabochon xanh thẳm.',
-                'intro_en' => 'Parisian refined elegance featuring beaded crown set with a blue sapphire cabochon.',
-                'price' => 320000000,
-                'price_old' => 360000000,
-                'content_vn' => '<p>Cartier Santos-Dumont tái hiện phong cách Art Deco quý phái với các chữ số La Mã thanh mảnh và kim thép xanh hình thanh kiếm đặc trưng từ nhà kim hoàn hoàng gia Cartier.</p>',
-                'content_en' => '<p>Cartier Santos-Dumont brings aristocratic Art Deco styling with slender Roman numerals and blued-steel sword-shaped hands from the royal jeweler Cartier.</p>',
-                'keyword' => 'cartier watch luxury',
-                'category_id' => 2,
-                'brand_id' => 6,
+                'name_vn' => 'Bàn Trà Đôi Mặt Đá Marble Cẩm Thạch Khung Inox PVD',
+                'name_en' => 'Marble Dual Nesting Coffee Table with Gold PVD Frame',
+                'slug_vn' => 'ban-tra-doi-mat-da-marble-khung-inox-pvd',
+                'intro_vn' => 'Thiết kế lồng đôi thông minh tiết kiệm diện tích, mặt đá Marble vân mây tự nhiên và khung inox mạ vàng PVD.',
+                'intro_en' => 'Smart nesting double table with natural cloud-vein marble top and luxury gold PVD stainless steel frame.',
+                'price' => 8500000,
+                'price_old' => 9800000,
+                'quantity' => 30,
+                'content_vn' => '<p>Bàn trà đôi gồm 1 bàn lớn đường kính 70cm và 1 bàn nhỏ 50cm có thể lồng gọn gàng khi cần không gian sinh hoạt. Khung inox 304 xi mạ chân không PVD chống rỉ sét, bền màu trọn đời.</p>',
+                'content_en' => '<p>Includes 70cm large table and 50cm smaller nesting table. Heavy-duty 304 stainless steel with vacuum PVD titanium coating that never tarnishes or fades.</p>',
+                'keyword_vn' => 'ban tra doi, ban tra mat da, ban tra inox pvd',
+                'keyword_en' => 'nesting coffee table, marble coffee table, gold coffee table',
+                'category_id' => $catLiving,
+                'brand_id' => $brand2,
+                'image_vn' => 'uploads/demo/table_marble.webp',
+                'image_en' => 'uploads/demo/table_marble.webp',
                 'hot' => false,
+                'home' => true,
+                'status' => true,
+                'stt' => 5,
             ],
-
-            // Category 3: Đồng hồ cơ Automatic
+            // 6. Bàn Làm Việc Giám Đốc Gỗ Óc Chó
             [
-                'name_vn' => 'Hublot Big Bang Unico King Gold Ceramic 42mm',
-                'name_en' => 'Hublot Big Bang Unico King Gold Ceramic 42mm',
-                'intro_vn' => 'Triết lý nghệ thuật dung hợp (Art of Fusion) kết hợp chất liệu King Gold và Ceramic đen.',
-                'intro_en' => 'The Art of Fusion combining exclusive 18k King Gold and high-tech satin black ceramic.',
-                'price' => 780000000,
-                'price_old' => 850000000,
-                'content_vn' => '<p>Hublot Big Bang Unico trang bị bộ máy skeleton in-house HUB1280 với bánh xe cột (column wheel) lộ cơ hoàn hảo ở mặt trước. Dây cao su vân thể thao êm ái cùng chốt khóa bấm One-Click thông minh.</p>',
-                'content_en' => '<p>Hublot Big Bang Unico powered by in-house skeleton movement HUB1280 with dial-side visible column wheel. Structured lined black rubber strap with patented One-Click quick release system.</p>',
-                'keyword' => 'hublot big bang king gold',
-                'category_id' => 3,
-                'brand_id' => 5,
-                'hot' => true,
-            ],
-            [
-                'name_vn' => 'Rolex Cosmograph Daytona 40mm Mặt Gấu Trúc Panda',
-                'name_en' => 'Rolex Cosmograph Daytona 40mm Oystersteel Panda Dial',
-                'intro_vn' => 'Chiếc đồng hồ bấm giờ thể thao được săn đón nhất trong lịch sử ngành chế tác đồng hồ.',
-                'intro_en' => 'The most sought-after motorsport chronograph in the history of haute horlogerie.',
-                'price' => 890000000,
-                'price_old' => 980000000,
-                'content_vn' => '<p>Rolex Cosmograph Daytona chế tác từ thép Oystersteel siêu bền bỉ với vành Cerachrom đen khắc thang đo tốc độ tachymetric. Mặt số trắng tương phản với các vòng cung đen tạo nên diện mạo Panda trứ danh.</p>',
-                'content_en' => '<p>Rolex Cosmograph Daytona in robust Oystersteel with high-tech black Cerachrom tachymetric bezel. Crisp white dial contrasted by black subdial rings creating the famous Panda configuration.</p>',
-                'keyword' => 'rolex daytona panda watch',
-                'category_id' => 3,
-                'brand_id' => 1,
-                'hot' => true,
+                'name_vn' => 'Bàn Làm Việc Giám Đốc Gỗ Óc Chó Bắc Mỹ President',
+                'name_en' => 'President American Walnut Executive Desk',
+                'slug_vn' => 'ban-lam-viec-giam-doc-go-oc-cho-president',
+                'intro_vn' => 'Đẳng cấp lãnh đạo với gỗ óc chó Bắc Mỹ vân cuộn sóng tự nhiên, hộc tủ đa năng tích hợp khóa số thông minh.',
+                'intro_en' => 'Prestige executive desk in American black walnut with natural swirl grain and smart digital security drawers.',
+                'price' => 38000000,
+                'price_old' => 42000000,
+                'quantity' => 8,
+                'content_vn' => '<p>Bàn làm việc President dài 2m2 được chế tác công phu từ gỗ óc chó Bắc Mỹ nhập khẩu. Tích hợp sạc không dây, cổng kết nối ẩn và hệ ray trượt Hafele cao cấp.</p>',
+                'content_en' => '<p>Crafted in 2.2m length from imported North American walnut. Features integrated wireless charging pads and Hafele German soft-close runner systems.</p>',
+                'keyword_vn' => 'ban lam viec go oc cho, ban giam doc cao cap',
+                'keyword_en' => 'walnut executive desk, luxury office desk',
+                'category_id' => $catOffice,
+                'brand_id' => $brand3,
+                'image_vn' => 'uploads/demo/desk_walnut.webp',
+                'image_en' => 'uploads/demo/desk_walnut.webp',
+                'hot' => false,
+                'home' => false,
+                'status' => true,
+                'stt' => 6,
             ],
         ];
 
-        foreach ($watches as $idx => $item) {
-            $slugVn = Str::slug($item['name_vn']);
-            if (! Product::where('slug_vn', $slugVn)->exists()) {
-                $imagePath = $downloader->fetchAndSaveImage($item['keyword'], 800, 800) ?? ('uploads/demo/watch_' . ($idx + 1) . '.webp');
-
-                $productRepo->createWithAutoSlug([
-                    'name_vn' => $item['name_vn'],
-                    'name_en' => $item['name_en'],
-                    'intro_vn' => $item['intro_vn'],
-                    'intro_en' => $item['intro_en'],
-                    'price' => $item['price'],
-                    'price_old' => $item['price_old'],
-                    'content_vn' => $item['content_vn'],
-                    'content_en' => $item['content_en'],
-                    'image_vn' => $imagePath,
-                    'image_en' => $imagePath,
-                    'image_detail' => null,
-                    'status' => true,
-                    'hot' => $item['hot'],
-                    'stt' => $idx + 1,
-                    'keyword_vn' => 'dong ho cao cap, ' . $item['name_vn'],
-                    'keyword_en' => 'luxury watch, ' . $item['name_en'],
-                    'description_vn' => $item['intro_vn'],
-                    'description_en' => $item['intro_en'],
-                    'category_id' => $item['category_id'],
-                    'brand_id' => $item['brand_id'],
-                    'uuid' => Str::uuid()->toString(),
-                ]);
+        foreach ($products as $prod) {
+            if (Product::where('slug_vn', $prod['slug_vn'])->exists()) {
+                continue;
             }
+            $productRepo->createWithAutoSlug($prod);
         }
     }
 }

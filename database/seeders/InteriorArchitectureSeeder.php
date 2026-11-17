@@ -25,6 +25,11 @@ class InteriorArchitectureSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có dữ liệu sản phẩm hoặc bài viết thì không chạy lại để tránh ghi đè
+        if (Product::query()->exists()) {
+            return;
+        }
+
         Schema::disableForeignKeyConstraints();
 
         // =========================================================================

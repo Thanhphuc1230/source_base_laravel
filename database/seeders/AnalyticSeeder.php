@@ -13,6 +13,11 @@ class AnalyticSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có thống kê thì không tạo thêm
+        if (DB::table('tp_analytics')->exists()) {
+            return;
+        }
+
         $data = [];
         for ($i = 9; $i >= 0; $i--) {
             $date = Carbon::now()->subDays($i)->toDateString();

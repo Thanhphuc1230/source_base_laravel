@@ -14,6 +14,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có người dùng thì không tạo lại
+        if (User::query()->exists()) {
+            return;
+        }
+
         // Tạo Admin user
         $adminUser = User::firstOrCreate([
             'email' => 'admin@gmail.com',

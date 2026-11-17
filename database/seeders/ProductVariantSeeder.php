@@ -11,6 +11,11 @@ class ProductVariantSeeder extends Seeder
 {
     public function run(): void
     {
+        // Nếu đã có biến thể sản phẩm thì không tạo đè lại
+        if (ProductVariant::query()->exists()) {
+            return;
+        }
+
         // 1. Giường Ngủ Master
         $bed = Product::where('slug_vn', 'LIKE', '%giuong%')->orWhere('name_vn', 'LIKE', '%Giường%')->first();
         if ($bed) {

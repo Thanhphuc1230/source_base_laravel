@@ -9,57 +9,55 @@ use Illuminate\Support\Str;
 class SliderSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds for Sliders.
      */
     public function run(): void
     {
-        $downloader = app(\App\Services\DemoImageDownloaderService::class);
-
-        $slide1 = $downloader->fetchAndSaveImage('luxury watch rolex dark banner', 1920, 750) ?? 'uploads/demo/banner_1.webp';
-        $slide2 = $downloader->fetchAndSaveImage('luxury swiss watch patek banner', 1920, 750) ?? 'uploads/demo/banner_2.webp';
-        $slide3 = $downloader->fetchAndSaveImage('luxury gold watch time banner', 1920, 750) ?? 'uploads/demo/banner_3.webp';
+        // Nếu đã có slider trong CSDL thì không tạo lại
+        if (Slider::query()->exists()) {
+            return;
+        }
 
         $sliders = [
             [
-                'name_vn' => 'Bộ Sưu Tập Tuyệt Tác Thời Gian 2026',
-                'name_en' => 'Haute Horlogerie Timepiece Collection 2026',
-                'link' => '#',
+                'name_vn' => 'Kiệt Tác Không Gian Sống Đẳng Cấp 2026',
+                'name_en' => 'Luxury Living Space Masterpieces 2026',
+                'link' => '/san-pham',
                 'status' => 1,
-                'image_desktop_vn' => $slide1,
-                'image_desktop_en' => $slide1,
-                'image_mobile_vn' => $slide1,
-                'image_mobile_en' => $slide1,
+                'image_desktop_vn' => 'uploads/demo/interior_banner_1.webp',
+                'image_desktop_en' => 'uploads/demo/interior_banner_1.webp',
+                'image_mobile_vn' => 'uploads/demo/interior_banner_1.webp',
+                'image_mobile_en' => 'uploads/demo/interior_banner_1.webp',
                 'stt' => 1,
             ],
             [
-                'name_vn' => 'Đỉnh Cao Chế Tác Đồng Hồ Thụy Sĩ',
-                'name_en' => 'The Pinnacle of Swiss Watchmaking',
-                'link' => '#',
+                'name_vn' => 'Thiết Kế & Thi Công Nội Thất Trọn Gói Chuẩn Châu Âu',
+                'name_en' => 'European Standard Turnkey Interior Fit-Out',
+                'link' => '/gioi-thieu',
                 'status' => 1,
-                'image_desktop_vn' => $slide2,
-                'image_desktop_en' => $slide2,
-                'image_mobile_vn' => $slide2,
-                'image_mobile_en' => $slide2,
+                'image_desktop_vn' => 'uploads/demo/interior_banner_2.webp',
+                'image_desktop_en' => 'uploads/demo/interior_banner_2.webp',
+                'image_mobile_vn' => 'uploads/demo/interior_banner_2.webp',
+                'image_mobile_en' => 'uploads/demo/interior_banner_2.webp',
                 'stt' => 2,
             ],
             [
-                'name_vn' => 'Đặc Quyền Sở Hữu Phiên Bản Giới Hạn',
-                'name_en' => 'Exclusive Privilege for Limited Editions',
-                'link' => '#',
+                'name_vn' => 'Bộ Sưu Tập Sofa Da & Bàn Ăn Mặt Đá Ceramic Độc Bản',
+                'name_en' => 'Exclusive Italian Leather Sofa & Ceramic Dining Sets',
+                'link' => '/san-pham',
                 'status' => 1,
-                'image_desktop_vn' => $slide3,
-                'image_desktop_en' => $slide3,
-                'image_mobile_vn' => $slide3,
-                'image_mobile_en' => $slide3,
+                'image_desktop_vn' => 'uploads/demo/interior_banner_3.webp',
+                'image_desktop_en' => 'uploads/demo/interior_banner_3.webp',
+                'image_mobile_vn' => 'uploads/demo/interior_banner_3.webp',
+                'image_mobile_en' => 'uploads/demo/interior_banner_3.webp',
                 'stt' => 3,
             ],
         ];
 
-        foreach ($sliders as $slider) {
-            Slider::firstOrCreate(
-                ['name_vn' => $slider['name_vn']],
-                array_merge($slider, ['uuid' => Str::uuid()->toString()])
-            );
+        foreach ($sliders as $slide) {
+            Slider::create(array_merge($slide, [
+                'uuid' => Str::uuid()->toString()
+            ]));
         }
     }
 }

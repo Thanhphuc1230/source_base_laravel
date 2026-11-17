@@ -12,6 +12,11 @@ class MailConfigSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có cấu hình mail thì không tạo lại
+        if (MailConfig::query()->exists()) {
+            return;
+        }
+
         MailConfig::firstOrCreate(
             ['mailer' => 'smtp', 'host' => 'smtp.gmail.com'],
             [

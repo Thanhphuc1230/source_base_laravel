@@ -15,6 +15,11 @@ class MenuSeeder extends Seeder
      */
     public function run()
     {
+        // Nếu đã có menu thì không tạo lại
+        if (Menu::query()->exists()) {
+            return;
+        }
+
         $menus = [
             [
                 'name_vn' => 'Trang Chủ',

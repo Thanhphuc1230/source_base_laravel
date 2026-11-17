@@ -13,6 +13,11 @@ class ProductSettingSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có cấu hình sản phẩm thì không tạo lại
+        if (ProductSetting::query()->exists()) {
+            return;
+        }
+
         $settings = [
             [
                 'key' => 'products_pagination',

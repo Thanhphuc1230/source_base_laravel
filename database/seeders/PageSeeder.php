@@ -12,6 +12,11 @@ class PageSeeder extends Seeder
      */
     public function run()
     {
+        // Nếu đã có trang tĩnh thì không tạo lại
+        if (Page::query()->exists()) {
+            return;
+        }
+
         $pageRepo = app(\App\Repositories\Interfaces\PageRepositoryInterface::class);
 
         if (! Page::where('slug_vn', 'gioi-thieu')->exists()) {

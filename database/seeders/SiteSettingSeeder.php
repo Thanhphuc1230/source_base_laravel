@@ -9,6 +9,10 @@ class SiteSettingSeeder extends Seeder
 {
     public function run(): void
     {
+        if (\App\Models\SiteSetting::query()->exists()) {
+            return;
+        }
+
         // Hero Section
         \App\Models\SiteSetting::updateOrCreate(
             ['key' => 'hero_title'],

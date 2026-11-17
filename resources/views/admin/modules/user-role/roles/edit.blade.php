@@ -243,20 +243,4 @@
         });
     });
 </script>
-<style>
-    .hover-shadow-sm:hover {
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        border-color: #adb5bd !important;
-    }
-    .form-check-success .form-check-input:checked {
-        background-color: #0ab39c;
-        border-color: #0ab39c;
-    }
-    .permission-group-row td {
-        padding: 0.75rem;
-    }
-    .table > :not(caption) > * > * {
-        padding: 0.75rem;
-    }
-</style>
 @endpush

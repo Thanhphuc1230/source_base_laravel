@@ -21,36 +21,6 @@
     <link href="{{ asset('admin/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Remix Icon (local) -->
     <link href="{{ asset('admin/libs/remixicon/remixicon.css') }}" rel="stylesheet">
-    <!-- Remix Icon fallback: ensure class selectors use the remix font (helps if other CSS overrides) -->
-    <style>
-        /* Force remixicon classes to use RemixIcon font-family when available */
-        .ri, [class^="ri-"], [class*=" ri-"] {
-            font-family: 'RemixIcon' !important;
-            speak: none;
-            font-style: normal;
-            font-weight: normal;
-            font-variant: normal;
-            text-transform: none;
-            line-height: 1;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Validation UI Standards (Rule 04 & Admin Error Highlighting) */
-        textarea.is-invalid + .cke,
-        textarea.is-invalid + .tox-tinymce {
-            border: 1.5px solid #dc3545 !important;
-            border-radius: 4px;
-        }
-        .is-invalid-feedback {
-            display: block;
-            width: 100%;
-            margin-top: 0.25rem;
-            font-size: 0.875em;
-            color: #dc3545;
-            font-weight: 600;
-        }
-    </style>
     {{-- ckeditor --}}
     <script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
 

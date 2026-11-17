@@ -13,6 +13,11 @@ class MailTemplateSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có template mail thì không tạo lại
+        if (MailTemplate::query()->exists()) {
+            return;
+        }
+
         $templates = [
             [
                 'name' => 'Xác nhận đơn hàng',

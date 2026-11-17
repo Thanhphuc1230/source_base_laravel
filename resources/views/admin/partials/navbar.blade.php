@@ -58,9 +58,9 @@
                                     request()->routeIs('admin.about.*') ||
                                     request()->routeIs('admin.feature.*') ||
                                     request()->routeIs('admin.gallery.*') ||
-                                    request()->routeIs('admin.brand.*');
+                                    request()->routeIs('admin.partner.*');
                 @endphp
-                @hasAnyPermission(['slider.view', 'about.view', 'feature.view', 'gallery.view', 'brand.view'])
+                @hasAnyPermission(['slider.view', 'about.view', 'feature.view', 'gallery.view', 'partner.view', 'brand.view'])
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ $isHomeActive ? 'active' : '' }}" href="#sidebarHome" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ $isHomeActive ? 'true' : 'false' }}" aria-controls="sidebarHome">
@@ -101,13 +101,13 @@
                                 </a>
                             </li>
                             @endhasPermission
-                            @hasPermission('brand.view')
+                            @hasAnyPermission(['partner.view', 'brand.view'])
                             <li class="nav-item">
-                                <a href="{{ route('admin.brand.index') }}" class="nav-link {{ request()->routeIs('admin.brand.*') ? 'active' : '' }}">
-                                    {{ $isEn ? 'Brands' : 'Thương hiệu' }}
+                                <a href="{{ route('admin.partner.index') }}" class="nav-link {{ request()->routeIs('admin.partner.*') ? 'active' : '' }}">
+                                    {{ $isEn ? 'Partners' : 'Đối tác' }}
                                 </a>
                             </li>
-                            @endhasPermission
+                            @endhasAnyPermission
                         </ul>
                     </div>
                 </li>
@@ -144,7 +144,7 @@
                     </div>
                 </li>
                 @endhasAnyPermission
-                @hasAnyPermission(['cate_product.view', 'product.view'])
+                @hasAnyPermission(['cate_product.view', 'product.view', 'brand.view'])
                     <li class="nav-item">
                         <a class="nav-link menu-link" href="#sidebarProduct" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="sidebarProduct">
@@ -162,6 +162,12 @@
                                 <li class="nav-item">
                                     <a href="{{ route('admin.product.index') }}" class="nav-link"
                                         data-key="t-grid-js">{{ $isEn ? 'Items' : 'Bài viết' }}</a>
+                                </li>
+                                @endhasPermission
+                                @hasPermission('brand.view')
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.brand.index') }}" class="nav-link {{ request()->routeIs('admin.brand.*') ? 'active' : '' }}"
+                                        data-key="t-brand">{{ $isEn ? 'Brands' : 'Thương hiệu sản phẩm' }}</a>
                                 </li>
                                 @endhasPermission
                                 @hasPermission('order.view')

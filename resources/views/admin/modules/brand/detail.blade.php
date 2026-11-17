@@ -11,7 +11,7 @@
                         <h4 class="mb-sm-0">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }} {{ $nameItem }}</h4>
                         <div class="page-title-right">
                             <ol class="breadcrumb m-0">
-                                <li class="breadcrumb-item"><a href="{{ route('admin.' . $nameClass . '.index') }}">Đối tác</a></li>
+                                <li class="breadcrumb-item"><a href="{{ route('admin.' . $nameClass . '.index') }}">Thương hiệu sản phẩm</a></li>
                                 <li class="breadcrumb-item active">{{ $action == 'create' ? 'Thêm' : 'Chỉnh sửa' }}</li>
                             </ol>
                         </div>
@@ -31,7 +31,7 @@
                                 @include('admin.partials.localized-fields', [
                                     'model' => $page ?? null,
                                     'fields' => [
-                                        ['base' => 'name', 'label' => 'Tên đối tác', 'type' => 'text', 'col' => 'col-md-12']
+                                        ['base' => 'name', 'label' => 'Tên thương hiệu sản phẩm', 'type' => 'text', 'col' => 'col-md-12']
                                     ]
                                 ])
                             </div>
@@ -39,7 +39,7 @@
 
                         <div class="card shadow-sm border-0 mb-4">
                             <div class="card-header bg-light border-0 py-3">
-                                <h5 class="card-title mb-0 font-weight-bold">Logo đối tác</h5>
+                                <h5 class="card-title mb-0 font-weight-bold">Logo thương hiệu sản phẩm</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
@@ -49,7 +49,7 @@
                                             'imageFolder' => $imageFolder,
                                             'model' => $page ?? null,
                                             'base' => 'image',
-                                            'label' => 'Logo đối tác',
+                                            'label' => 'Logo thương hiệu sản phẩm',
                                             'dimensions' => '300x120 px (PNG/SVG tách nền)'
                                         ])
                                     @endforeach

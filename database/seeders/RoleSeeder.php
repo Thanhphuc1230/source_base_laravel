@@ -12,6 +12,11 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có vai trò thì không tạo lại
+        if (\App\Models\Role::query()->exists()) {
+            return;
+        }
+
         // Tạo các roles
         $adminRole = \App\Models\Role::firstOrCreate(
             ['name' => 'admin'],

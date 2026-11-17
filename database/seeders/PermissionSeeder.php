@@ -12,6 +12,11 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        // Nếu đã có quyền thì không tạo lại
+        if (\App\Models\Permission::query()->exists()) {
+            return;
+        }
+
         $permissions = [
             // Category Product permissions (Danh mục sản phẩm)
             [
@@ -143,29 +148,55 @@ class PermissionSeeder extends Seeder
                 'description' => 'Quyền xóa slider'
             ],
 
-            // Brand permissions (Đối tác)
+            // Brand permissions (Thương hiệu sản phẩm)
             [
                 'name' => 'brand.view',
-                'display_name' => 'Xem đối tác',
+                'display_name' => 'Xem thương hiệu sản phẩm',
                 'group_name' => 'brand',
-                'description' => 'Quyền xem danh sách đối tác'
+                'description' => 'Quyền xem danh sách thương hiệu sản phẩm'
             ],
             [
                 'name' => 'brand.create',
-                'display_name' => 'Tạo đối tác',
+                'display_name' => 'Tạo thương hiệu sản phẩm',
                 'group_name' => 'brand',
-                'description' => 'Quyền tạo đối tác mới'
+                'description' => 'Quyền tạo thương hiệu sản phẩm mới'
             ],
             [
                 'name' => 'brand.edit',
-                'display_name' => 'Sửa đối tác',
+                'display_name' => 'Sửa thương hiệu sản phẩm',
                 'group_name' => 'brand',
-                'description' => 'Quyền chỉnh sửa đối tác'
+                'description' => 'Quyền chỉnh sửa thương hiệu sản phẩm'
             ],
             [
                 'name' => 'brand.delete',
-                'display_name' => 'Xóa đối tác',
+                'display_name' => 'Xóa thương hiệu sản phẩm',
                 'group_name' => 'brand',
+                'description' => 'Quyền xóa thương hiệu sản phẩm'
+            ],
+
+            // Partner permissions (Đối tác)
+            [
+                'name' => 'partner.view',
+                'display_name' => 'Xem đối tác',
+                'group_name' => 'partner',
+                'description' => 'Quyền xem danh sách đối tác'
+            ],
+            [
+                'name' => 'partner.create',
+                'display_name' => 'Tạo đối tác',
+                'group_name' => 'partner',
+                'description' => 'Quyền tạo đối tác mới'
+            ],
+            [
+                'name' => 'partner.edit',
+                'display_name' => 'Sửa đối tác',
+                'group_name' => 'partner',
+                'description' => 'Quyền chỉnh sửa đối tác'
+            ],
+            [
+                'name' => 'partner.delete',
+                'display_name' => 'Xóa đối tác',
+                'group_name' => 'partner',
                 'description' => 'Quyền xóa đối tác'
             ],
 

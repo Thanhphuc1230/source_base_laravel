@@ -8,65 +8,39 @@ use Illuminate\Database\Seeder;
 class SystemSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds for System Settings.
      */
     public function run(): void
     {
-        $topic = config('demo.current_topic', 'watches');
-
-        if ($topic === 'watches') {
-            $data = [
-                'email' => 'contact@auraluxurywatches.com',
-                'active_languages' => '["vi","en"]',
-                'address_vn' => '188 Đồng Khởi, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
-                'address_en' => '188 Dong Khoi, Ben Nghe Ward, District 1, Ho Chi Minh City',
-                'phone' => '0909 888 999',
-                'footer_vn' => 'AURA LUXURY WATCHES - Tuyệt tác thời gian đỉnh cao. Nhà phân phối đồng hồ Thụy Sĩ và các thương hiệu xa xỉ hàng đầu thế giới với cam kết 100% chính hãng và bảo hành quốc tế.',
-                'footer_en' => 'AURA LUXURY WATCHES - Pinnacle of Haute Horlogerie. Authorized distributor of Swiss and world-leading luxury watchmakers with 100% authenticity guarantee.',
-                'email_alert' => 'admin@auraluxurywatches.com',
-                'facebook' => 'https://facebook.com/auraluxury',
-                'youtube' => 'https://youtube.com/auraluxury',
-                'twitter' => 'https://twitter.com/auraluxury',
-                'instagram' => 'https://instagram.com/auraluxury',
-                'zalo' => 'https://zalo.me/0909888999',
-                'favicon' => '',
-                'logo' => '',
-                'name_vn' => 'AURA LUXURY WATCHES',
-                'name_en' => 'AURA LUXURY WATCHES',
-                'description_vn' => 'AURA LUXURY WATCHES - Đỉnh Cao Đồng Hồ Thụy Sĩ & Xa Xỉ Chính Hãng',
-                'description_en' => 'AURA LUXURY WATCHES - Authentic Swiss & Haute Horlogerie Timepieces',
-                'keyword_vn' => 'dong ho cao cap, dong ho thuy si, rolex, patek philippe, hublot, omega',
-                'keyword_en' => 'luxury watches, swiss watches, rolex, patek philippe, hublot, omega',
-            ];
-        } else {
-            $data = [
-                'email' => 'info@basetravel.com',
-                'active_languages' => '["vi","en"]',
-                'address_vn' => 'Lầu 5, Tòa nhà Travel, TP. Hồ Chí Minh',
-                'address_en' => '5th Floor, Travel Building, Ho Chi Minh City',
-                'phone' => '1800 6700',
-                'footer_vn' => 'Chúng tôi tự hào mang đến những trải nghiệm hành trình độc đáo, dịch vụ du lịch nghỉ dưỡng cao cấp 5 sao phục vụ quý khách hàng.',
-                'footer_en' => 'We are proud to deliver unique journeys and 5-star premium hospitality services.',
-                'email_alert' => 'admin@basetravel.com',
-                'facebook' => 'https://facebook.com/basetravel',
-                'youtube' => 'https://youtube.com/basetravel',
-                'twitter' => 'https://twitter.com/basetravel',
-                'instagram' => 'https://instagram.com/basetravel',
-                'zalo' => 'https://zalo.me/0909090909',
-                'favicon' => '',
-                'logo' => '',
-                'name_vn' => 'BASE TRAVEL',
-                'name_en' => 'BASE TRAVEL',
-                'description_vn' => 'BASE TRAVEL - Tour Du Lịch Uy Tín Hàng Đầu',
-                'description_en' => 'BASE TRAVEL - Leading Prestigious Travel Tours',
-                'keyword_vn' => 'base travel, du lich, tour du lich',
-                'keyword_en' => 'base travel, travel, travel tours',
-            ];
+        // Nếu đã có cấu hình hệ thống rồi thì không ghi đè dữ liệu cũ
+        if (System::query()->exists()) {
+            return;
         }
 
-        $system = System::first();
-        if (! $system) {
-            System::create($data);
-        }
+        $data = [
+            'email' => 'contact@luxuryhome.vn',
+            'active_languages' => '["vi","en"]',
+            'address_vn' => 'Showroom: KĐT Sala, TP. Thủ Đức, TP. Hồ Chí Minh | Nhà máy: Cụm Công nghiệp Thạch Thất, Hà Nội',
+            'address_en' => 'Showroom: Sala Urban Area, Thu Duc City, HCMC | Factory: Thach That Industrial Cluster, Hanoi',
+            'phone' => '0979 248 298',
+            'footer_vn' => 'NỘI THẤT & KIẾN TRÚC LUXURY HOME - Đơn vị thiết kế, sản xuất và thi công nội thất cao cấp chuẩn quốc tế. Sở hữu nhà máy sản xuất trực tiếp 5.000m² với công nghệ tiên tiến nhất, mang đến không gian sống hoàn mỹ và giá trị trường tồn.',
+            'footer_en' => 'LUXURY HOME BESPOKE INTERIOR & ARCHITECTURE - International standard luxury interior design, manufacturing and build contractor. Powered by a 5,000m² direct manufacturing plant.',
+            'email_alert' => 'contact@luxuryhome.vn',
+            'facebook' => 'https://facebook.com/luxuryhome.interior',
+            'youtube' => 'https://youtube.com/luxuryhome',
+            'twitter' => 'https://twitter.com/luxuryhome',
+            'instagram' => 'https://instagram.com/luxuryhome',
+            'zalo' => 'https://zalo.me/0979248298',
+            'favicon' => 'uploads/demo/interior_logo.svg',
+            'logo' => 'uploads/demo/interior_logo.svg',
+            'name_vn' => 'NỘI THẤT & KIẾN TRÚC LUXURY HOME',
+            'name_en' => 'LUXURY HOME INTERIOR & ARCHITECTURE',
+            'description_vn' => 'NỘI THẤT & KIẾN TRÚC LUXURY HOME - Thiết Kế & Thi Công Nội Thất Trọn Gói Cao Cấp',
+            'description_en' => 'LUXURY HOME INTERIOR & ARCHITECTURE - Premium Bespoke Interior Design & Turnkey Fit-out',
+            'keyword_vn' => 'noi that cao cap, thiet ke noi that, thi cong noi that, noi that phong khach, noi that phong ngu, go an cuong',
+            'keyword_en' => 'luxury interior, interior design, bespoke furniture, living room, bedroom furniture',
+        ];
+
+        System::create($data);
     }
 }

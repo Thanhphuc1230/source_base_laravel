@@ -14,6 +14,10 @@ class CategoryNewSeeder extends Seeder
      */
     public function run()
     {
+        if (CateNew::query()->exists()) {
+            return;
+        }
+
         $cateRepo = app(\App\Repositories\Interfaces\CateNewRepositoryInterface::class);
 
         if (! CateNew::where('slug_vn', 'tin-tuc')->exists()) {

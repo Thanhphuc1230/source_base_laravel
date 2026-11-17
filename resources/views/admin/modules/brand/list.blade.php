@@ -60,7 +60,7 @@
                                                 <th class="text-center" style="width: 40px;"><input type="checkbox" class="form-check-input" id="checkAll"></th>
                                                 <th class="text-center" style="width: 50px;">STT</th>
                                                 <th class="text-center" style="width: 100px;">Hình ảnh</th>
-                                                <th class="text-start">Tên đối tác</th>
+                                                <th class="text-start">Tên thương hiệu</th>
                                                 <th class="text-center" style="width: 100px;">Hiển thị</th>
                                                 <th class="text-center" style="width: 75px;">Thứ tự</th>
                                                 <th class="text-center" style="width: 110px;">Ngày đăng</th>
