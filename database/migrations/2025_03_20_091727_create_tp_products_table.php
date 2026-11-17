@@ -64,8 +64,14 @@ return new class extends Migration
             $table->index(['status', 'category_id']);
             $table->index(['created_at', 'status']);
 
-            // Fulltext search for high-volume catalog lookup (MySQL/PostgreSQL)
-            if (DB::getDriverName() !== 'sqlite') {
+            // Fulltext search for high-volume catalog lookup (MySQL/PostgreSQL, bypassed on TiDB)
+            $isTiDb = false;
+            try {
+                $ver = DB::selectOne("SELECT VERSION() as ver")->ver ?? '';
+                $isTiDb = str_contains($ver, 'TiDB');
+            } catch (\Throwable $e) {}
+
+            if (DB::getDriverName() !== 'sqlite' && !$isTiDb) {
                 $table->fullText(['name_vn', 'name_en']);
             }
         });

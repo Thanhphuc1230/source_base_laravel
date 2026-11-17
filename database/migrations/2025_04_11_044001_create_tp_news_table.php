@@ -55,8 +55,14 @@ return new class extends Migration
             $table->index(['views', 'status']);
             $table->index(['created_at', 'status']);
 
-            // Fulltext search (MySQL/PostgreSQL)
-            if (DB::getDriverName() !== 'sqlite') {
+            // Fulltext search (MySQL/PostgreSQL, bypassed on TiDB)
+            $isTiDb = false;
+            try {
+                $ver = DB::selectOne("SELECT VERSION() as ver")->ver ?? '';
+                $isTiDb = str_contains($ver, 'TiDB');
+            } catch (\Throwable $e) {}
+
+            if (DB::getDriverName() !== 'sqlite' && !$isTiDb) {
                 $table->fullText(['name_vn', 'name_en']);
             }
         });
