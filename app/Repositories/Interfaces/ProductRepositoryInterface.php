@@ -35,4 +35,11 @@ interface ProductRepositoryInterface extends RepositoryInterface
      * @return void
      */
     public function syncAttributesAndVariants($product, array $data);
+
+    /**
+     * Lấy danh sách mẫu thuộc tính có sẵn & tái sử dụng
+     *
+     * @return array
+     */
+    public function getReusableAttributes(): array;
 }

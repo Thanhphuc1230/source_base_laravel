@@ -1,49 +1,76 @@
+@php
+    $reusableAttributes = $reusableAttributes ?? [];
+    $existingAttributes = isset($page) && $page->attributes ? $page->attributes : collect();
+    $existingVariants = isset($page) && $page->variants ? $page->variants : collect();
+@endphp
+
 <div class="row">
     <div class="col-12">
         <div class="alert alert-info border-0 shadow-2xs mb-4 p-3 rounded" style="background-color: #f0f7ff; border-left: 4px solid #2563eb !important;">
             <div class="d-flex align-items-center">
                 <i class="ri-information-line fs-18 text-primary me-2"></i>
                 <div class="text-dark small">
-                    <strong>Tính năng Phân loại hàng (Biến thể nội thất):</strong> Thêm các thuộc tính như <strong>Kích thước</strong> (1m6 x 2m, 1m8 x 2m) hoặc <strong>Màu sắc / Chất liệu</strong> (Gỗ Sồi, Gỗ Óc Chó). Sau đó bấm <strong>"Tạo ma trận biến thể tự động"</strong> để hệ thống tự động sinh bảng giá và tồn kho riêng cho từng phân loại.
+                    <strong>Tính năng Phân loại hàng (Biến thể nội thất):</strong> Chọn thuộc tính có sẵn từ <strong>Dropdown mẫu</strong> (hoặc thêm tùy biến), sau đó bấm <strong>"Tạo ma trận biến thể tự động"</strong> để hệ thống tự động sinh bảng giá và tồn kho riêng cho từng phân loại.
                 </div>
             </div>
         </div>
 
         {{-- KHỐI 1: DANH SÁCH THUỘC TÍNH --}}
         <div class="card border shadow-2xs mb-4">
-            <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center py-2 flex-wrap gap-2">
                 <h6 class="card-title mb-0 fs-14 fw-bold text-dark">
                     <i class="ri-equalizer-line me-1 text-primary"></i> 1. Danh sách Nhóm thuộc tính
                 </h6>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addPresetAttribute('Kích thước', '1m6 x 2m, 1m8 x 2m, 2m x 2m2')">
-                        <i class="ri-add-line"></i> + Mẫu Kích thước
-                    </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addPresetAttribute('Màu sắc', 'Gỗ Sồi Tự Nhiên, Gỗ Óc Chó, Trắng Bắc Âu')">
-                        <i class="ri-add-line"></i> + Mẫu Màu sắc
-                    </button>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    {{-- DROPDOWN MẪU THUỘC TÍNH TÁI SỬ DỤNG --}}
+                    <div class="d-flex align-items-center">
+                        <select id="select-reusable-preset" class="form-select form-select-sm border-primary" style="min-width: 280px;" onchange="handleSelectPreset(this)">
+                            <option value="">⚡ Chọn mẫu thuộc tính để thêm nhanh...</option>
+                            @foreach($reusableAttributes as $preset)
+                                <option value="{{ $preset['name_vn'] }}" data-values="{{ implode(', ', $preset['values']) }}">
+                                    {{ $preset['name_vn'] }} ({{ count($preset['values']) }} giá trị)
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <button type="button" class="btn btn-sm btn-primary" onclick="addAttributeRow()">
-                        <i class="ri-add-fill"></i> Thêm thuộc tính
+                        <i class="ri-add-fill"></i> + Thêm thuộc tính tùy biến
                     </button>
                 </div>
             </div>
             <div class="card-body p-3">
                 <div id="attributes-container" class="space-y-3">
-                    @php
-                        $existingAttributes = isset($page) && $page->attributes ? $page->attributes : collect();
-                    @endphp
-
                     @forelse($existingAttributes as $index => $attr)
                         <div class="attribute-row card border p-3 mb-3 bg-white" data-index="{{ $index }}">
                             <input type="hidden" name="product_attributes[{{ $index }}][id]" value="{{ $attr->id }}">
                             <div class="row align-items-center g-2">
-                                <div class="col-md-3">
-                                    <label class="form-label small fw-bold mb-1">Tên thuộc tính (Ví dụ: Kích thước)</label>
-                                    <input type="text" class="form-control form-control-sm attr-name" 
-                                           name="product_attributes[{{ $index }}][name_vn]" 
-                                           value="{{ $attr->name_vn }}" placeholder="vd: Kích thước, Màu sắc" required>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold mb-1">Tên thuộc tính</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm attr-name" 
+                                               name="product_attributes[{{ $index }}][name_vn]" 
+                                               value="{{ $attr->name_vn }}" 
+                                               list="reusable-attr-datalist"
+                                               placeholder="vd: Kích thước, Màu sắc..." 
+                                               onchange="onAttrNameChanged(this)"
+                                               required>
+                                        <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Chọn mẫu tái sử dụng"></button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-13" style="max-height: 250px; overflow-y: auto;">
+                                            <li><h6 class="dropdown-header text-uppercase fs-11">Thuộc tính mẫu có sẵn</h6></li>
+                                            @foreach($reusableAttributes as $preset)
+                                                <li>
+                                                    <a class="dropdown-item py-1" href="javascript:void(0)" 
+                                                       onclick="pickAttributeForRow(this, '{{ addslashes($preset['name_vn']) }}', '{{ addslashes(implode(', ', $preset['values'])) }}')">
+                                                        <strong>{{ $preset['name_vn'] }}</strong>
+                                                        <small class="text-muted d-block text-truncate" style="max-width: 220px;">{{ implode(', ', $preset['values']) }}</small>
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-7">
                                     <label class="form-label small fw-bold mb-1">Các giá trị lựa chọn (Cách nhau bởi dấu phẩy ",")</label>
                                     @php
                                         $valStr = is_array($attr->values_json) ? implode(', ', $attr->values_json) : $attr->values_json;
@@ -62,10 +89,17 @@
                     @empty
                         <div id="empty-attribute-msg" class="text-center py-4 text-muted small">
                             <i class="ri-inbox-line fs-24 d-block mb-1 text-secondary"></i>
-                            Chưa có thuộc tính nào. Bấm nút <strong>"+ Mẫu Kích thước"</strong> hoặc <strong>"Thêm thuộc tính"</strong> ở trên để bắt đầu.
+                            Chưa có thuộc tính nào. Chọn từ dropdown <strong>"⚡ Chọn mẫu thuộc tính để thêm nhanh"</strong> ở trên hoặc bấm <strong>"Thêm thuộc tính tùy biến"</strong>.
                         </div>
                     @endforelse
                 </div>
+
+                {{-- DATALIST TỰ ĐỘNG GỢI Ý KHI GÕ TÊN THUỘC TÍNH --}}
+                <datalist id="reusable-attr-datalist">
+                    @foreach($reusableAttributes as $preset)
+                        <option value="{{ $preset['name_vn'] }}" label="{{ implode(', ', $preset['values']) }}">
+                    @endforeach
+                </datalist>
 
                 <div class="mt-3 text-end">
                     <button type="button" class="btn btn-success btn-sm px-3" onclick="generateVariantsMatrix()">
@@ -98,99 +132,73 @@
                         <thead class="table-light text-center small">
                             <tr>
                                 <th style="width: 50px;">Mặc định</th>
-                                <th style="min-width: 160px;">Phân loại hàng</th>
-                                <th style="min-width: 120px;">Mã SKU</th>
-                                <th style="min-width: 140px;">Giá bán ({{ currency_unit() }}) <span class="text-danger">*</span></th>
-                                <th style="min-width: 130px;">Giá cũ ({{ currency_unit() }})</th>
-                                <th style="min-width: 90px;">Tồn kho</th>
-                                <th style="min-width: 140px;">Ảnh biến thể</th>
-                                <th style="width: 80px;">Bật/Tắt</th>
+                                <th>Phiên bản / Phân loại</th>
+                                <th style="width: 140px;">Mã SKU</th>
+                                <th style="width: 140px;">Giá bán (đ) <span class="text-danger">*</span></th>
+                                <th style="width: 130px;">Giá gốc (đ)</th>
+                                <th style="width: 90px;">Kho <span class="text-danger">*</span></th>
+                                <th style="width: 70px;">Bật</th>
                                 <th style="width: 50px;">Xóa</th>
                             </tr>
                         </thead>
                         <tbody id="variants-tbody">
-                            @php
-                                $existingVariants = isset($page) && $page->variants ? $page->variants : collect();
-                            @endphp
-
-                            @forelse($existingVariants as $vIndex => $variant)
+                            @forelse($existingVariants as $index => $variant)
                                 @php
-                                    $optValuesJson = is_array($variant->option_values) ? json_encode($variant->option_values, JSON_UNESCAPED_UNICODE) : $variant->option_values;
-                                    $displayName = $variant->variant_name ?: 'Biến thể #' . ($vIndex + 1);
+                                    $optVals = is_array($variant->option_values) ? $variant->option_values : (json_decode($variant->option_values, true) ?: []);
+                                    $displayName = implode(' / ', array_values($optVals));
                                 @endphp
-                                <tr class="variant-row" data-index="{{ $vIndex }}">
-                                    <input type="hidden" name="product_variants[{{ $vIndex }}][id]" value="{{ $variant->id }}">
-                                    <input type="hidden" name="product_variants[{{ $vIndex }}][option_values]" class="variant-opt-json" value="{{ $optValuesJson }}">
-                                    
-                                    {{-- Mặc định --}}
+                                <tr class="variant-row" data-index="{{ $index }}">
+                                    <input type="hidden" name="product_variants[{{ $index }}][id]" value="{{ $variant->id }}">
+                                    <input type="hidden" name="product_variants[{{ $index }}][option_values]" value="{{ json_encode($optVals) }}">
+
                                     <td class="text-center">
-                                        <input type="radio" name="default_variant_radio" value="{{ $vIndex }}" 
-                                               class="form-check-input default-variant-radio" 
+                                        <input type="radio" name="default_variant_radio" 
+                                               class="form-check-input default-radio" 
                                                {{ $variant->is_default ? 'checked' : '' }} 
                                                onchange="setDefaultVariant(this)">
-                                        <input type="hidden" name="product_variants[{{ $vIndex }}][is_default]" class="is-default-input" value="{{ $variant->is_default ? '1' : '0' }}">
+                                        <input type="hidden" name="product_variants[{{ $index }}][is_default]" 
+                                               class="is-default-input" 
+                                               value="{{ $variant->is_default ? '1' : '0' }}">
                                     </td>
-
-                                    {{-- Tên phân loại --}}
                                     <td>
-                                        <div class="fw-bold text-dark fs-13 variant-label">{{ $displayName }}</div>
+                                        <div class="fw-semibold text-dark fs-13">{{ $displayName }}</div>
+                                        <small class="text-muted">{{ json_encode($optVals, JSON_UNESCAPED_UNICODE) }}</small>
                                     </td>
-
-                                    {{-- SKU --}}
                                     <td>
-                                        <input type="text" name="product_variants[{{ $vIndex }}][sku]" 
-                                               class="form-control form-control-sm" 
-                                               value="{{ $variant->sku }}" placeholder="SKU">
+                                        <input type="text" class="form-control form-control-sm variant-sku" 
+                                               name="product_variants[{{ $index }}][sku]" 
+                                               value="{{ $variant->sku }}" placeholder="SKU-{{ $index + 1 }}">
                                     </td>
-
-                                    {{-- Giá bán --}}
                                     <td>
-                                        <input type="number" name="product_variants[{{ $vIndex }}][price]" 
-                                               class="form-control form-control-sm variant-price fw-bold text-primary" 
-                                               value="{{ (int)$variant->price }}" placeholder="0" required>
+                                        <input type="number" class="form-control form-control-sm text-end variant-price" 
+                                               name="product_variants[{{ $index }}][price]" 
+                                               value="{{ (int) $variant->price }}" required min="0">
                                     </td>
-
-                                    {{-- Giá cũ --}}
                                     <td>
-                                        <input type="number" name="product_variants[{{ $vIndex }}][price_old]" 
-                                               class="form-control form-control-sm variant-price-old text-muted" 
-                                               value="{{ $variant->price_old ? (int)$variant->price_old : '' }}" placeholder="0">
+                                        <input type="number" class="form-control form-control-sm text-end variant-price-old" 
+                                               name="product_variants[{{ $index }}][price_old]" 
+                                               value="{{ $variant->price_old ? (int) $variant->price_old : '' }}" min="0">
                                     </td>
-
-                                    {{-- Tồn kho --}}
                                     <td>
-                                        <input type="number" name="product_variants[{{ $vIndex }}][quantity]" 
-                                               class="form-control form-control-sm variant-qty text-center" 
-                                               value="{{ $variant->quantity ?? 50 }}" placeholder="50">
+                                        <input type="number" class="form-control form-control-sm text-center variant-qty" 
+                                               name="product_variants[{{ $index }}][quantity]" 
+                                               value="{{ $variant->quantity ?? 50 }}" min="0">
                                     </td>
-
-                                    {{-- Ảnh biến thể --}}
-                                    <td>
-                                        <input type="text" name="product_variants[{{ $vIndex }}][image]" 
-                                               class="form-control form-control-sm variant-image" 
-                                               value="{{ $variant->image }}" placeholder="URL ảnh hoặc uploads/...">
-                                    </td>
-
-                                    {{-- Trạng thái Bật/Tắt --}}
                                     <td class="text-center">
-                                        <div class="form-check form-switch d-inline-block">
-                                            <input type="checkbox" name="product_variants[{{ $vIndex }}][status]" value="1" 
-                                                   class="form-check-input" style="accent-color: #2563eb;" 
-                                                   {{ $variant->status ? 'checked' : '' }}>
-                                        </div>
+                                        <input type="hidden" name="product_variants[{{ $index }}][status]" value="0">
+                                        <input type="checkbox" name="product_variants[{{ $index }}][status]" 
+                                               class="form-check-input" value="1" {{ $variant->status ? 'checked' : '' }}>
                                     </td>
-
-                                    {{-- Xóa --}}
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removeVariantRow(this)">
-                                            <i class="ri-delete-bin-line fs-16"></i>
+                                            <i class="ri-delete-bin-line"></i>
                                         </button>
                                     </td>
                                 </tr>
                             @empty
                                 <tr id="empty-variant-row">
-                                    <td colspan="9" class="text-center py-4 text-muted small">
-                                        Chưa có biến thể nào được tạo. Hãy nhập thuộc tính ở mục 1 và bấm <strong>"Tạo ma trận biến thể tự động"</strong>.
+                                    <td colspan="8" class="text-center py-4 text-muted small">
+                                        Chưa có phiên bản phân loại nào. Hãy chọn/nhập thuộc tính ở trên rồi bấm <strong>"Tạo ma trận biến thể tự động"</strong>.
                                     </td>
                                 </tr>
                             @endforelse
@@ -206,6 +214,7 @@
 <script>
     let attributeIndexCounter = {{ count($existingAttributes) }};
     let variantIndexCounter = {{ count($existingVariants) }};
+    const reusablePresets = @json($reusableAttributes);
 
     function updateVariantCount() {
         const count = document.querySelectorAll('#variants-tbody .variant-row').length;
@@ -220,6 +229,27 @@
         updateVariantCount();
     });
 
+    function getPresetDropdownHtml() {
+        let itemsHtml = '';
+        if (Array.isArray(reusablePresets)) {
+            reusablePresets.forEach(preset => {
+                const vals = Array.isArray(preset.values) ? preset.values.join(', ') : preset.values;
+                const safeName = preset.name_vn.replace(/'/g, "\\'");
+                const safeVals = vals.replace(/'/g, "\\'");
+                itemsHtml += `
+                    <li>
+                        <a class="dropdown-item py-1" href="javascript:void(0)" 
+                           onclick="pickAttributeForRow(this, '${safeName}', '${safeVals}')">
+                            <strong>${preset.name_vn}</strong>
+                            <small class="text-muted d-block text-truncate" style="max-width: 220px;">${vals}</small>
+                        </a>
+                    </li>
+                `;
+            });
+        }
+        return itemsHtml;
+    }
+
     function addAttributeRow(name = '', values = '') {
         const emptyMsg = document.getElementById('empty-attribute-msg');
         if (emptyMsg) emptyMsg.style.display = 'none';
@@ -230,13 +260,24 @@
         const html = `
             <div class="attribute-row card border p-3 mb-3 bg-white" data-index="${index}">
                 <div class="row align-items-center g-2">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label class="form-label small fw-bold mb-1">Tên thuộc tính</label>
-                        <input type="text" class="form-control form-control-sm attr-name" 
-                               name="product_attributes[${index}][name_vn]" 
-                               value="${name}" placeholder="vd: Kích thước, Màu sắc" required>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-sm attr-name" 
+                                   name="product_attributes[${index}][name_vn]" 
+                                   value="${name}" 
+                                   list="reusable-attr-datalist"
+                                   placeholder="vd: Kích thước, Màu sắc..." 
+                                   onchange="onAttrNameChanged(this)"
+                                   required>
+                            <button class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Chọn mẫu tái sử dụng"></button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm fs-13" style="max-height: 250px; overflow-y: auto;">
+                                <li><h6 class="dropdown-header text-uppercase fs-11">Thuộc tính mẫu có sẵn</h6></li>
+                                ${getPresetDropdownHtml()}
+                            </ul>
+                        </div>
                     </div>
-                    <div class="col-md-8">
+                    <div class="col-md-7">
                         <label class="form-label small fw-bold mb-1">Các giá trị lựa chọn (Cách nhau bởi dấu phẩy ",")</label>
                         <input type="text" class="form-control form-control-sm attr-values" 
                                name="product_attributes[${index}][values]" 
@@ -253,8 +294,55 @@
         container.insertAdjacentHTML('beforeend', html);
     }
 
-    function addPresetAttribute(name, values) {
+    function handleSelectPreset(select) {
+        const selectedOption = select.options[select.selectedIndex];
+        if (!selectedOption || !selectedOption.value) return;
+
+        const name = selectedOption.value;
+        const values = selectedOption.getAttribute('data-values') || '';
+
+        // Kiểm tra xem thuộc tính đã có trong danh sách chưa
+        const existingNames = Array.from(document.querySelectorAll('#attributes-container .attr-name'))
+                                   .map(input => input.value.trim().toLowerCase());
+        
+        if (existingNames.includes(name.toLowerCase())) {
+            alert(`Thuộc tính "${name}" đã có trong danh sách nhóm thuộc tính!`);
+            select.value = '';
+            return;
+        }
+
         addAttributeRow(name, values);
+        select.value = ''; // Reset select
+    }
+
+    function pickAttributeForRow(element, name, values) {
+        const row = element.closest('.attribute-row');
+        if (!row) return;
+
+        const nameInput = row.querySelector('.attr-name');
+        const valuesInput = row.querySelector('.attr-values');
+
+        if (nameInput) nameInput.value = name;
+        if (valuesInput && (!valuesInput.value.trim() || confirm('Bạn có muốn điền các giá trị mẫu cho thuộc tính này không?'))) {
+            valuesInput.value = values;
+        }
+    }
+
+    function onAttrNameChanged(input) {
+        const name = input.value.trim().toLowerCase();
+        if (!name) return;
+
+        const matched = reusablePresets.find(p => p.name_vn.toLowerCase() === name);
+        if (matched) {
+            const row = input.closest('.attribute-row');
+            if (row) {
+                const valuesInput = row.querySelector('.attr-values');
+                if (valuesInput && !valuesInput.value.trim()) {
+                    const vals = Array.isArray(matched.values) ? matched.values.join(', ') : matched.values;
+                    valuesInput.value = vals;
+                }
+            }
+        }
     }
 
     function removeAttributeRow(btn) {
@@ -314,7 +402,7 @@
         });
 
         if (attrGroups.length === 0) {
-            alert('Vui lòng nhập ít nhất 1 nhóm thuộc tính và các giá trị trước khi tạo ma trận biến thể!');
+            alert('Vui lòng chọn hoặc nhập ít nhất 1 nhóm thuộc tính và các giá trị trước khi tạo ma trận biến thể!');
             return;
         }
 
@@ -337,74 +425,58 @@
             const displayParts = Object.values(combo);
             const displayName = displayParts.join(' / ');
             const jsonStr = JSON.stringify(combo);
-            
-            // Generate SKU slug-like code
-            const skuParts = displayParts.map(p => p.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, ''));
-            const sku = 'SKU-' + skuParts.join('-').toUpperCase();
-
             const isFirst = idx === 0;
 
-            const tr = `
-                <tr class="variant-row" data-index="${index}">
-                    <input type="hidden" name="product_variants[${index}][option_values]" class="variant-opt-json" value='${jsonStr}'>
-                    
-                    <td class="text-center">
-                        <input type="radio" name="default_variant_radio" value="${index}" 
-                               class="form-check-input default-variant-radio" 
-                               ${isFirst ? 'checked' : ''} 
-                               onchange="setDefaultVariant(this)">
-                        <input type="hidden" name="product_variants[${index}][is_default]" class="is-default-input" value="${isFirst ? '1' : '0'}">
-                    </td>
-
-                    <td>
-                        <div class="fw-bold text-dark fs-13 variant-label">${displayName}</div>
-                    </td>
-
-                    <td>
-                        <input type="text" name="product_variants[${index}][sku]" 
-                               class="form-control form-control-sm" 
-                               value="${sku}" placeholder="SKU">
-                    </td>
-
-                    <td>
-                        <input type="number" name="product_variants[${index}][price]" 
-                               class="form-control form-control-sm variant-price fw-bold text-primary" 
-                               value="${defaultPrice}" placeholder="0" required>
-                    </td>
-
-                    <td>
-                        <input type="number" name="product_variants[${index}][price_old]" 
-                               class="form-control form-control-sm variant-price-old text-muted" 
-                               value="${defaultOldPrice}" placeholder="0">
-                    </td>
-
-                    <td>
-                        <input type="number" name="product_variants[${index}][quantity]" 
-                               class="form-control form-control-sm variant-qty text-center" 
-                               value="50" placeholder="50">
-                    </td>
-
-                    <td>
-                        <input type="text" name="product_variants[${index}][image]" 
-                               class="form-control form-control-sm variant-image" 
-                               value="" placeholder="URL ảnh hoặc uploads/...">
-                    </td>
-
-                    <td class="text-center">
-                        <div class="form-check form-switch d-inline-block">
-                            <input type="checkbox" name="product_variants[${index}][status]" value="1" 
-                                   class="form-check-input" style="accent-color: #2563eb;" checked>
-                        </div>
-                    </td>
-
-                    <td class="text-center">
-                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removeVariantRow(this)">
-                            <i class="ri-delete-bin-line fs-16"></i>
-                        </button>
-                    </td>
-                </tr>
+            const tr = document.createElement('tr');
+            tr.className = 'variant-row';
+            tr.setAttribute('data-index', index);
+            tr.innerHTML = `
+                <input type="hidden" name="product_variants[${index}][option_values]" value='${jsonStr}'>
+                <td class="text-center">
+                    <input type="radio" name="default_variant_radio" 
+                           class="form-check-input default-radio" 
+                           ${isFirst ? 'checked' : ''} 
+                           onchange="setDefaultVariant(this)">
+                    <input type="hidden" name="product_variants[${index}][is_default]" 
+                           class="is-default-input" 
+                           value="${isFirst ? '1' : '0'}">
+                </td>
+                <td>
+                    <div class="fw-semibold text-dark fs-13">${displayName}</div>
+                    <small class="text-muted">${jsonStr}</small>
+                </td>
+                <td>
+                    <input type="text" class="form-control form-control-sm variant-sku" 
+                           name="product_variants[${index}][sku]" 
+                           placeholder="SKU-${idx + 1}">
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-end variant-price" 
+                           name="product_variants[${index}][price]" 
+                           value="${defaultPrice}" required min="0">
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-end variant-price-old" 
+                           name="product_variants[${index}][price_old]" 
+                           value="${defaultOldPrice}" min="0">
+                </td>
+                <td>
+                    <input type="number" class="form-control form-control-sm text-center variant-qty" 
+                           name="product_variants[${index}][quantity]" 
+                           value="50" min="0">
+                </td>
+                <td class="text-center">
+                    <input type="hidden" name="product_variants[${index}][status]" value="0">
+                    <input type="checkbox" name="product_variants[${index}][status]" 
+                           class="form-check-input" value="1" checked>
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="removeVariantRow(this)">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </td>
             `;
-            tbody.insertAdjacentHTML('beforeend', tr);
+            tbody.appendChild(tr);
         });
 
         updateVariantCount();

@@ -169,4 +169,97 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         // Xóa variants không còn trong request
         $product->variants()->whereNotIn('id', $savedVariantIds)->delete();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReusableAttributes(): array
+    {
+        $defaultPresets = [
+            [
+                'name_vn' => 'Kích thước',
+                'name_en' => 'Size',
+                'values' => ['1m6 x 2m', '1m8 x 2m', '2m x 2m2'],
+            ],
+            [
+                'name_vn' => 'Màu sắc gỗ',
+                'name_en' => 'Wood Finish',
+                'values' => ['Gỗ Sồi Nga Tự Nhiên', 'Gỗ Óc Chó Bắc Mỹ', 'Gỗ Gõ Đỏ', 'Gỗ Xoan Đào', 'Trắng Bắc Âu'],
+            ],
+            [
+                'name_vn' => 'Chất liệu bọc',
+                'name_en' => 'Upholstery',
+                'values' => ['Da Bò Ý Cao Cấp', 'Da Microfiber Chống Xước', 'Vải Nỉ Nhung Hàn Quốc', 'Vải Bố Canvas'],
+            ],
+            [
+                'name_vn' => 'Kích thước Sofa',
+                'name_en' => 'Sofa Dimensions',
+                'values' => ['Văng 1m8', 'Văng 2m2', 'Góc L 2m6 x 1m6', 'Góc L 3m x 1m8'],
+            ],
+            [
+                'name_vn' => 'Kích thước Bàn Ăn',
+                'name_en' => 'Dining Table Size',
+                'values' => ['Bàn 4 ghế (1m2)', 'Bàn 6 ghế (1m6)', 'Bàn 8 ghế (1m8)', 'Bàn 10 ghế (2m2)'],
+            ],
+            [
+                'name_vn' => 'Kích thước Tủ Áo',
+                'name_en' => 'Wardrobe Size',
+                'values' => ['2 cánh (1m2 x 2m)', '3 cánh (1m6 x 2m)', '4 cánh (2m x 2m2)', '5 cánh (2m4 x 2m2)'],
+            ],
+            [
+                'name_vn' => 'Chất liệu mặt bàn',
+                'name_en' => 'Tabletop Material',
+                'values' => ['Mặt Đá Ceramic Chống Xước', 'Mặt Đá Cẩm Thạch Marble', 'Mặt Gỗ Tự Nhiên Liền Tấm', 'Mặt Kính Cường Lực'],
+            ],
+            [
+                'name_vn' => 'Chất liệu đệm mút',
+                'name_en' => 'Cushion Foam',
+                'values' => ['Đệm Foam D40 Cao Cấp', 'Đệm Lò Xo Túi Độc Lập', 'Đệm Cao Su Thiên Nhiên'],
+            ],
+            [
+                'name_vn' => 'Chân khung',
+                'name_en' => 'Frame Material',
+                'values' => ['Khung Gỗ Tự Nhiên', 'Sắt Sơn Tĩnh Điện Anodize', 'Inox 304 Mạ Vàng PVD'],
+            ],
+            [
+                'name_vn' => 'Xuất xứ',
+                'name_en' => 'Origin',
+                'values' => ['Việt Nam xuất khẩu', 'Nhập khẩu Malaysia', 'Nhập khẩu Đan Mạch', 'Nhập khẩu Ý'],
+            ],
+            [
+                'name_vn' => 'Thời gian bảo hành',
+                'name_en' => 'Warranty',
+                'values' => ['12 Tháng', '24 Tháng', '36 Tháng', '5 Năm'],
+            ],
+        ];
+
+        // Lấy thêm các thuộc tính đã từng được lưu từ CSDL để tái sử dụng
+        try {
+            $dbAttrs = \App\Models\ProductAttribute::query()
+                ->select('name_vn', 'values_json')
+                ->whereNotNull('name_vn')
+                ->get();
+
+            $existingNames = array_map(fn($item) => mb_strtolower($item['name_vn']), $defaultPresets);
+
+            foreach ($dbAttrs as $attr) {
+                $name = trim($attr->name_vn);
+                if (!empty($name) && !in_array(mb_strtolower($name), $existingNames)) {
+                    $vals = is_array($attr->values_json) ? $attr->values_json : (json_decode($attr->values_json, true) ?: []);
+                    if (!empty($vals)) {
+                        $defaultPresets[] = [
+                            'name_vn' => $name,
+                            'name_en' => $name,
+                            'values' => $vals,
+                        ];
+                        $existingNames[] = mb_strtolower($name);
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            // Log or ignore database fetch error
+        }
+
+        return $defaultPresets;
+    }
 }

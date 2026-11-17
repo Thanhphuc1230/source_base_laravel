@@ -1,0 +1,25 @@
+name: Keep-Alive Render Service
+
+on:
+  schedule:
+    # Chạy mỗi 14 phút một lần để Render không bao giờ rơi vào trạng thái ngủ đông (Sleep sau 15p)
+    - cron: '*/14 * * * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    name: Ping Render Live Website
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Send HTTP Ping Request
+        run: |
+          echo "🌐 Gửi tín hiệu đánh thức máy chủ Render..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 30 https://source-base-laravel.onrender.com/)
+          echo "✅ Trạng thái HTTP phản hồi: $STATUS"
+          if [ "$STATUS" -ge 200 ] && [ "$STATUS" -lt 400 ]; then
+            echo "🎉 Website đang hoạt động trực tuyến hoàn hảo!"
+          else
+            echo "⚠️ Cảnh báo: Mã phản hồi HTTP $STATUS"
+          fi

@@ -350,3 +350,131 @@ body, .page-content, h1, h2, h3, h4, h5, h6, .card-title, .counter-value {
     color: #b91c1c;
 }
 
+/* ========================================================
+   MULTI-IMAGE & MEDIA UPLOADER STANDARD
+   ======================================================== */
+#multi-image-drop-area.dragover {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+}
+.detail-preview-card {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.detail-preview-card .preview-media {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    background-color: #f8fafc;
+    border-radius: 6px 6px 0 0;
+    display: block;
+}
+.detail-preview-card .media-badge {
+    position: absolute;
+    bottom: 26px;
+    left: 6px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+.detail-preview-card .btn-remove-new {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    line-height: 22px;
+    font-size: 13px;
+    border-radius: 3px;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    z-index: 2;
+}
+.detail-preview-card .btn-remove-new:hover {
+    background: #b91c1c;
+    transform: scale(1.05);
+}
+.detail-preview-card .file-info {
+    font-size: 11px;
+    padding: 4px 6px;
+    color: #475569;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: #fff;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* ========================================================
+   USER ROLE & PERMISSIONS STANDARD
+   ======================================================== */
+.role-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+.role-card.border-primary {
+    background-color: rgba(37, 64, 143, 0.03) !important;
+}
+.hover-shadow-sm:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    border-color: #adb5bd !important;
+}
+.form-check-success .form-check-input:checked {
+    background-color: #0ab39c;
+    border-color: #0ab39c;
+}
+.text-success-light {
+    color: #0ab39c !important;
+}
+.bg-primary-subtle-light {
+    background-color: rgba(37, 64, 143, 0.03) !important;
+    border-color: #25408f !important;
+}
+.transition-all {
+    transition: all 0.2s ease-in-out;
+}
+.permission-group-row td {
+    padding: 0.75rem;
+}
+
+/* ========================================================
+   CHAT MODULE STANDARD
+   ======================================================== */
+.session-row {
+    transition: background-color 0.3s ease;
+}
+.session-row:hover {
+    background-color: #f8f9fa;
+}
+.session-row.has-new-message {
+    animation: highlightNew 1.5s ease-out;
+}
+@keyframes highlightNew {
+    0% {
+        background-color: #fff3cd;
+        transform: scale(1);
+    }
+    50% {
+        background-color: #ffe69c;
+        transform: scale(1.01);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+

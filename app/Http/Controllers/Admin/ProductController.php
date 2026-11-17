@@ -55,6 +55,7 @@ class ProductController extends BaseController
     {
         $data['category'] = $this->productRepository->getActiveCategories();
         $data['brands'] = $this->productRepository->getActiveBrands();
+        $data['reusableAttributes'] = $this->productRepository->getReusableAttributes();
         $data['action'] = 'create';
         $data['nameItem'] = $this->nameItem;
         $data['imageFolder'] = $this->imageFolder;
@@ -94,6 +95,7 @@ class ProductController extends BaseController
             'page' => $page,
             'category' => $this->productRepository->getActiveCategories(),
             'brands' => $this->productRepository->getActiveBrands(),
+            'reusableAttributes' => $this->productRepository->getReusableAttributes(),
             'action' => 'edit',
             'nameItem' => $this->nameItem,
             'currentPage' => $currentPage,
