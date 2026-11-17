@@ -21,4 +21,5 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
 fi
 
 echo "Launching Supervisor (Nginx + PHP-FPM)..."
+mkdir -p /var/log/supervisor /var/run
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
