@@ -3,8 +3,8 @@ set -e
 
 # Dynamic port binding for Cloud PaaS (Railway / Render / Fly.io)
 PORT=${PORT:-80}
-sed -i "s/listen 80;/listen ${PORT};/g" /etc/nginx/conf.d/default.conf
-sed -i "s/listen \[::\]:80;/listen \[::\]:${PORT};/g" /etc/nginx/conf.d/default.conf
+sed -i "s/listen 80;/listen ${PORT};/g" /etc/nginx/nginx.conf
+sed -i "s/listen \[::\]:80;/listen \[::\]:${PORT};/g" /etc/nginx/nginx.conf
 
 echo "Starting Laravel initialization on port ${PORT}..."
 

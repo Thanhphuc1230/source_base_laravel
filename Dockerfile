@@ -43,7 +43,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Copy docker configs
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+RUN rm -rf /etc/nginx/conf.d/* /etc/nginx/http.d/*
+COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
