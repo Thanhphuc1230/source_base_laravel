@@ -42,6 +42,11 @@
                                             {{ $item['name_vn'] }}
                                         </a>
                                     </h3>
+                                    @if(!empty($item['variant_name']))
+                                        <div class="text-3xs text-amber-800 bg-amber-50/80 border border-amber-200/60 px-2 py-0.5 rounded-md inline-block font-medium">
+                                            Phân loại: <strong>{{ $item['variant_name'] }}</strong>
+                                        </div>
+                                    @endif
                                     <div class="text-2xs text-gray-500 flex items-center justify-center sm:justify-start space-x-3 pt-0.5">
                                         <span>Đơn giá: <strong class="text-emerald-950">{{ number_format($item['price'], 0, ',', '.') }}{{ currency_unit() }}</strong></span>
                                         @if($item['price_old'] > $item['price'])

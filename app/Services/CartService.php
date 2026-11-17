@@ -52,7 +52,15 @@ class CartService
             return false;
         }
 
-        $this->addToCartSession($quantity, $product);
+        $variant = null;
+        $variantId = $request->input('variant_id');
+        if ($variantId) {
+            $variant = \App\Models\ProductVariant::where('id', $variantId)
+                ->where('product_id', $product->id_product)
+                ->first();
+        }
+
+        $this->addToCartSession($quantity, $product, $variant);
         return true;
     }
 
@@ -61,15 +69,18 @@ class CartService
      *
      * @param int $quantity
      * @param Product $product
+     * @param \App\Models\ProductVariant|null $variant
      * @return void
      */
-    private function addToCartSession(int $quantity, Product $product): void
+    private function addToCartSession(int $quantity, Product $product, ?\App\Models\ProductVariant $variant = null): void
     {
         $cart = session()->get('cart', []);
         $found = false;
+        $variantId = $variant ? $variant->id : null;
 
         foreach ($cart as $key => $item) {
-            if ($item['uuid'] === $product->uuid) {
+            $itemVariantId = $item['variant_id'] ?? null;
+            if ($item['uuid'] === $product->uuid && $itemVariantId == $variantId) {
                 $cart[$key]['qty'] += $quantity;
                 $found = true;
                 break;
@@ -77,15 +88,22 @@ class CartService
         }
 
         if (!$found) {
+            $price = ($variant && $variant->price > 0) ? $variant->price : $product->price;
+            $priceOld = ($variant && $variant->price_old > 0) ? $variant->price_old : $product->price_old;
+            $avatar = ($variant && !empty($variant->image)) ? $variant->image : $product->image;
+            $variantName = $variant ? $variant->variant_name : null;
+
             $cart[] = [
                 'stt' => count($cart) + 1,
                 'id_product' => $product->id_product,
+                'variant_id' => $variantId,
+                'variant_name' => $variantName,
                 'name_vn' => $product->name_vn,
                 'name_en' => $product->name_en,
                 'qty' => $quantity,
-                'price' => $product->price,
-                'price_old' => $product->price_old,
-                'avatar' => $product->image,
+                'price' => $price,
+                'price_old' => $priceOld,
+                'avatar' => $avatar,
                 'uuid' => $product->uuid,
                 'name_cate' => $product->cate->name_vn ?? '',
                 'slug' => $product->slug,

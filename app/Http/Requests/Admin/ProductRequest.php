@@ -49,6 +49,8 @@ class ProductRequest extends BaseAdminRequest
             'stt' => 'required|integer|min:0',
             'intro_vn' => 'required|max:1000',
             'intro_en' => 'nullable|max:1000',
+            'product_attributes' => 'nullable|array',
+            'product_variants' => 'nullable|array',
         ];
     }
 

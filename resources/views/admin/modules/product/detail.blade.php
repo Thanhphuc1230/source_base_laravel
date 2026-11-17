@@ -51,6 +51,12 @@
                                             Thông tin tổng quan
                                         </a>
                                     </li>
+                                    <li class="nav-item" role="presentation">
+                                        <a class="nav-link text-primary fw-bold" data-bs-toggle="tab" href="#addproduct-attributes"
+                                            role="tab" aria-selected="false">
+                                            <i class="ri-equalizer-line me-1"></i> Thuộc tính & Phân loại (Kích thước, Màu sắc)
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                             <!-- end card header -->
@@ -88,6 +94,11 @@
                                             <!-- end col -->
                                         </div>
                                         <!-- end row -->
+                                    </div>
+                                    <!-- end tab-pane -->
+
+                                    <div class="tab-pane" id="addproduct-attributes" role="tabpanel">
+                                        @include('admin.modules.product.partials.attributes-tab')
                                     </div>
                                     <!-- end tab-pane -->
                                 </div>

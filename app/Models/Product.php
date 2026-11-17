@@ -127,4 +127,19 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class, 'brand_id', 'id_brand');
     }
+
+    public function attributes()
+    {
+        return $this->hasMany(ProductAttribute::class, 'product_id', 'id_product')->orderBy('stt', 'asc');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id', 'id_product');
+    }
+
+    public function activeVariants()
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id', 'id_product')->where('status', true);
+    }
 }

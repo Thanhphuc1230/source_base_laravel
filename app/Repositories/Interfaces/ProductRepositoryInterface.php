@@ -26,4 +26,13 @@ interface ProductRepositoryInterface extends RepositoryInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getActiveBrands();
+
+    /**
+     * Đồng bộ thuộc tính và biến thể sản phẩm
+     *
+     * @param \App\Models\Product $product
+     * @param array $data
+     * @return void
+     */
+    public function syncAttributesAndVariants($product, array $data);
 }

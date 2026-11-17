@@ -74,10 +74,12 @@ class ProductService
     {
         $data = [];
 
-        // Cache product detail
-        $data['product_detail'] = Product::with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
-            ->where('id_product', $id_product)
-            ->firstOrFail();
+        // Cache product detail with attributes and active variants
+        $data['product_detail'] = Product::with([
+            'cate:id_cate_product,name_vn,name_en,slug_vn,slug_en',
+            'attributes',
+            'variants' => fn($q) => $q->where('status', true),
+        ])->where('id_product', $id_product)->firstOrFail();
 
         // Cache related products
         $data['related_product'] = Product::where('category_id', $data['product_detail']->category_id)

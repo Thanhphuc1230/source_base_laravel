@@ -50,7 +50,7 @@ function showToast(message, type = 'success') {
 }
 
 // Global function to add product to cart via AJAX
-function addToCartAjax(uuid, buttonElement = null) {
+function addToCartAjax(uuid, buttonElement = null, quantity = 1, variantId = null) {
     let originalHtml = '';
     if (buttonElement) {
         // Keep backup and show spinner
@@ -59,9 +59,15 @@ function addToCartAjax(uuid, buttonElement = null) {
         buttonElement.disabled = true;
     }
 
+    const vId = variantId || window.selectedVariantId || null;
+    const qty = quantity || 1;
+
     // Pull add to cart base URL dynamically
     const baseUrl = window.addToCartUrl || '/add-to-cart';
-    const url = `${baseUrl}/${uuid}/1`;
+    let url = `${baseUrl}/${uuid}/${qty}`;
+    if (vId) {
+        url += `?variant_id=${vId}`;
+    }
 
     fetch(url, {
         method: 'GET',

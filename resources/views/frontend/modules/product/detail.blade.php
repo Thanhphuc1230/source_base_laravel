@@ -223,13 +223,49 @@
                 <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-lg space-y-5">
                     <div class="text-center space-y-1">
                         <span class="text-slate-400 text-3xs uppercase tracking-wider block font-bold">Giá niêm yết chính hãng</span>
-                        @if($product_detail->price_old > $product_detail->price)
-                            <span class="text-xs text-slate-400 line-through block leading-none">{{ number_format($product_detail->price_old, 0, ',', '.') }}{{ currency_unit() }}</span>
-                        @endif
-                        <span class="text-2xl sm:text-3xl font-heading font-black text-slate-900 block leading-none mt-1">
+                        <span id="product-active-old-price" class="text-xs text-slate-400 line-through block leading-none" style="{{ $product_detail->price_old > $product_detail->price ? '' : 'display: none;' }}">
+                            {{ number_format($product_detail->price_old ?? 0, 0, ',', '.') }}{{ currency_unit() }}
+                        </span>
+                        <span id="product-active-price" class="text-2xl sm:text-3xl font-heading font-black text-slate-900 block leading-none mt-1">
                             {{ number_format($product_detail->price, 0, ',', '.') }}{{ currency_unit() }}
                         </span>
                     </div>
+
+                    {{-- Khối Chọn Thuộc tính & Biến thể Sản phẩm (Kích thước, Màu sắc) --}}
+                    @if($product_detail->attributes && $product_detail->attributes->isNotEmpty())
+                        <div class="border-t border-slate-100 pt-3 space-y-3.5 text-left" id="product-options-section">
+                            @foreach($product_detail->attributes as $attr)
+                                @php
+                                    $values = is_array($attr->values_json) ? $attr->values_json : json_decode($attr->values_json, true) ?? [];
+                                @endphp
+                                @if(!empty($values))
+                                    <div class="space-y-1.5">
+                                        <div class="flex justify-between items-center text-xs">
+                                            <span class="font-bold text-slate-800">{{ $attr->name }}:</span>
+                                            <span class="text-3xs text-gold-700 font-semibold current-selected-label" data-attr="{{ $attr->name }}"></span>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2 attribute-options" data-attr-name="{{ $attr->name }}">
+                                            @foreach($values as $valIdx => $val)
+                                                <button type="button" 
+                                                        class="option-pill px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white text-slate-700 hover:border-slate-900 transition-all font-medium cursor-pointer"
+                                                        data-attr="{{ $attr->name }}" 
+                                                        data-value="{{ $val }}"
+                                                        onclick="selectProductOption('{{ addslashes($attr->name) }}', '{{ addslashes($val) }}', this)">
+                                                    {{ $val }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+                            @endforeach
+
+                            {{-- Thông tin SKU & Tồn kho biến thể --}}
+                            <div class="flex items-center justify-between text-3xs text-slate-500 pt-1.5 border-t border-slate-100">
+                                <span>Mã SKU: <strong id="product-variant-sku" class="text-slate-800">--</strong></span>
+                                <span id="product-variant-stock" class="text-emerald-600 font-semibold"><i class="fa-solid fa-check-circle mr-1"></i>Còn hàng</span>
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="space-y-3 pt-2">
                         <!-- Add to Cart AJAX Realtime Action Button -->
@@ -338,6 +374,113 @@ function switchGalleryMedia(type, src, btn) {
         }
     }
 }
+
+// Xử lý Lựa chọn Biến thể Thuộc tính (Kích thước, Màu sắc)
+@if($product_detail->variants && $product_detail->variants->isNotEmpty())
+    const productVariants = @json($product_detail->variants);
+    const currencyUnit = "{{ currency_unit() }}";
+    let selectedOptions = {};
+
+    function selectProductOption(attrName, attrValue, btn) {
+        // Active visual state
+        const container = btn.closest('.attribute-options');
+        if (container) {
+            container.querySelectorAll('.option-pill').forEach(b => {
+                b.classList.remove('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+                b.classList.add('bg-white', 'text-slate-700', 'border-slate-200');
+            });
+        }
+        btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200');
+        btn.classList.add('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+
+        // Update selected state map
+        selectedOptions[attrName] = attrValue;
+
+        // Update selected label
+        const label = document.querySelector(`.current-selected-label[data-attr="${attrName}"]`);
+        if (label) label.innerText = attrValue;
+
+        // Match with variant list
+        matchVariant();
+    }
+
+    function matchVariant() {
+        let matched = null;
+
+        for (const variant of productVariants) {
+            if (!variant.option_values) continue;
+            let isMatch = true;
+            for (const [key, val] of Object.entries(selectedOptions)) {
+                if (variant.option_values[key] !== val) {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if (isMatch) {
+                matched = variant;
+                break;
+            }
+        }
+
+        if (matched) {
+            window.selectedVariantId = matched.id;
+
+            // Update price
+            const priceEl = document.getElementById('product-active-price');
+            if (priceEl && matched.price > 0) {
+                priceEl.innerText = new Intl.NumberFormat('vi-VN').format(matched.price) + currencyUnit;
+            }
+
+            // Update old price
+            const oldPriceEl = document.getElementById('product-active-old-price');
+            if (oldPriceEl) {
+                if (matched.price_old > matched.price) {
+                    oldPriceEl.innerText = new Intl.NumberFormat('vi-VN').format(matched.price_old) + currencyUnit;
+                    oldPriceEl.style.display = 'block';
+                } else {
+                    oldPriceEl.style.display = 'none';
+                }
+            }
+
+            // Update SKU
+            const skuEl = document.getElementById('product-variant-sku');
+            if (skuEl) skuEl.innerText = matched.sku || '--';
+
+            // Update Stock
+            const stockEl = document.getElementById('product-variant-stock');
+            if (stockEl) {
+                if (matched.quantity > 0) {
+                    stockEl.className = 'text-emerald-600 font-semibold';
+                    stockEl.innerHTML = '<i class="fa-solid fa-check-circle mr-1"></i>Còn hàng (' + matched.quantity + ')';
+                } else {
+                    stockEl.className = 'text-rose-600 font-semibold';
+                    stockEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i>Tạm hết hàng';
+                }
+            }
+
+            // If variant has specific image, switch main image
+            if (matched.image) {
+                const mainImg = document.getElementById('main-image');
+                if (mainImg) {
+                    mainImg.src = matched.image;
+                }
+            }
+        }
+    }
+
+    // Auto-select first/default variant on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const defaultVar = productVariants.find(v => v.is_default) || productVariants[0];
+        if (defaultVar && defaultVar.option_values) {
+            for (const [key, val] of Object.entries(defaultVar.option_values)) {
+                const btn = document.querySelector(`.option-pill[data-attr="${key}"][data-value="${val}"]`);
+                if (btn) {
+                    selectProductOption(key, val, btn);
+                }
+            }
+        }
+    });
+@endif
 </script>
 @endpush
 @endsection

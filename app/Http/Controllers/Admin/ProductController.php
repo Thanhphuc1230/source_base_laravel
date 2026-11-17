@@ -72,6 +72,7 @@ class ProductController extends BaseController
         $data['video'] = $this->saveVideo($request);
 
         $product = $this->productRepository->createWithAutoSlug($data);
+        $this->productRepository->syncAttributesAndVariants($product, $request->all());
         toast('Thêm '.$this->nameItem.' thành công', 'success');
         ProductChanged::dispatch($product, 'created');
 
@@ -86,6 +87,8 @@ class ProductController extends BaseController
             toast('Không tìm thấy '.$this->nameItem, 'error');
             return back();
         }
+
+        $page->load(['attributes', 'variants']);
 
         $data = [
             'page' => $page,
@@ -113,6 +116,7 @@ class ProductController extends BaseController
         $data['video'] = $this->updateVideo($request, $current);
 
         $this->productRepository->update($data, $uuid);
+        $this->productRepository->syncAttributesAndVariants($current, $request->all());
         toast('Cập nhật '.$this->nameItem.' thành công', 'success');
         ProductChanged::dispatch($current, 'updated', $data['slug_vn'], $data['slug_en']);
 
