@@ -6,6 +6,22 @@
 @section('og_type', 'product')
 
 @section('content')
+@php
+    $defaultCommitments = [
+        ['icon' => 'fa-solid fa-rotate', 'title' => 'Bảo hành 1 đổi 1', 'desc' => 'Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất'],
+        ['icon' => 'fa-solid fa-headset', 'title' => 'Hỗ trợ kỹ thuật 24/7', 'desc' => 'Tư vấn nhiệt tình, hỗ trợ kỹ thuật trọn đời sản phẩm'],
+        ['icon' => 'fa-solid fa-shield-halved', 'title' => 'Cam kết chính hãng 100%', 'desc' => 'Đền gấp 10 lần nếu phát hiện hàng không chính hãng'],
+        ['icon' => 'fa-solid fa-truck-fast', 'title' => 'Giao hàng hỏa tốc', 'desc' => 'Miễn phí giao hàng toàn quốc, đồng kiểm khi nhận hàng'],
+    ];
+    $product_commitments = $product_commitments ?? \App\Models\ProductSetting::get('products_commitments', $defaultCommitments);
+    if (is_string($product_commitments)) {
+        $decoded = json_decode($product_commitments, true);
+        $product_commitments = is_array($decoded) ? $decoded : $defaultCommitments;
+    }
+    $commitments_title = $commitments_title ?? \App\Models\ProductSetting::get('products_commitments_title', 'Chính sách bán hàng & Cam kết');
+    $commitments_subtitle = $commitments_subtitle ?? \App\Models\ProductSetting::get('products_commitments_subtitle', 'Áp dụng cho tất cả sản phẩm chính hãng tại hệ thống');
+    $show_commitments = isset($show_commitments) ? (bool) $show_commitments : (bool) \App\Models\ProductSetting::get('products_show_commitments', true);
+@endphp
     <!-- Product Detail Header Breadcrumb -->
     <div class="bg-slate-100/70 py-3 border-b border-slate-200/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-2xs text-slate-500 flex items-center space-x-2">
@@ -173,6 +189,48 @@
                 </div>
                 @endif
 
+                <!-- Product Commitments & Policies (Dynamic from Product Setting in Admin) -->
+                @if(!empty($show_commitments) && !empty($product_commitments) && is_array($product_commitments))
+                <div class="bg-gradient-to-br from-amber-50/40 via-white to-slate-50 rounded-2xl border border-gold-200/60 p-5 sm:p-6 shadow-2xs space-y-4">
+                    <div class="flex items-center justify-between border-b border-gold-100 pb-3 flex-wrap gap-2">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-gold-500 text-slate-900 flex items-center justify-center font-bold text-sm shadow-xs flex-shrink-0">
+                                <i class="fa-solid fa-shield-heart"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-heading font-extrabold text-sm sm:text-base text-slate-900 leading-none">
+                                    {{ $commitments_title ?: 'Chính sách bán hàng & Cam kết dịch vụ' }}
+                                </h3>
+                                @if(!empty($commitments_subtitle))
+                                    <span class="text-3xs text-slate-500 mt-0.5 block">{{ $commitments_subtitle }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center text-3xs font-bold text-gold-700 bg-gold-100/80 px-2.5 py-1 rounded-full border border-gold-200">
+                            <i class="fa-solid fa-circle-check mr-1 text-gold-600"></i> An tâm mua sắm
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        @foreach($product_commitments as $item)
+                            <div class="flex flex-col p-3 rounded-xl bg-white border border-slate-100 shadow-3xs hover:border-gold-300 hover:shadow-2xs transition-all duration-200 space-y-1.5">
+                                <div class="w-8 h-8 rounded-lg bg-gold-50 text-gold-600 flex items-center justify-center flex-shrink-0">
+                                    <i class="{{ !empty($item['icon']) ? $item['icon'] : 'fa-solid fa-circle-check' }} text-sm"></i>
+                                </div>
+                                <span class="font-extrabold text-xs text-slate-900 leading-snug line-clamp-2">
+                                    {{ $item['title'] ?? '' }}
+                                </span>
+                                @if(!empty($item['desc']))
+                                    <p class="text-3xs text-slate-500 leading-relaxed font-normal line-clamp-2">
+                                        {{ $item['desc'] }}
+                                    </p>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <!-- Main Content HTML -->
                 <div class="bg-white rounded-2xl border border-slate-100 p-6 sm:p-8 shadow-2xs space-y-4">
                     <h3 class="font-heading font-extrabold text-base text-slate-900 border-b border-slate-100 pb-3 flex items-center">
@@ -291,15 +349,19 @@
                         @endif
                     </div>
 
+                    @if(!empty($show_commitments) && !empty($product_commitments) && is_array($product_commitments))
                     <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 text-3xs text-slate-600 space-y-2">
                         <p class="font-bold text-slate-800 uppercase border-b border-slate-200 pb-1.5 mb-1.5 flex items-center">
-                            <i class="fa-solid fa-circle-check text-gold-600 mr-1.5 text-xs"></i> Đặc quyền & Cam kết:
+                            <i class="fa-solid fa-circle-check text-gold-600 mr-1.5 text-xs"></i> {{ $commitments_title ?: 'Đặc quyền & Cam kết:' }}
                         </p>
-                        <p class="flex items-center"><i class="fa-solid fa-check text-gold-600 mr-1.5"></i> 100% Đồng hồ chính hãng Thụy Sĩ cao cấp</p>
-                        <p class="flex items-center"><i class="fa-solid fa-check text-gold-600 mr-1.5"></i> Bảo hành quốc tế 5 năm & Hỗ trợ kỹ thuật trọn đời</p>
-                        <p class="flex items-center"><i class="fa-solid fa-check text-gold-600 mr-1.5"></i> Đầy đủ hộp sổ thẻ bảo hành & phụ kiện nguyên bản</p>
-                        <p class="flex items-center"><i class="fa-solid fa-check text-gold-600 mr-1.5"></i> Miễn phí giao hàng VIP bảo mật & bảo hiểm toàn quốc</p>
+                        @foreach($product_commitments as $c)
+                            <p class="flex items-start">
+                                <i class="{{ !empty($c['icon']) ? $c['icon'] : 'fa-solid fa-check' }} text-gold-600 mr-1.5 mt-0.5 flex-shrink-0 text-2xs"></i>
+                                <span><strong>{{ $c['title'] ?? '' }}</strong>@if(!empty($c['desc'])) - {{ $c['desc'] }}@endif</span>
+                            </p>
+                        @endforeach
                     </div>
+                    @endif
                 </div>
 
                 <!-- Related Products Widget -->

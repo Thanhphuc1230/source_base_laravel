@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\CateProduct;
 use App\Models\Product;
+use App\Models\ProductSetting;
 use App\Repositories\Interfaces\CommentRepositoryInterface;
 use App\Repositories\Interfaces\ProductRepositoryInterface;
 use Illuminate\Http\Request;
@@ -91,6 +92,23 @@ class ProductService
 
         // Cache approved comments
         $data['comments'] = $this->commentRepository->getApprovedCommentsForItem('product', $data['product_detail']->id_product);
+
+        // Product Commitments & Policies from Setting (Zero-Hardcode)
+        $defaultCommitments = [
+            ['icon' => 'fa-solid fa-rotate', 'title' => 'Bảo hành 1 đổi 1', 'desc' => 'Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất'],
+            ['icon' => 'fa-solid fa-headset', 'title' => 'Hỗ trợ kỹ thuật 24/7', 'desc' => 'Tư vấn nhiệt tình, hỗ trợ kỹ thuật trọn đời sản phẩm'],
+            ['icon' => 'fa-solid fa-shield-halved', 'title' => 'Cam kết chính hãng 100%', 'desc' => 'Đền gấp 10 lần nếu phát hiện hàng không chính hãng'],
+            ['icon' => 'fa-solid fa-truck-fast', 'title' => 'Giao hàng hỏa tốc', 'desc' => 'Miễn phí giao hàng toàn quốc, đồng kiểm khi nhận hàng'],
+        ];
+        $commitments = ProductSetting::get('products_commitments', $defaultCommitments);
+        if (is_string($commitments)) {
+            $decoded = json_decode($commitments, true);
+            $commitments = is_array($decoded) ? $decoded : $defaultCommitments;
+        }
+        $data['product_commitments'] = !empty($commitments) ? $commitments : $defaultCommitments;
+        $data['commitments_title'] = ProductSetting::get('products_commitments_title', 'Chính sách bán hàng & Cam kết');
+        $data['commitments_subtitle'] = ProductSetting::get('products_commitments_subtitle', 'Áp dụng cho tất cả sản phẩm chính hãng tại hệ thống');
+        $data['show_commitments'] = (bool) ProductSetting::get('products_show_commitments', true);
 
         return $data;
     }

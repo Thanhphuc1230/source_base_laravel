@@ -42,6 +42,15 @@ class ProductSettingController extends BaseController
                 'category_color' => ProductSetting::get('products_category_color', '#b45309'),
                 'banner_category' => ProductSetting::get('products_banner_category', ''),
                 'banner_detail' => ProductSetting::get('products_banner_detail', ''),
+                'show_commitments' => ProductSetting::get('products_show_commitments', true),
+                'commitments_title' => ProductSetting::get('products_commitments_title', 'Chính sách bán hàng & Cam kết'),
+                'commitments_subtitle' => ProductSetting::get('products_commitments_subtitle', 'Áp dụng cho tất cả sản phẩm chính hãng tại hệ thống'),
+                'commitments' => ProductSetting::get('products_commitments', [
+                    ['icon' => 'fa-solid fa-rotate', 'title' => 'Bảo hành 1 đổi 1', 'desc' => 'Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất'],
+                    ['icon' => 'fa-solid fa-headset', 'title' => 'Hỗ trợ kỹ thuật 24/7', 'desc' => 'Tư vấn nhiệt tình, hỗ trợ kỹ thuật trọn đời sản phẩm'],
+                    ['icon' => 'fa-solid fa-shield-halved', 'title' => 'Cam kết chính hãng 100%', 'desc' => 'Đền gấp 10 lần nếu phát hiện hàng không chính hãng'],
+                    ['icon' => 'fa-solid fa-truck-fast', 'title' => 'Giao hàng hỏa tốc', 'desc' => 'Miễn phí giao hàng toàn quốc, đồng kiểm khi nhận hàng'],
+                ]),
             ]
         ];
 
@@ -69,6 +78,30 @@ class ProductSettingController extends BaseController
         ProductSetting::set('products_click_image_detail', $request->has('products_click_image_detail') ? '1' : '0', 'boolean', 'general');
         ProductSetting::set('products_title_color', $request->input('products_title_color', '#064e3b'), 'text', 'style');
         ProductSetting::set('products_category_color', $request->input('products_category_color', '#b45309'), 'text', 'style');
+
+        // Cam kết & Chính sách sản phẩm (Bảo hành, Hỗ trợ, Đổi trả,...)
+        ProductSetting::set('products_show_commitments', $request->has('products_show_commitments') ? '1' : '0', 'boolean', 'general', 'Bật tắt hiển thị cam kết sản phẩm ngoài frontend');
+        ProductSetting::set('products_commitments_title', $request->input('products_commitments_title', 'Chính sách bán hàng & Cam kết'), 'text', 'general', 'Tiêu đề khối cam kết sản phẩm');
+        ProductSetting::set('products_commitments_subtitle', $request->input('products_commitments_subtitle', ''), 'text', 'general', 'Mô tả phụ khối cam kết sản phẩm');
+
+        $commitments = [];
+        $titles = $request->input('commitment_titles', []);
+        $icons = $request->input('commitment_icons', []);
+        $descs = $request->input('commitment_descs', []);
+
+        if (is_array($titles)) {
+            foreach ($titles as $idx => $title) {
+                $trimmedTitle = trim((string) $title);
+                if (!empty($trimmedTitle)) {
+                    $commitments[] = [
+                        'title' => $trimmedTitle,
+                        'icon' => !empty($icons[$idx]) ? trim($icons[$idx]) : 'fa-solid fa-circle-check',
+                        'desc' => !empty($descs[$idx]) ? trim($descs[$idx]) : '',
+                    ];
+                }
+            }
+        }
+        ProductSetting::set('products_commitments', json_encode($commitments, JSON_UNESCAPED_UNICODE), 'json', 'general', 'Danh sách các cam kết & chính sách sản phẩm');
 
         // 2. Xử lý upload Banner Danh mục
         if ($request->has('delete_products_banner_category')) {

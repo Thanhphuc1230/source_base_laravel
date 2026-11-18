@@ -217,6 +217,121 @@
                                 </div>
                             </div>
                         </div>
+                    <!-- Column 4: Cấu hình Cam kết & Chính sách sản phẩm -->
+                    <div class="col-12">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-light border-0 py-3 d-flex align-items-center justify-content-between">
+                                <h5 class="card-title mb-0 font-weight-bold text-emerald-900">
+                                    <i class="ri-shield-check-line me-1 text-primary"></i> 4. Cấu hình Cam kết & Chính sách sản phẩm (Bảo hành, Hỗ trợ, Đổi trả,...)
+                                </h5>
+                                <span class="badge bg-primary-subtle text-primary fs-12 px-2 py-1">Hiển thị dưới phần Intro trang Chi tiết Sản phẩm</span>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted fs-13 mb-3">
+                                    Các cam kết này sẽ tự động xuất hiện tại trang chi tiết tất cả sản phẩm (ngay dưới phần Giới thiệu / Intro và hộp Đặt hàng) giúp khách hàng tin tưởng và chốt đơn nhanh chóng.
+                                </p>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <div class="form-check form-switch form-switch-success py-2">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="products_show_commitments" name="products_show_commitments" value="1"
+                                                {{ !empty($settings['show_commitments']) ? 'checked' : '' }}>
+                                            <label class="form-check-label font-weight-semibold" for="products_show_commitments">
+                                                Hiển thị khối Cam kết
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label font-weight-semibold fs-13" for="products_commitments_title">
+                                            Tiêu đề khối Cam kết <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control rounded-2" id="products_commitments_title" name="products_commitments_title"
+                                            value="{{ $settings['commitments_title'] ?? 'Chính sách bán hàng & Cam kết' }}"
+                                            placeholder="Ví dụ: Chính sách bán hàng & Cam kết dịch vụ" style="height: 38px;">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label font-weight-semibold fs-13" for="products_commitments_subtitle">
+                                            Mô tả phụ ngắn
+                                        </label>
+                                        <input type="text" class="form-control rounded-2" id="products_commitments_subtitle" name="products_commitments_subtitle"
+                                            value="{{ $settings['commitments_subtitle'] ?? '' }}"
+                                            placeholder="Ví dụ: Áp dụng cho tất cả sản phẩm chính hãng tại hệ thống" style="height: 38px;">
+                                    </div>
+                                </div>
+
+                                <div class="border rounded-2 p-3 bg-light">
+                                    <div class="d-flex align-items-center justify-content-between mb-3">
+                                        <h6 class="font-weight-bold text-dark mb-0 fs-14">
+                                            <i class="ri-list-check-2 me-1"></i> Danh sách các điều khoản Cam kết
+                                        </h6>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-2" id="btnResetDefaultCommitments">
+                                                <i class="ri-restart-line me-1"></i> Nạp cam kết mẫu
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-primary rounded-2" id="btnAddCommitmentRow">
+                                                <i class="ri-add-line me-1"></i> Thêm cam kết mới
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-hover bg-white align-middle mb-0" id="commitmentsTable">
+                                            <thead class="table-light text-muted fs-12">
+                                                <tr>
+                                                    <th class="text-center" style="width: 50px;">#</th>
+                                                    <th style="width: 220px;">Icon (FontAwesome/Remix)</th>
+                                                    <th style="width: 280px;">Tiêu đề cam kết <span class="text-danger">*</span></th>
+                                                    <th>Mô tả chi tiết / Diễn giải</th>
+                                                    <th class="text-center" style="width: 70px;">Xóa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="commitmentsTableBody">
+                                                @php
+                                                    $commitmentsList = $settings['commitments'] ?? [];
+                                                    if (is_string($commitmentsList)) {
+                                                        $commitmentsList = json_decode($commitmentsList, true) ?? [];
+                                                    }
+                                                @endphp
+
+                                                @if(!empty($commitmentsList) && is_array($commitmentsList))
+                                                    @foreach($commitmentsList as $index => $cItem)
+                                                        <tr class="commitment-row">
+                                                            <td class="text-center fw-semibold text-muted row-number">{{ $index + 1 }}</td>
+                                                            <td>
+                                                                <div class="input-group input-group-sm">
+                                                                    <span class="input-group-text icon-preview bg-light text-primary">
+                                                                        <i class="{{ !empty($cItem['icon']) ? $cItem['icon'] : 'fa-solid fa-circle-check' }}"></i>
+                                                                    </span>
+                                                                    <input type="text" class="form-control commitment-icon-input" name="commitment_icons[]"
+                                                                        value="{{ $cItem['icon'] ?? 'fa-solid fa-circle-check' }}" placeholder="fa-solid fa-shield-halved">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control form-control-sm fw-bold" name="commitment_titles[]"
+                                                                    value="{{ $cItem['title'] ?? '' }}" placeholder="Ví dụ: Bảo hành 1 đổi 1" required>
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control form-control-sm" name="commitment_descs[]"
+                                                                    value="{{ $cItem['desc'] ?? '' }}" placeholder="Ví dụ: Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất">
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-delete-commitment" title="Xóa dòng này">
+                                                                    <i class="ri-delete-bin-line fs-14"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-text fs-11 text-muted mt-2">
+                                        <i class="ri-information-line me-1"></i> Gợi ý icon phổ biến: <code>fa-solid fa-rotate</code> (Bảo hành 1-1), <code>fa-solid fa-headset</code> (Hỗ trợ 24/7), <code>fa-solid fa-shield-halved</code> (Bảo hành/Chính hãng), <code>fa-solid fa-truck-fast</code> (Giao hàng), <code>fa-solid fa-award</code> (Cam kết chất lượng), <code>fa-solid fa-box-open</code> (Đổi trả).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -240,6 +355,108 @@
             previewImage('file_products_banner_category', 'container_products_banner_category');
             previewImage('file_products_banner_detail', 'container_products_banner_detail');
         }
+
+        // ===================================
+        // PRODUCT COMMITMENTS REPEATER SCRIPT
+        // ===================================
+        const tbody = document.getElementById('commitmentsTableBody');
+        const btnAdd = document.getElementById('btnAddCommitmentRow');
+        const btnReset = document.getElementById('btnResetDefaultCommitments');
+
+        function updateRowNumbers() {
+            if (!tbody) return;
+            const rows = tbody.querySelectorAll('.commitment-row');
+            rows.forEach((row, index) => {
+                const numCell = row.querySelector('.row-number');
+                if (numCell) numCell.textContent = index + 1;
+            });
+        }
+
+        function createRowHtml(icon = 'fa-solid fa-circle-check', title = '', desc = '') {
+            const tr = document.createElement('tr');
+            tr.className = 'commitment-row';
+            tr.innerHTML = `
+                <td class="text-center fw-semibold text-muted row-number"></td>
+                <td>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text icon-preview bg-light text-primary">
+                            <i class="${icon}"></i>
+                        </span>
+                        <input type="text" class="form-control commitment-icon-input" name="commitment_icons[]"
+                            value="${icon}" placeholder="fa-solid fa-shield-halved">
+                    </div>
+                </td>
+                <td>
+                    <input type="text" class="form-control form-control-sm fw-bold" name="commitment_titles[]"
+                        value="${title}" placeholder="Ví dụ: Bảo hành 1 đổi 1" required>
+                </td>
+                <td>
+                    <input type="text" class="form-control form-control-sm" name="commitment_descs[]"
+                        value="${desc}" placeholder="Ví dụ: Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất">
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger border-0 btn-delete-commitment" title="Xóa dòng này">
+                        <i class="ri-delete-bin-line fs-14"></i>
+                    </button>
+                </td>
+            `;
+            return tr;
+        }
+
+        // Thêm dòng mới
+        if (btnAdd && tbody) {
+            btnAdd.addEventListener('click', function() {
+                const newRow = createRowHtml('fa-solid fa-circle-check', '', '');
+                tbody.appendChild(newRow);
+                updateRowNumbers();
+                newRow.querySelector('input[name="commitment_titles[]"]').focus();
+            });
+        }
+
+        // Xóa dòng & Cập nhật icon preview
+        if (tbody) {
+            tbody.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('.btn-delete-commitment');
+                if (deleteBtn) {
+                    const row = deleteBtn.closest('.commitment-row');
+                    if (row) {
+                        row.remove();
+                        updateRowNumbers();
+                    }
+                }
+            });
+
+            tbody.addEventListener('input', function(e) {
+                if (e.target.classList.contains('commitment-icon-input')) {
+                    const val = e.target.value.trim() || 'fa-solid fa-circle-check';
+                    const iconPreview = e.target.closest('.input-group').querySelector('.icon-preview i');
+                    if (iconPreview) {
+                        iconPreview.className = val;
+                    }
+                }
+            });
+        }
+
+        // Nạp cam kết mẫu
+        if (btnReset && tbody) {
+            btnReset.addEventListener('click', function() {
+                if (confirm('Bạn có muốn nạp lại danh sách cam kết mẫu chuẩn (Bảo hành 1-1, Hỗ trợ 24/7, Cam kết chính hãng, Giao hàng toàn quốc)?')) {
+                    tbody.innerHTML = '';
+                    const sampleItems = [
+                        { icon: 'fa-solid fa-rotate', title: 'Bảo hành 1 đổi 1', desc: 'Đổi mới trong 30 ngày nếu có lỗi từ nhà sản xuất' },
+                        { icon: 'fa-solid fa-headset', title: 'Hỗ trợ kỹ thuật 24/7', desc: 'Tư vấn nhiệt tình, hỗ trợ kỹ thuật trọn đời sản phẩm' },
+                        { icon: 'fa-solid fa-shield-halved', title: 'Cam kết chính hãng 100%', desc: 'Đền gấp 10 lần nếu phát hiện hàng không chính hãng' },
+                        { icon: 'fa-solid fa-truck-fast', title: 'Giao hàng hỏa tốc', desc: 'Miễn phí giao hàng toàn quốc, đồng kiểm khi nhận hàng' },
+                    ];
+                    sampleItems.forEach(item => {
+                        tbody.appendChild(createRowHtml(item.icon, item.title, item.desc));
+                    });
+                    updateRowNumbers();
+                }
+            });
+        }
+
+        updateRowNumbers();
     });
 </script>
 @endpush
