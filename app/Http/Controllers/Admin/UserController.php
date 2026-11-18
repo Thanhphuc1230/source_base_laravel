@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Requests\Admin\QuickUserRequest;
 use App\Http\Requests\Admin\UserRequest;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
@@ -42,6 +43,7 @@ class UserController extends BaseController
 
         $data['list'] = $this->userRepository->getFilteredUsers($filters);
         $data['nameItem'] = $this->nameItem;
+        $data['roles'] = $this->userRepository->getAllRoles();
 
         return $this->view_admin('list', $data);
     }
@@ -54,6 +56,61 @@ class UserController extends BaseController
         $data['userRoles'] = [];
 
         return $this->view_admin('detail', $data);
+    }
+
+    public function store(UserRequest $request)
+    {
+        $data = $request->validated();
+
+        try {
+            $this->userRepository->createUser($data);
+
+            toast('Tạo người dùng thành công!', 'success');
+            return redirect()->route('admin.user.index');
+        } catch (\Exception $e) {
+            toast('Có lỗi xảy ra khi tạo người dùng!', 'error');
+            return back()->withInput();
+        }
+    }
+
+    public function quickStore(QuickUserRequest $request)
+    {
+        $data = $request->validated();
+
+        try {
+            $plainPassword = $data['password'];
+            $user = $this->userRepository->createUser($data);
+
+            // Eager load roles
+            $user->load('roles');
+            $roleNames = $user->roles->map(function ($role) {
+                return $role->display_name ?: $role->name;
+            })->values()->toArray();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo tài khoản người dùng thành công!',
+                'data' => [
+                    'id' => $user->id,
+                    'uuid' => $user->uuid,
+                    'fullname' => $user->fullname,
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'phone' => $user->phone ?: 'Chưa cập nhật',
+                    'password' => $plainPassword,
+                    'level' => $user->level,
+                    'level_label' => $user->level == 1 ? 'Admin' : ($user->level == 2 ? 'Staff' : 'User'),
+                    'status' => (bool) $user->status,
+                    'roles' => $roleNames,
+                    'created_at' => $user->created_at ? $user->created_at->format('d/m/Y H:i') : now()->format('d/m/Y H:i'),
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi tạo người dùng: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     public function edit($uuid)

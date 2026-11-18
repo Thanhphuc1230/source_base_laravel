@@ -8,6 +8,7 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/', [UserController::class, 'index'])->name('index')->middleware('permission:user.view');
     Route::get('/create', [UserController::class, 'create'])->name('create')->middleware('permission:user.create');
     Route::post('/store', [UserController::class, 'store'])->name('store')->middleware('permission:user.create');
+    Route::post('/quick-store', [UserController::class, 'quickStore'])->name('quick-store')->middleware('permission:user.create');
     Route::get('/{uuid}/edit', [UserController::class, 'edit'])->name('edit')->middleware('permission:user.edit');
     Route::put('/{uuid}', [UserController::class, 'update'])->name('update')->middleware('permission:user.edit');
     Route::delete('/{uuid}', [UserController::class, 'destroy'])->name('destroy')->middleware('permission:user.delete');

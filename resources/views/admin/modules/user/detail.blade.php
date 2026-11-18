@@ -92,28 +92,44 @@
                                 </div>
 
                                 @if($action == 'create')
-                                <div class="row">
+                                <div class="row align-items-end mb-3">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold" for="password">Mật khẩu <span class="text-danger">*</span></label>
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <label class="form-label fw-semibold mb-0" for="password">Mật khẩu <span class="text-danger">*</span></label>
+                                            <div class="d-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 fs-11" id="btnDetailRandomPass" title="Tạo mật khẩu ngẫu nhiên">
+                                                    <i class="ri-refresh-line me-1"></i> Tạo ngẫu nhiên
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2 fs-11" id="btnDetailCopyPass" title="Sao chép mật khẩu">
+                                                    <i class="ri-file-copy-line me-1"></i> <span id="detailCopyPassText">Copy</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="input-group">
                                             <input type="password" id="password"
                                                 class="form-control @error('password') is-invalid @enderror" name="password"
-                                                placeholder="Nhập mật khẩu" required>
-                                            @error('password')
-                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
-                                            @enderror
+                                                placeholder="Nhập hoặc tạo mật khẩu ngẫu nhiên" required>
+                                            <button class="btn btn-outline-secondary" type="button" id="btnToggleDetailPass" title="Hiện/Ẩn mật khẩu">
+                                                <i class="ri-eye-line fs-14"></i>
+                                            </button>
                                         </div>
+                                        @error('password')
+                                            <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label fw-semibold" for="password_confirmation">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-semibold mb-1" for="password_confirmation">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                                        <div class="input-group">
                                             <input type="password" id="password_confirmation"
                                                 class="form-control @error('password_confirmation') is-invalid @enderror" name="password_confirmation"
                                                 placeholder="Nhập lại mật khẩu" required>
-                                            @error('password_confirmation')
-                                                <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
-                                            @enderror
+                                            <button class="btn btn-outline-secondary" type="button" id="btnToggleDetailConfirmPass" title="Hiện/Ẩn mật khẩu">
+                                                <i class="ri-eye-line fs-14"></i>
+                                            </button>
                                         </div>
+                                        @error('password_confirmation')
+                                            <div class="invalid-feedback d-block fw-semibold">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 @endif
@@ -195,3 +211,115 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    function generateStrongPassword(length = 10) {
+        const uppercase = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+        const lowercase = "abcdefghijkmnpqrstuvwxyz";
+        const numbers = "23456789";
+        const symbols = "@#$%&*!";
+        const allChars = uppercase + lowercase + numbers + symbols;
+
+        let password = "";
+        password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+        password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+        password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        password += symbols.charAt(Math.floor(Math.random() * symbols.length));
+
+        for (let i = password.length; i < length; i++) {
+            password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+        }
+
+        return password.split('').sort(() => 0.5 - Math.random()).join('');
+    }
+
+    function copyToClipboard(text, onDone) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function() {
+                if (typeof onDone === 'function') onDone();
+            }).catch(function() {
+                fallbackCopy(text, onDone);
+            });
+        } else {
+            fallbackCopy(text, onDone);
+        }
+    }
+
+    function fallbackCopy(text, onDone) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            if (typeof onDone === 'function') onDone();
+        } catch (err) {}
+        document.body.removeChild(textArea);
+    }
+
+    // Nút tạo mật khẩu ngẫu nhiên trên trang Detail
+    $('#btnDetailRandomPass').on('click', function() {
+        const rand = generateStrongPassword(10);
+        $('#password').val(rand).attr('type', 'text');
+        $('#password_confirmation').val(rand).attr('type', 'text');
+        $('#btnToggleDetailPass i, #btnToggleDetailConfirmPass i').removeClass('ri-eye-line').addClass('ri-eye-off-line');
+
+        // Animation visual
+        const btn = $(this);
+        btn.addClass('btn-primary').removeClass('btn-outline-primary');
+        setTimeout(() => {
+            btn.addClass('btn-outline-primary').removeClass('btn-primary');
+        }, 500);
+    });
+
+    // Nút Copy mật khẩu trên trang Detail
+    $('#btnDetailCopyPass').on('click', function() {
+        const val = $('#password').val();
+        if (!val) {
+            alert('Chưa có mật khẩu để sao chép!');
+            return;
+        }
+
+        copyToClipboard(val, function() {
+            const btnText = $('#detailCopyPassText');
+            btnText.text('Đã chép!');
+            $('#btnDetailCopyPass').removeClass('btn-outline-secondary').addClass('btn-success');
+            setTimeout(() => {
+                btnText.text('Copy');
+                $('#btnDetailCopyPass').removeClass('btn-success').addClass('btn-outline-secondary');
+            }, 1500);
+        });
+    });
+
+    // Toggle hiện/ẩn mật khẩu Detail
+    $('#btnToggleDetailPass').on('click', function() {
+        const input = $('#password');
+        const icon = $(this).find('i');
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('ri-eye-line').addClass('ri-eye-off-line');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('ri-eye-off-line').addClass('ri-eye-line');
+        }
+    });
+
+    $('#btnToggleDetailConfirmPass').on('click', function() {
+        const input = $('#password_confirmation');
+        const icon = $(this).find('i');
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('ri-eye-line').addClass('ri-eye-off-line');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('ri-eye-off-line').addClass('ri-eye-line');
+        }
+    });
+});
+</script>
+@endpush
