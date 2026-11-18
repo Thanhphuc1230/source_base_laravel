@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\FileManagerController;
 
+// Health check & Keep-alive ping route (siêu nhẹ 2 bytes cho cron-job & uptime monitors)
+Route::match(['get', 'head'], '/ping', function () {
+    return response('ok', 200)->header('Content-Type', 'text/plain');
+})->name('ping');
+
 // Language switching
 Route::group(['middleware' => 'web'], function () {
     Route::get('lang/{locale}', function ($locale = 'vn') {
