@@ -8,6 +8,10 @@ Route::match(['get', 'head'], '/ping', function () {
     return response('ok', 200)->header('Content-Type', 'text/plain');
 })->name('ping');
 
+Route::match(['get', 'head'], '/health', function () {
+    return response('ok', 200)->header('Content-Type', 'text/plain');
+})->name('health');
+
 // Language switching
 Route::group(['middleware' => 'web'], function () {
     Route::get('lang/{locale}', function ($locale = 'vn') {
