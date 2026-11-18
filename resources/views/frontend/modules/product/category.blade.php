@@ -190,9 +190,9 @@
 
                 <!-- Pagination Links -->
                 @if($products->hasPages())
-                    <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs flex justify-center">
+                    <div class="bg-white rounded-lg border border-border-subtle p-4 shadow-xs flex justify-center mt-6">
                         <div class="pagination-wrap w-full flex justify-center">
-                            {!! $products->links() !!}
+                            {!! $products->links('frontend.partials.pagination') !!}
                         </div>
                     </div>
                 @endif

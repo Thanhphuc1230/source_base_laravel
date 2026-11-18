@@ -64,8 +64,10 @@
 
                 <!-- Pagination -->
                 @if($projects->hasPages())
-                    <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex justify-center mt-6">
-                        {!! $projects->links('frontend.partials.pagination') !!}
+                    <div class="bg-white rounded-lg border border-border-subtle p-4 shadow-xs flex justify-center mt-6">
+                        <div class="pagination-wrap w-full flex justify-center">
+                            {!! $projects->links('frontend.partials.pagination') !!}
+                        </div>
                     </div>
                 @endif
             </div>

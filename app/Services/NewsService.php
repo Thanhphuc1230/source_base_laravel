@@ -43,7 +43,8 @@ class NewsService
             ->where('status', 1)
             ->select('id_new', 'name_vn', 'name_en', 'intro_vn', 'intro_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'created_at', 'category_id')
             ->orderBy('created_at', 'desc')
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->withQueryString();
 
         // Get common data
         $data = array_merge($data, $this->getCommonFrontendData());

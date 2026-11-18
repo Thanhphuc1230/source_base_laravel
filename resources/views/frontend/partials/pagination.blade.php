@@ -1,34 +1,43 @@
 @if ($paginator->hasPages())
-    <div class="flex items-center justify-center space-x-2 mt-6 w-full" aria-label="Pagination">
-        {{-- Nút Trước --}}
+    @php
+        $isEn = (app()->getLocale() === 'en');
+        $prevText = $isEn ? 'Previous' : 'Trước';
+        $nextText = $isEn ? 'Next' : 'Sau';
+        $prevAria = $isEn ? 'Previous page' : 'Trang trước';
+        $nextAria = $isEn ? 'Next page' : 'Trang sau';
+    @endphp
+    <nav role="navigation" aria-label="Pagination Navigation" class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 select-none w-full">
+        {{-- Previous Page Link --}}
         @if ($paginator->onFirstPage())
-            <span class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-100 text-xs font-bold text-gray-300 bg-gray-50 cursor-not-allowed select-none">
-                <i class="fa-solid fa-chevron-left mr-2 text-3xs"></i> Trước
+            <span class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 text-xs font-semibold text-charcoal-400 bg-cream/70 border border-border-subtle/80 rounded-lg cursor-not-allowed opacity-60" aria-disabled="true" aria-label="{{ $prevAria }}">
+                <i class="fa-solid fa-chevron-left text-[10px] mr-1.5 opacity-60"></i>
+                <span>{{ $prevText }}</span>
             </span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-emerald-950 bg-white hover:bg-gray-50 hover:text-emerald-800 hover:border-gray-300 transition-all duration-300 shadow-2xs active:scale-95">
-                <i class="fa-solid fa-chevron-left mr-2 text-3xs"></i> Trước
+            <a href="{{ $paginator->previousPageUrl() }}" rel="prev" class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 text-xs font-semibold text-charcoal bg-white border border-border-subtle rounded-lg hover:border-charcoal hover:bg-beige-warm/60 transition-all duration-200 active:scale-95 shadow-xs" aria-label="{{ $prevAria }}">
+                <i class="fa-solid fa-chevron-left text-[10px] mr-1.5"></i>
+                <span>{{ $prevText }}</span>
             </a>
         @endif
 
-        {{-- Các số trang --}}
+        {{-- Pagination Elements --}}
         @foreach ($elements as $element)
-            {{-- Dấu ba chấm --}}
+            {{-- "Three Dots" Separator --}}
             @if (is_string($element))
-                <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-xs font-semibold text-gray-400 select-none">
+                <span class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-xs font-semibold text-charcoal-400 select-none">
                     {{ $element }}
                 </span>
             @endif
 
-            {{-- Các link số --}}
+            {{-- Array Of Links --}}
             @if (is_array($element))
                 @foreach ($element as $page => $url)
                     @if ($page == $paginator->currentPage())
-                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-xs font-extrabold text-white shadow-sm transition-all select-none" style="background-color: {{ $news_settings['title_color'] ?? '#064e3b' }}">
+                        <span class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-xs font-bold text-white bg-charcoal border border-charcoal rounded-lg shadow-xs select-none" aria-current="page">
                             {{ $page }}
                         </span>
                     @else
-                        <a href="{{ $url }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 bg-white hover:bg-gray-50 hover:text-emerald-800 hover:border-gray-300 transition-all duration-300 shadow-2xs active:scale-95">
+                        <a href="{{ $url }}" class="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-xs font-semibold text-charcoal bg-white border border-border-subtle rounded-lg hover:border-charcoal hover:bg-beige-warm/60 transition-all duration-200 active:scale-95 shadow-xs">
                             {{ $page }}
                         </a>
                     @endif
@@ -36,15 +45,17 @@
             @endif
         @endforeach
 
-        {{-- Nút Sau --}}
+        {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-200 text-xs font-bold text-emerald-950 bg-white hover:bg-gray-50 hover:text-emerald-800 hover:border-gray-300 transition-all duration-300 shadow-2xs active:scale-95">
-                Sau <i class="fa-solid fa-chevron-right ml-2 text-3xs"></i>
+            <a href="{{ $paginator->nextPageUrl() }}" rel="next" class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 text-xs font-semibold text-charcoal bg-white border border-border-subtle rounded-lg hover:border-charcoal hover:bg-beige-warm/60 transition-all duration-200 active:scale-95 shadow-xs" aria-label="{{ $nextAria }}">
+                <span>{{ $nextText }}</span>
+                <i class="fa-solid fa-chevron-right text-[10px] ml-1.5"></i>
             </a>
         @else
-            <span class="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-100 text-xs font-bold text-gray-300 bg-gray-50 cursor-not-allowed select-none">
-                Sau <i class="fa-solid fa-chevron-right ml-2 text-3xs"></i>
+            <span class="inline-flex items-center justify-center h-9 sm:h-10 px-3 sm:px-4 text-xs font-semibold text-charcoal-400 bg-cream/70 border border-border-subtle/80 rounded-lg cursor-not-allowed opacity-60" aria-disabled="true" aria-label="{{ $nextAria }}">
+                <span>{{ $nextText }}</span>
+                <i class="fa-solid fa-chevron-right text-[10px] ml-1.5 opacity-60"></i>
             </span>
         @endif
-    </div>
+    </nav>
 @endif

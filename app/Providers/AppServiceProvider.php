@@ -47,7 +47,12 @@ class AppServiceProvider extends ServiceProvider
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
-        Paginator::useBootstrapFive();
+        if (request()->is('admin*')) {
+            Paginator::useBootstrapFive();
+        } else {
+            Paginator::defaultView('frontend.partials.pagination');
+            Paginator::defaultSimpleView('frontend.partials.pagination');
+        }
 
         View::composer('frontend.*', FrontendComposer::class);
 
