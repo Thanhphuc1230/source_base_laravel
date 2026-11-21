@@ -19,7 +19,7 @@ class PageSeeder extends Seeder
 
         $pageRepo = app(\App\Repositories\Interfaces\PageRepositoryInterface::class);
 
-        if (! Page::where('slug_vn', 'gioi-thieu')->exists()) {
+        if (! Page::where('slug', 'LIKE', '%gioi-thieu%')->exists()) {
             $pageRepo->createWithAutoSlug([
                 'name_vn' => 'Giới thiệu',
                 'name_en' => 'About us',

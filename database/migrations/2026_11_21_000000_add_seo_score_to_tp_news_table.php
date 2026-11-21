@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tp_news', function (Blueprint $table) {
-            $table->unsignedTinyInteger('seo_score')->default(0)->after('description_en');
+            $table->unsignedTinyInteger('seo_score')->default(0)->after('description');
             $table->index('seo_score');
         });
     }

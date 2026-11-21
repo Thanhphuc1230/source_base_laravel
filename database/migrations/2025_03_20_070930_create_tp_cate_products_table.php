@@ -14,29 +14,19 @@ return new class extends Migration
         Schema::create('tp_cate_products', function (Blueprint $table) {
             $table->id('id_cate_product');
             $table->uuid()->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
-            $table->string('slug_vn');
-            $table->string('slug_en')->nullable();
+            $table->json('name');
+            $table->json('slug');
             $table->string('image_vn')->nullable();
             $table->string('image_en')->nullable();
-            $table->string('keyword_vn')->nullable();
-            $table->string('keyword_en')->nullable();
-            $table->string('description_vn')->nullable();
-            $table->string('description_en')->nullable();
+            $table->json('keyword')->nullable();
+            $table->json('description')->nullable();
             $table->boolean('status')->default(true);
             $table->boolean('home')->default(false);
             $table->unsignedInteger('stt')->default(0)->nullable();
             $table->unsignedBigInteger('parent_id')->default(0);
             $table->timestamps();
 
-            // Essential indexes for hierarchy
-            $table->index('slug_vn');              // Required for route resolution
-            $table->index('slug_en');              // Required for route resolution
-
             // Composite indexes for hierarchical queries
-            $table->index(['status', 'slug_vn']);   // Route resolution optimization
-            $table->index(['status', 'slug_en']);   // Route resolution optimization
             $table->index(['status', 'home']);      // Home category display
             $table->index(['status', 'parent_id', 'stt']); // Covers: status + hierarchy + ordering
             $table->index(['parent_id', 'stt']);          // Covers: hierarchy navigation

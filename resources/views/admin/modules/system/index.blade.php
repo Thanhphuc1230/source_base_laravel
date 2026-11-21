@@ -34,15 +34,23 @@
                                 <!-- Cấu hình ngôn ngữ hoạt động -->
                                 <div class="mb-4 pb-3 border-b border-gray-150">
                                     <label class="form-label font-weight-bold d-block">Ngôn ngữ hoạt động</label>
-                                    <div class="d-flex align-items-center">
-                                        <div class="form-check form-switch form-switch-success me-4">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="lang-vi" name="active_languages[]" value="vi" {{ in_array('vi', $system->active_languages ?? ['vi', 'en']) ? 'checked' : '' }}>
-                                            <label class="form-check-label font-weight-semibold" for="lang-vi">Tiếng Việt (VI)</label>
-                                        </div>
-                                        <div class="form-check form-switch form-switch-success">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="lang-en" name="active_languages[]" value="en" {{ in_array('en', $system->active_languages ?? ['vi', 'en']) ? 'checked' : '' }}>
-                                            <label class="form-check-label font-weight-semibold" for="lang-en">Tiếng Anh (EN)</label>
-                                        </div>
+                                    <div class="row g-3">
+                                        @foreach(config('languages.supported', []) as $code => $lang)
+                                            <div class="col-md-4 col-sm-6">
+                                                <div class="form-check form-switch form-switch-success d-flex align-items-center gap-2">
+                                                    <input class="form-check-input" type="checkbox" role="switch" id="lang-{{ $code }}" name="active_languages[]" value="{{ $code }}"
+                                                        {{ in_array($code, $system->active_languages ?? ['vi', 'en', 'de', 'ja', 'ko', 'zh']) ? 'checked' : '' }}
+                                                        {{ !empty($lang['is_default']) ? 'disabled checked' : '' }}>
+                                                    @if(!empty($lang['is_default']))
+                                                        <input type="hidden" name="active_languages[]" value="{{ $code }}">
+                                                    @endif
+                                                    <label class="form-check-label font-weight-semibold d-inline-flex align-items-center gap-1 cursor-pointer" for="lang-{{ $code }}">
+                                                        <img src="{{ asset($lang['flag']) }}" alt="{{ $code }}" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;">
+                                                        <span>{{ $lang['name'] }} ({{ strtoupper($code) }})</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                     @error('active_languages')
                                         <span class="text-danger d-block mt-1">{{ $message }}</span>

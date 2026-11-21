@@ -8,15 +8,12 @@
 ])
 
 @php
-    $activeLocales = isset($systemConfig) ? ($systemConfig->active_languages ?? ['vi', 'en']) : ['vi', 'en'];
+    $activeLocales = isset($systemConfig) && !empty($systemConfig->active_languages)
+        ? $systemConfig->active_languages 
+        : ['vi', 'en', 'de', 'ja', 'ko', 'zh'];
     
-    $shouldRender = false;
-    if ($locale === 'vn' && in_array('vi', $activeLocales)) {
-        $shouldRender = true;
-    }
-    if ($locale === 'en' && in_array('en', $activeLocales)) {
-        $shouldRender = true;
-    }
+    $normLocale = ($locale === 'vn') ? 'vi' : $locale;
+    $shouldRender = in_array($normLocale, $activeLocales, true) || in_array($locale, $activeLocales, true);
 @endphp
 
 @if ($shouldRender)

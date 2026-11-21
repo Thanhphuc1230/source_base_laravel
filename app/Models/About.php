@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class About extends Model
 {
-    use AutoImagePathsTrait, Cachable, HasFactory;
+    use AutoImagePathsTrait, Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name', 'intro', 'content'];
 
     protected $table = 'tp_abouts';
 
@@ -17,6 +20,9 @@ class About extends Model
 
     protected $fillable = [
         'uuid',
+        'name',
+        'intro',
+        'content',
         'name_vn',
         'name_en',
         'intro_vn',

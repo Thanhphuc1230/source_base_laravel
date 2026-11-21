@@ -17,19 +17,19 @@ class ProductVariantSeeder extends Seeder
         }
 
         // 1. Giường Ngủ Master
-        $bed = Product::where('slug_vn', 'LIKE', '%giuong%')->orWhere('name_vn', 'LIKE', '%Giường%')->first();
+        $bed = Product::where('slug', 'LIKE', '%giuong%')->orWhere('name', 'LIKE', '%Giường%')->first();
         if ($bed) {
             $this->seedBedVariants($bed);
         }
 
         // 2. Sofa
-        $sofa = Product::where('slug_vn', 'LIKE', '%sofa%')->orWhere('name_vn', 'LIKE', '%Sofa%')->first();
+        $sofa = Product::where('slug', 'LIKE', '%sofa%')->orWhere('name', 'LIKE', '%Sofa%')->first();
         if ($sofa) {
             $this->seedSofaVariants($sofa);
         }
 
         // 3. Bàn Ăn
-        $table = Product::where('slug_vn', 'LIKE', '%ban-an%')->orWhere('name_vn', 'LIKE', '%Bàn%')->first();
+        $table = Product::where('slug', 'LIKE', '%ban-an%')->orWhere('name', 'LIKE', '%Bàn%')->first();
         if ($table && $table->id_product !== ($sofa ? $sofa->id_product : null)) {
             $this->seedDiningVariants($table);
         }

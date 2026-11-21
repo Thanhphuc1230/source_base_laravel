@@ -4,13 +4,16 @@ namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
 use App\Traits\BaseLogsActivity;
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CateProduct extends Model
 {
-    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory;
+    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name', 'slug', 'intro', 'content', 'keyword', 'description'];
 
     protected $primaryKey = 'id_cate_product';
 
@@ -18,6 +21,12 @@ class CateProduct extends Model
 
     protected $fillable = [
         'uuid',
+        'name',
+        'slug',
+        'intro',
+        'content',
+        'keyword',
+        'description',
         'name_vn',
         'name_en',
         'slug_vn',
@@ -35,14 +44,12 @@ class CateProduct extends Model
 
     public function getSlugAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'slug_' . $locale} ?: ($this->slug_vn ?: $this->slug_en);
+        return $this->getTranslation('slug');
     }
 
     public function getNameAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'name_' . $locale} ?: ($this->name_vn ?: $this->name_en);
+        return $this->getTranslation('name');
     }
 
     public function getImageAttribute()
@@ -53,8 +60,7 @@ class CateProduct extends Model
 
     public function getKeywordAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'keyword_' . $locale} ?: ($this->keyword_vn ?: $this->keyword_en);
+        return $this->getTranslation('keyword');
     }
 
     public function getKeywordsAttribute()
@@ -64,8 +70,7 @@ class CateProduct extends Model
 
     public function getDescriptionAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'description_' . $locale} ?: ($this->description_vn ?: $this->description_en);
+        return $this->getTranslation('description');
     }
 
     protected $casts = [
@@ -81,7 +86,7 @@ class CateProduct extends Model
     public function products()
     {
         return $this->hasMany(Product::class, 'category_id', 'id_cate_product')->where('status', 1)
-        ->select('id_product','uuid', 'name_vn', 'slug_vn', 'slug_en', 'price','image_vn', 'image_en', 'intro_vn', 'category_id', 'status','hot','stt', 'created_at')
+        ->select('id_product', 'uuid', 'name', 'slug', 'price', 'image_vn', 'image_en', 'intro', 'category_id', 'status', 'hot', 'stt', 'created_at')
         ->orderBy('stt', 'asc');
     }
 

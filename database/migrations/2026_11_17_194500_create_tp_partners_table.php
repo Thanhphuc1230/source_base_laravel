@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('tp_partners', function (Blueprint $table) {
             $table->id('id_partner');
             $table->uuid('uuid')->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
-            $table->string('slug_vn')->nullable()->index();
-            $table->string('slug_en')->nullable()->index();
+            $table->json('name');
+            $table->json('slug')->nullable();
             $table->boolean('status')->default(true);
             $table->string('image_vn')->nullable();
             $table->string('image_en')->nullable();
@@ -26,8 +24,6 @@ return new class extends Migration
 
             // Indexes for status and ordering
             $table->index(['status', 'stt']);
-            $table->index(['status', 'slug_vn']);
-            $table->index(['status', 'slug_en']);
         });
     }
 

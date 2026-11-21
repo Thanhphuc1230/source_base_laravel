@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    use Cachable, HasFactory;
+    use Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name'];
 
     protected $table = 'tp_menus';
 
@@ -16,6 +19,7 @@ class Menu extends Model
 
     protected $fillable = [
         'uuid',
+        'name',
         'name_vn',
         'name_en',
         'link',

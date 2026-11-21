@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tp_products', function (Blueprint $table) {
-            $table->unsignedTinyInteger('seo_score')->default(0)->after('description_en');
+            $table->unsignedTinyInteger('seo_score')->default(0)->after('description');
             $table->index('seo_score');
         });
 
         Schema::table('tp_cate_products', function (Blueprint $table) {
-            $table->unsignedTinyInteger('seo_score')->default(0)->after('description_en');
+            $table->unsignedTinyInteger('seo_score')->default(0)->after('description');
             $table->index('seo_score');
         });
 
         Schema::table('tp_cate_news', function (Blueprint $table) {
-            $table->unsignedTinyInteger('seo_score')->default(0)->after('description_en');
+            $table->unsignedTinyInteger('seo_score')->default(0)->after('description');
             $table->index('seo_score');
         });
     }

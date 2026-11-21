@@ -16,7 +16,7 @@ class SlugService
      * @param int|null $id ID hiện tại để loại trừ khi update
      * @return string
      */
-    public function generateUniqueSlug(string $name, string $table, string $column = 'slug_vn', ?int $id = null): string
+    public function generateUniqueSlug(string $name, string $table, string $column = 'slug', ?int $id = null): string
     {
         return $this->generateUniqueSlugGlobal($name, $table, $column, $id);
     }
@@ -24,7 +24,7 @@ class SlugService
     /**
      * Tương thích ngược với hàm cũ nhưng không ghép ID vào slug
      */
-    public function generateUniqueSlugWithId(string $name, int $id, string $table, string $column = 'slug_vn'): string
+    public function generateUniqueSlugWithId(string $name, int $id, string $table, string $column = 'slug'): string
     {
         return $this->generateUniqueSlugGlobal($name, $table, $column, $id > 0 ? $id : null);
     }
@@ -57,8 +57,7 @@ class SlugService
 
         foreach ($tables as $table => $idColumn) {
             $query = DB::table($table)->where(function($q) use ($slug) {
-                $q->where('slug_vn', $slug)
-                  ->orWhere('slug_en', $slug);
+                $q->where('slug', 'like', '%"' . $slug . '"%');
             });
 
             if ($excludeTable === $table && $excludeId) {
@@ -76,7 +75,7 @@ class SlugService
     /**
      * Tạo slug duy nhất toàn hệ thống (không ghép ID)
      */
-    public function generateUniqueSlugGlobal(string $name, string $table, string $column = 'slug_vn', ?int $id = null): string
+    public function generateUniqueSlugGlobal(string $name, string $table, string $column = 'slug', ?int $id = null): string
     {
         $baseSlug = Str::slug($name);
         if (empty($baseSlug)) {
@@ -96,7 +95,7 @@ class SlugService
     /**
      * Tương thích ngược với hàm cũ
      */
-    public function generateUniqueSlugWithIdGlobal(string $name, int $id, string $table, string $column = 'slug_vn'): string
+    public function generateUniqueSlugWithIdGlobal(string $name, int $id, string $table, string $column = 'slug'): string
     {
         return $this->generateUniqueSlugGlobal($name, $table, $column, $id > 0 ? $id : null);
     }

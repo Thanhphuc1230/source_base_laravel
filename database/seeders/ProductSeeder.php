@@ -22,11 +22,11 @@ class ProductSeeder extends Seeder
 
         $productRepo = app(\App\Repositories\Interfaces\ProductRepositoryInterface::class);
 
-        $catLiving = CateProduct::where('slug_vn', 'LIKE', '%phong-khach%')->value('id_cate_product') ?? 1;
-        $catBed = CateProduct::where('slug_vn', 'LIKE', '%phong-ngu%')->value('id_cate_product') ?? 2;
-        $catDining = CateProduct::where('slug_vn', 'LIKE', '%bep%')->orWhere('slug_vn', 'LIKE', '%ban-an%')->value('id_cate_product') ?? 3;
-        $catOffice = CateProduct::where('slug_vn', 'LIKE', '%lam-viec%')->value('id_cate_product') ?? 4;
-        $catDecor = CateProduct::where('slug_vn', 'LIKE', '%decor%')->value('id_cate_product') ?? 5;
+        $catLiving = CateProduct::where('slug', 'LIKE', '%phong-khach%')->value('id_cate_product') ?? 1;
+        $catBed = CateProduct::where('slug', 'LIKE', '%phong-ngu%')->value('id_cate_product') ?? 2;
+        $catDining = CateProduct::where('slug', 'LIKE', '%bep%')->orWhere('slug', 'LIKE', '%ban-an%')->value('id_cate_product') ?? 3;
+        $catOffice = CateProduct::where('slug', 'LIKE', '%lam-viec%')->value('id_cate_product') ?? 4;
+        $catDecor = CateProduct::where('slug', 'LIKE', '%decor%')->value('id_cate_product') ?? 5;
 
         $brand1 = Brand::value('id_brand') ?? 1;
         $brand2 = Brand::skip(1)->value('id_brand') ?? $brand1;
@@ -172,7 +172,7 @@ class ProductSeeder extends Seeder
         ];
 
         foreach ($products as $prod) {
-            if (Product::where('slug_vn', $prod['slug_vn'])->exists()) {
+            if (Product::where('slug', 'LIKE', '%' . ($prod['slug_vn'] ?? '') . '%')->exists()) {
                 continue;
             }
             $productRepo->createWithAutoSlug($prod);

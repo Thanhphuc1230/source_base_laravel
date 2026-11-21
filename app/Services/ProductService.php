@@ -45,8 +45,8 @@ class ProductService
         $categoryIds = $this->getAllCategoryIds($data['category_detail']->id_cate_product);
 
         // Base query
-        $query = Product::with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
-            ->select('id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'price', 'price_old', 'image_vn', 'image_en', 'intro_vn', 'intro_en', 'category_id', 'status', 'stt', 'created_at')
+        $query = Product::with(['cate:id_cate_product,name,slug'])
+            ->select('id_product', 'uuid', 'name', 'slug', 'price', 'price_old', 'image_vn', 'image_en', 'intro', 'category_id', 'status', 'stt', 'created_at')
             ->whereIn('category_id', $categoryIds)
             ->where('status', 1)
             ->orderBy('created_at', 'desc');
@@ -77,7 +77,7 @@ class ProductService
 
         // Cache product detail with attributes and active variants
         $data['product_detail'] = Product::with([
-            'cate:id_cate_product,name_vn,name_en,slug_vn,slug_en',
+            'cate:id_cate_product,name,slug',
             'attributes',
             'variants' => fn($q) => $q->where('status', true),
         ])->where('id_product', $id_product)->firstOrFail();
@@ -125,10 +125,7 @@ class ProductService
         // Name search filter
         if ($request->filled('name')) {
             $name = $request->get('name');
-            $query->where(function ($q) use ($name) {
-                $q->where('name_vn', 'like', "%{$name}%")
-                  ->orWhere('name_en', 'like', "%{$name}%");
-            });
+            $query->where('name', 'like', "%{$name}%");
         }
 
         // Price filters
@@ -169,10 +166,10 @@ class ProductService
 
         switch ($sort) {
             case 'name_asc':
-                $query->orderBy('name_vn', 'asc');
+                $query->orderBy('name', 'asc');
                 break;
             case 'name_desc':
-                $query->orderBy('name_vn', 'desc');
+                $query->orderBy('name', 'desc');
                 break;
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -276,8 +273,8 @@ class ProductService
             ->get()
             ->groupBy('parent_id');
 
-        $query = Product::with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
-            ->select('id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'price', 'price_old', 'image_vn', 'image_en', 'intro_vn', 'intro_en', 'category_id', 'brand_id', 'status', 'stt', 'created_at')
+        $query = Product::with(['cate:id_cate_product,name,slug'])
+            ->select('id_product', 'uuid', 'name', 'slug', 'price', 'price_old', 'image_vn', 'image_en', 'intro', 'category_id', 'brand_id', 'status', 'stt', 'created_at')
             ->where('brand_id', $id_brand)
             ->where('status', 1)
             ->orderBy('created_at', 'desc');
