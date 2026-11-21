@@ -37,7 +37,7 @@ class NewsSeeder extends Seeder
                 'image_en' => 'uploads/demo/news_interior_1.webp',
                 'category_id' => $categoryId,
                 'status' => true,
-                'hot' => true,
+                'home' => true,
                 'stt' => 1,
             ],
             [
@@ -54,7 +54,7 @@ class NewsSeeder extends Seeder
                 'image_en' => 'uploads/demo/news_interior_2.webp',
                 'category_id' => $categoryId,
                 'status' => true,
-                'hot' => true,
+                'home' => true,
                 'stt' => 2,
             ],
             [
@@ -71,7 +71,7 @@ class NewsSeeder extends Seeder
                 'image_en' => 'uploads/demo/news_interior_3.webp',
                 'category_id' => $categoryId,
                 'status' => true,
-                'hot' => false,
+                'home' => false,
                 'stt' => 3,
             ],
         ];

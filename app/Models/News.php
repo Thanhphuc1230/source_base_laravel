@@ -34,6 +34,7 @@ class News extends Model
         'keyword_en',
         'description_vn',
         'description_en',
+        'seo_score',
         'status',
         'home',
     ];
@@ -77,6 +78,7 @@ class News extends Model
         'status' => 'boolean',
         'home' => 'boolean',
         'views' => 'integer',
+        'seo_score' => 'integer',
     ];
 
     public function cate()

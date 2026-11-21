@@ -22,13 +22,20 @@ class ProductController extends BaseController
     
     protected $productRepository;
 
-    public function __construct(ProductRepositoryInterface $productRepository, $imageFolder = 'product')
+    protected $seoAnalysisService;
+
+    public function __construct(
+        ProductRepositoryInterface $productRepository,
+        \App\Services\SeoAnalysisService $seoAnalysisService,
+        $imageFolder = 'product'
+    )
     {
         $this->module = 'product';
         $this->model = new Product;
         $this->nameItem = 'sản phẩm';
         $this->imageFolder = $imageFolder;
         $this->productRepository = $productRepository;
+        $this->seoAnalysisService = $seoAnalysisService;
 
         parent::__construct($this->module, $imageFolder);
 
@@ -71,6 +78,7 @@ class ProductController extends BaseController
         $data['image_en'] = $this->saveImage($request, null, 'image_en');
         $data['image_detail'] = $this->saveMultipleImages($request);
         $data['video'] = $this->saveVideo($request);
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $product = $this->productRepository->createWithAutoSlug($data);
         $this->productRepository->syncAttributesAndVariants($product, $request->all());
@@ -116,6 +124,7 @@ class ProductController extends BaseController
         $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
         $data['image_detail'] = $this->updateMultipleImages($request, $current);
         $data['video'] = $this->updateVideo($request, $current);
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $this->productRepository->update($data, $uuid);
         $this->productRepository->syncAttributesAndVariants($current, $request->all());
@@ -155,5 +164,18 @@ class ProductController extends BaseController
         $result = $this->dataRemovalService->destroyAllByUUIDs($this->model::class, $uuids, $this->imageFolder);
         ProductChanged::dispatch(null, 'deleted');
         return $result;
+    }
+
+    /**
+     * Phân tích và chấm điểm SEO trực tiếp qua AJAX
+     */
+    public function analyzeSeo(Request $request)
+    {
+        $result = $this->seoAnalysisService->analyze($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $result
+        ]);
     }
 }

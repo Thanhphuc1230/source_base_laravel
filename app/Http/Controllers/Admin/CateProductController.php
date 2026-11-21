@@ -22,6 +22,8 @@ class CateProductController extends BaseController
     
     protected $cateProductRepository;
 
+    protected $seoAnalysisService;
+
     // Override default image config to allow SVG uploads
     protected $defaultImageConfig = [
         'convertToWebp' => false, // Disable WebP conversion for SVG compatibility
@@ -29,13 +31,18 @@ class CateProductController extends BaseController
         'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/svg', 'text/xml', 'application/xml', 'application/svg+xml'],
     ];
 
-    public function __construct(CateProductRepositoryInterface $cateProductRepository, $imageFolder = 'cate_product')
+    public function __construct(
+        CateProductRepositoryInterface $cateProductRepository,
+        \App\Services\SeoAnalysisService $seoAnalysisService,
+        $imageFolder = 'cate_product'
+    )
     {
         $this->module = 'cate_product';
         $this->model = new CateProduct;
         $this->nameItem = 'Danh mục sản phẩm';
         $this->imageFolder = $imageFolder;
         $this->cateProductRepository = $cateProductRepository;
+        $this->seoAnalysisService = $seoAnalysisService;
 
         parent::__construct($this->module, $imageFolder);
 
@@ -84,6 +91,8 @@ class CateProductController extends BaseController
         $data['status'] = 1;
         $data['image_vn'] = $this->saveImage($request, null, 'image_vn');
         $data['image_en'] = $this->saveImage($request, null, 'image_en');
+        $data['is_category'] = true;
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $cateProduct = $this->cateProductRepository->createWithAutoSlug($data);
         toast('Thêm '.$this->nameItem.' thành công', 'success');
@@ -139,6 +148,8 @@ class CateProductController extends BaseController
         // Handle image - Update existing image
         $data['image_vn'] = $this->updateImage($request, $current, null, 'image_vn');
         $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
+        $data['is_category'] = true;
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $this->cateProductRepository->update($data, $uuid);
 

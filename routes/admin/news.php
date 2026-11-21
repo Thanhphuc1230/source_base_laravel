@@ -16,4 +16,5 @@ Route::controller(NewsController::class)
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:news.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:news.delete');
         Route::post('/update-stt/{uuid}', 'numericalOrder')->name('numericalOrder')->middleware('permission:news.edit');
+        Route::post('/analyze-seo', 'analyzeSeo')->name('analyzeSeo')->middleware('permission:news.view');
     });

@@ -16,4 +16,5 @@ Route::controller(ProductController::class)
         Route::get('/destroy/{uuid}', 'destroy')->name('destroy')->middleware('permission:product.delete');
         Route::post('/destroyAll', 'destroyAll')->name('destroyAll')->middleware('permission:product.delete');
         Route::post('/update-stt/{uuid}', 'numericalOrder')->name('numericalOrder')->middleware('permission:product.edit');
+        Route::post('/analyze-seo', 'analyzeSeo')->name('analyzeSeo')->middleware('permission:product.view');
     });

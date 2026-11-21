@@ -37,6 +37,7 @@ class Product extends Model
         'keyword_en',
         'description_vn',
         'description_en',
+        'seo_score',
         'category_id',
         'brand_id',
         'quantity',
@@ -100,6 +101,7 @@ class Product extends Model
         'quantity' => 'integer',
         'price' => 'decimal:2',
         'price_old' => 'decimal:2',
+        'seo_score' => 'integer',
     ];
 
     /**

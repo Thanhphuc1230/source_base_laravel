@@ -22,13 +22,20 @@ class NewsController extends BaseController
     
     protected $newsRepository;
 
-    public function __construct(NewsRepositoryInterface $newsRepository, $imageFolder = 'news')
+    protected $seoAnalysisService;
+
+    public function __construct(
+        NewsRepositoryInterface $newsRepository,
+        \App\Services\SeoAnalysisService $seoAnalysisService,
+        $imageFolder = 'news'
+    )
     {
         $this->module = 'news';
         $this->model = new News;
         $this->nameItem = 'bài viết';
         $this->imageFolder = $imageFolder;
         $this->newsRepository = $newsRepository;
+        $this->seoAnalysisService = $seoAnalysisService;
 
         parent::__construct($this->module, $imageFolder);
 
@@ -66,6 +73,7 @@ class NewsController extends BaseController
         $data = $request->except('_token', 'return_back', 'return_list');
         $data['image_vn'] = $this->saveImage($request, null, 'image_vn');
         $data['image_en'] = $this->saveImage($request, null, 'image_en');
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $news = $this->newsRepository->createWithAutoSlug($data);
         toast('Thêm '.$this->nameItem.' thành công', 'success');
@@ -105,6 +113,7 @@ class NewsController extends BaseController
         // Handle image
         $data['image_vn'] = $this->updateImage($request, $current, null, 'image_vn');
         $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $this->newsRepository->update($data, $uuid);
         toast('Cập nhật '.$this->nameItem.' thành công', 'success');
@@ -161,5 +170,18 @@ class NewsController extends BaseController
         NewsChanged::dispatch(null, 'deleted');
 
         return $result;
+    }
+
+    /**
+     * Phân tích và chấm điểm SEO trực tiếp qua AJAX (Real-time SEO scoring)
+     */
+    public function analyzeSeo(Request $request)
+    {
+        $result = $this->seoAnalysisService->analyze($request->all());
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $result
+        ]);
     }
 }

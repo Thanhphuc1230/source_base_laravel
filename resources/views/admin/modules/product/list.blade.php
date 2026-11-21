@@ -78,6 +78,7 @@
                                                 <th class="text-center" style="width: 65px;">Hình ảnh</th>
                                                 <th class="text-start">Sản phẩm / Tiêu đề</th>
                                                 <th class="text-start" style="width: 180px;">Danh mục / Phân loại</th>
+                                                <th class="text-center" style="width: 110px;">Điểm SEO</th>
                                                 <th class="text-center" style="width: 90px;">Nổi bật</th>
                                                 <th class="text-center" style="width: 95px;">Trạng thái</th>
                                                 <th class="text-center" style="width: 90px;">Trang chủ</th>
