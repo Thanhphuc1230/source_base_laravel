@@ -76,6 +76,7 @@
                                                 <th class="text-center" style="width: 40px;"><input type="checkbox" class="form-check-input" id="checkAll"></th>
                                                 <th class="text-center" style="width: 50px;">STT</th>
                                                 <th class="text-start">Tiêu đề danh mục</th>
+                                                <th class="text-center" style="width: 110px;">Điểm SEO</th>
                                                 <th class="text-center" style="width: 100px;">Trạng thái</th>
                                                 <th class="text-center" style="width: 100px;">Trang chủ</th>
                                                 <th class="text-center" style="width: 75px;">Thứ tự</th>
@@ -101,6 +102,29 @@
                                                                 @if($item->parent_id != 0 && $item->parent)
                                                                     <span class="text-muted fs-11 d-block mt-0.5">Danh mục cha: {{ $item->parent->name_vn }}</span>
                                                                 @endif
+                                                            </td>
+                                                            <td class="text-center">
+                                                                @php
+                                                                    $score = (int) ($item->seo_score ?? 0);
+                                                                    if ($score >= 80) {
+                                                                        $badgeColor = 'success';
+                                                                        $badgeIcon = 'ri-checkbox-circle-fill';
+                                                                        $badgeText = 'Tốt';
+                                                                    } elseif ($score >= 50) {
+                                                                        $badgeColor = 'warning';
+                                                                        $badgeIcon = 'ri-alert-fill';
+                                                                        $badgeText = 'Khá';
+                                                                    } else {
+                                                                        $badgeColor = 'danger';
+                                                                        $badgeIcon = 'ri-close-circle-fill';
+                                                                        $badgeText = 'Cần tối ưu';
+                                                                    }
+                                                                @endphp
+                                                                <span class="badge bg-{{ $badgeColor }}-subtle text-{{ $badgeColor }} border border-{{ $badgeColor }}-subtle px-2 py-1 fs-12 d-inline-flex align-items-center gap-1"
+                                                                      title="Đánh giá SEO: {{ $score }}/100 ({{ $badgeText }})">
+                                                                    <i class="{{ $badgeIcon }} fs-13"></i>
+                                                                    <span>{{ $score }}/100</span>
+                                                                </span>
                                                             </td>
                                                             <td class="text-center">
                                                                 <div class="form-check form-switch d-inline-block m-0">
@@ -159,7 +183,7 @@
                                                 </form>
                                             @else
                                                 <tr>
-                                                    <td colspan="8" class="text-center py-4 text-muted">Chưa có dữ liệu</td>
+                                                    <td colspan="9" class="text-center py-4 text-muted">Chưa có dữ liệu</td>
                                                 </tr>
                                             @endif
                                         </tbody>
