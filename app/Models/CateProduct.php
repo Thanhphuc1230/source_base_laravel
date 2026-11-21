@@ -26,6 +26,7 @@ class CateProduct extends Model
         'keyword_en',
         'description_vn',
         'description_en',
+        'seo_score',
         'image_vn',
         'image_en',
         'stt',
@@ -69,6 +70,7 @@ class CateProduct extends Model
 
     protected $casts = [
         'status' => 'boolean',
+        'seo_score' => 'integer',
     ];
 
     public function children()

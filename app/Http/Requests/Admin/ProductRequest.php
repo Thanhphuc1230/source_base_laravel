@@ -24,6 +24,7 @@ class ProductRequest extends BaseAdminRequest
             'keyword_en' => 'nullable|max:255',
             'description_vn' => 'required|max:1000',
             'description_en' => 'nullable|max:1000',
+            'seo_score' => 'nullable|integer|min:0|max:100',
 
             'image_vn' => $this->imageRule(!request()->route('uuid')),
             'image_en' => $this->imageRule(false),

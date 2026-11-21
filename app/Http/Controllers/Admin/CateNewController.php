@@ -22,13 +22,20 @@ class CateNewController extends BaseController
     
     protected $cateNewRepository;
 
-    public function __construct(CateNewRepositoryInterface $cateNewRepository, $imageFolder = 'cate_new')
+    protected $seoAnalysisService;
+
+    public function __construct(
+        CateNewRepositoryInterface $cateNewRepository,
+        \App\Services\SeoAnalysisService $seoAnalysisService,
+        $imageFolder = 'cate_new'
+    )
     {
         $this->module = 'cate_new';
         $this->model = new CateNew;
         $this->nameItem = 'Danh mục tin tức';
         $this->imageFolder = $imageFolder;
         $this->cateNewRepository = $cateNewRepository;
+        $this->seoAnalysisService = $seoAnalysisService;
 
         parent::__construct($this->module, $imageFolder);
 
@@ -68,6 +75,8 @@ class CateNewController extends BaseController
         $data['status'] = 1;
         $data['image_vn'] = $this->saveImage($request, null, 'image_vn');
         $data['image_en'] = $this->saveImage($request, null, 'image_en');
+        $data['is_category'] = true;
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $cateNew = $this->cateNewRepository->createWithAutoSlug($data);
         toast('Thêm '.$this->nameItem.' thành công', 'success');
@@ -107,6 +116,8 @@ class CateNewController extends BaseController
         // Handle image - Update existing image
         $data['image_vn'] = $this->updateImage($request, $current, null, 'image_vn');
         $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
+        $data['is_category'] = true;
+        $data['seo_score'] = $this->seoAnalysisService->calculateScore($data);
 
         $this->cateNewRepository->update($data, $uuid);
         toast('Cập nhật '.$this->nameItem.' thành công', 'success');

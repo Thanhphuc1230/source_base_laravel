@@ -54,7 +54,7 @@ class NewsRepository extends BaseRepository implements NewsRepositoryInterface
         $query->orderBy($sortField, $sortDirection);
 
         return $query->with(['cate:id_cate_new,name_vn,name_en,slug_vn,slug_en'])
-            ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_new')
+            ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_new', 'seo_score')
             ->paginate($perPage);
     }
 

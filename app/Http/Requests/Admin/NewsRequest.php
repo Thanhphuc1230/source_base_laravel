@@ -31,6 +31,7 @@ class NewsRequest extends BaseAdminRequest
             'keyword_en' => 'nullable|string|max:255',
             'description_vn' => 'required|string|max:1000',
             'description_en' => 'nullable|string|max:1000',
+            'seo_score' => 'nullable|integer|min:0|max:100',
         ];
     }
 

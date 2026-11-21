@@ -22,6 +22,7 @@ class CateNewRequest extends BaseAdminRequest
             'keyword_en' => 'nullable|max:255',
             'description_vn' => 'required|string|max:1000',
             'description_en' => 'nullable|string|max:1000',
+            'seo_score' => 'nullable|integer|min:0|max:100',
             'image_vn' => $this->imageRule(false),
             'image_en' => $this->imageRule(false),
         ];
