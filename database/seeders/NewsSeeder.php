@@ -77,7 +77,7 @@ class NewsSeeder extends Seeder
         ];
 
         foreach ($articles as $art) {
-            if (News::where('slug_vn', $art['slug_vn'])->exists()) {
+            if (News::where('slug', 'LIKE', '%' . ($art['slug_vn'] ?? '') . '%')->exists()) {
                 continue;
             }
             $newsRepo->createWithAutoSlug($art);

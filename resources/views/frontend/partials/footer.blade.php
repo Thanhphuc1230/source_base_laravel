@@ -47,12 +47,14 @@
                 <ul class="space-y-2.5 text-xs">
                     @if(isset($category_product_footer) && $category_product_footer->isNotEmpty())
                         @foreach($category_product_footer as $cate)
+                            @if(!empty($cate->slug))
                             <li>
                                 <a href="{{ route('web.resolve', ['slug' => $cate->slug]) }}" class="text-stone-400 hover:text-taupe-light transition-colors duration-200 flex items-center group">
                                     <i class="fa-solid fa-angle-right text-3xs text-taupe-oak mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                     {{ lang($cate, 'name') }}
                                 </a>
                             </li>
+                            @endif
                         @endforeach
                     @else
                         <li>
@@ -78,12 +80,14 @@
                     </li>
                     @if(isset($footer_pages) && $footer_pages->isNotEmpty())
                         @foreach($footer_pages as $page)
+                            @if(!empty($page->slug))
                             <li>
                                 <a href="{{ route('web.resolve', ['slug' => $page->slug]) }}" class="text-stone-400 hover:text-taupe-light transition-colors duration-200 flex items-center group">
                                     <i class="fa-solid fa-angle-right text-3xs text-taupe-oak mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                     {{ lang($page, 'name') }}
                                 </a>
                             </li>
+                            @endif
                         @endforeach
                     @else
                         <li>

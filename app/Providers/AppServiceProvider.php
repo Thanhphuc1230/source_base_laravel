@@ -62,18 +62,24 @@ class AppServiceProvider extends ServiceProvider
                 $system = Cache::remember('admin_system_config', now()->addHours(24), function () {
                     return \App\Models\System::first();
                 });
-                $activeLocales = $system->active_languages ?? ['vi', 'en'];
+                $activeLocales = $system->active_languages ?? ['vi', 'en', 'de', 'ja', 'ko', 'zh'];
+                $supported = config('languages.supported', []);
+
                 $adminLanguages = [];
-                if (in_array('vi', $activeLocales)) {
-                    $adminLanguages[] = 'vn';
-                }
-                if (in_array('en', $activeLocales)) {
-                    $adminLanguages[] = 'en';
+                foreach (array_keys($supported) as $code) {
+                    if (in_array($code, $activeLocales, true)) {
+                        $adminLanguages[] = $code;
+                        // Support legacy 'vn' alias for 'vi' in older admin templates
+                        if ($code === 'vi' && !in_array('vn', $adminLanguages, true)) {
+                            $adminLanguages[] = 'vn';
+                        }
+                    }
                 }
 
                 $adminSharedData = [
                     'systemConfig' => $system,
                     'adminLanguages' => $adminLanguages,
+                    'supportedLanguages' => $supported,
                 ];
             }
             if ($adminSharedData !== null) {

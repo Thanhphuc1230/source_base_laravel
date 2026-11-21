@@ -15,12 +15,9 @@ return new class extends Migration
         Schema::create('tp_abouts', function (Blueprint $table) {
             $table->id('id_about');
             $table->uuid()->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
-            $table->text('intro_vn')->nullable();
-            $table->text('intro_en')->nullable();
-            $table->longText('content_vn');
-            $table->longText('content_en')->nullable();
+            $table->json('name');
+            $table->json('intro')->nullable();
+            $table->json('content')->nullable();
             $table->string('image')->nullable();
             $table->string('link')->nullable();
             $table->boolean('status')->default(1);

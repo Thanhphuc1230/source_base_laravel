@@ -4,13 +4,16 @@ namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
 use App\Traits\BaseLogsActivity;
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class System extends Model
 {
-    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory;
+    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name', 'description', 'address', 'footer', 'keyword', 'contact_title', 'contact_desc'];
 
     protected $table = 'tp_systems';
 
@@ -20,7 +23,25 @@ class System extends Model
         'active_languages' => 'array',
     ];
 
+    public function getActiveLanguagesAttribute($value)
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        if (is_string($value) && (str_starts_with($value, '[') || str_starts_with($value, '{'))) {
+            return json_decode($value, true) ?: array_keys(config('languages.supported', []));
+        }
+        return array_keys(config('languages.supported', []));
+    }
+
     protected $fillable = [
+        'name',
+        'description',
+        'address',
+        'footer',
+        'keyword',
+        'contact_title',
+        'contact_desc',
         'active_languages',
         'email',
         'email_alert',

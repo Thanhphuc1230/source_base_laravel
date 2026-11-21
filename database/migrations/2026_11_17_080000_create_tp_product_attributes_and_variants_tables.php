@@ -15,8 +15,7 @@ return new class extends Migration
             Schema::create('tp_product_attributes', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('product_id');
-                $table->string('name_vn');
-                $table->string('name_en')->nullable();
+                $table->json('name');
                 $table->longText('values_json'); // Array of values e.g. ["1m6 x 2m", "1m8 x 2m"]
                 $table->unsignedInteger('stt')->default(1);
                 $table->timestamps();

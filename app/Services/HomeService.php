@@ -27,19 +27,19 @@ class HomeService
                 ->orderBy('stt', 'asc')
                 ->get();
 
-            $data['category_news'] = CateNew::select('id_cate_new', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'status', 'home', 'stt')
+            $data['category_news'] = CateNew::select('id_cate_new', 'uuid', 'name', 'slug', 'image_vn', 'image_en', 'status', 'home', 'stt')
                 ->where('status', 1)
                 ->where('home', 1)
                 ->orderBy('stt', 'asc')
                 ->get();
 
             $previewColumns = [
-                'id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en',
+                'id_product', 'uuid', 'name', 'slug',
                 'image_vn', 'image_en', 'price', 'price_old', 'category_id',
-                'hot', 'status', 'stt', 'intro_vn', 'intro_en', 'created_at',
+                'hot', 'status', 'stt', 'intro', 'created_at',
             ];
 
-            $data['category_product'] = CateProduct::select('id_cate_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'parent_id', 'status', 'home', 'stt')
+            $data['category_product'] = CateProduct::select('id_cate_product', 'uuid', 'name', 'slug', 'image_vn', 'image_en', 'parent_id', 'status', 'home', 'stt')
                 ->with(['products' => function ($q) use ($previewColumns) {
                     $q->select($previewColumns)->where('status', 1)->orderBy('stt', 'asc')->limit(8);
                 }])
@@ -55,15 +55,15 @@ class HomeService
                 ->limit(8)
                 ->get();
 
-            $data['latest_news'] = News::with('cate:id_cate_new,name_vn,name_en,slug_vn,slug_en')
-                ->select('id_new', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'intro_vn', 'intro_en', 'created_at', 'category_id', 'status', 'stt')
+            $data['latest_news'] = News::with('cate:id_cate_new,name,slug')
+                ->select('id_new', 'uuid', 'name', 'slug', 'image_vn', 'image_en', 'intro', 'created_at', 'category_id', 'status', 'stt')
                 ->where('status', 1)
                 ->orderBy('created_at', 'desc')
                 ->limit(3)
                 ->get();
 
-            $data['featured_projects'] = Project::with('cate:id_cate_project,name_vn,name_en,slug_vn,slug_en')
-                ->select('id_project', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'intro_vn', 'intro_en', 'category_id', 'status', 'home', 'stt', 'created_at')
+            $data['featured_projects'] = Project::with('cate:id_cate_project,name,slug')
+                ->select('id_project', 'uuid', 'name', 'slug', 'image_vn', 'image_en', 'intro', 'category_id', 'status', 'home', 'stt', 'created_at')
                 ->where('status', 1)
                 ->where('home', 1)
                 ->orderBy('stt', 'asc')

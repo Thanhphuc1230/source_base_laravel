@@ -64,28 +64,30 @@ class SitemapService
 
         $rows = DB::table($table)
             ->where('status', 1)
-            ->select('slug_vn', 'slug_en', 'updated_at', 'created_at')
+            ->select('slug', 'updated_at', 'created_at')
             ->get();
 
         foreach ($rows as $row) {
             $lastmod = Carbon::parse($row->updated_at ?? $row->created_at ?? now());
-
-            if (! empty($row->slug_vn)) {
-                $sitemap->add(
-                    Url::create('/' . ltrim($row->slug_vn, '/'))
-                        ->setPriority($priority)
-                        ->setChangeFrequency($frequency)
-                        ->setLastModificationDate($lastmod)
-                );
+            $slugs = [];
+            if (!empty($row->slug)) {
+                if (is_string($row->slug) && (str_starts_with($row->slug, '{') || str_starts_with($row->slug, '['))) {
+                    $slugs = json_decode($row->slug, true) ?: [];
+                } elseif (is_string($row->slug)) {
+                    $slugs = ['vi' => $row->slug];
+                }
             }
 
-            if ($includeEnglish && ! empty($row->slug_en)) {
-                $sitemap->add(
-                    Url::create('/' . ltrim($row->slug_en, '/'))
-                        ->setPriority($priority)
-                        ->setChangeFrequency($frequency)
-                        ->setLastModificationDate($lastmod)
-                );
+            foreach ($slugs as $loc => $slugVal) {
+                if (!empty($slugVal)) {
+                    $path = ($loc === 'vi') ? '/' . ltrim($slugVal, '/') : '/' . $loc . '/' . ltrim($slugVal, '/');
+                    $sitemap->add(
+                        Url::create($path)
+                            ->setPriority($priority)
+                            ->setChangeFrequency($frequency)
+                            ->setLastModificationDate($lastmod)
+                    );
+                }
             }
         }
     }

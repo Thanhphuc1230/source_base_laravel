@@ -13,6 +13,22 @@ class RouteController extends Controller
     ) {}
 
     /**
+     * Localized route handler (e.g. /en/slug, /ja/slug)
+     */
+    public function resolveLocalized(string $locale, string $slug)
+    {
+        $supported = config('languages.supported', []);
+        $norm = ($locale === 'vn') ? 'vi' : $locale;
+
+        if (array_key_exists($norm, $supported)) {
+            app()->setLocale($norm);
+            session()->put('locale', $norm);
+        }
+
+        return $this->resolve($slug);
+    }
+
+    /**
      * Universal route handler - xử lý tất cả slug với fallback chain
      * Priority: Product Detail > News Detail > Category Product > Category News > Service > Project > Page > Brand
      */
