@@ -424,3 +424,23 @@ h1, h2, h3, h4, h5, h6, .font-heading {
     border-color: var(--color-border-subtle, #E8E2D9);
     pointer-events: none;
 }
+
+/* ==========================================================================
+   Cross-Document View Transitions (Smooth Native Page Navigation)
+   ========================================================================== */
+@view-transition {
+    navigation: auto;
+}
+
+/* Keep Header steady across page transitions */
+header {
+    view-transition-name: site-header;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+}
+

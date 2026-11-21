@@ -9,6 +9,7 @@ Route::name('web.')
     ->group(function () {
         // Cart
         Route::get('/cart', [CartController::class, 'index'])->name('cart');
+        Route::get('/cart/count', [CartController::class, 'cartCount'])->name('cartCount');
         Route::get('/add-to-cart/{uuid}/{quantity?}', [CartController::class, 'addToCart'])->name('addToCart');
         Route::post('/update-cart', [CartController::class, 'updateCart'])->name('updateCart');
         Route::get('/remove-item/{uuid}/{stt}', [CartController::class, 'removeItem'])->name('removeItem');

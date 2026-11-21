@@ -49,7 +49,75 @@ function showToast(message, type = 'success') {
     }, 4000);
 }
 
-// Global function to add product to cart via AJAX
+// Helper to update the cart badge UI
+function updateCartBadgeUI(count, animate = false) {
+    const badge = document.getElementById('cart-badge-count');
+    if (!badge) return;
+
+    const num = parseInt(count, 10) || 0;
+    badge.innerText = num;
+
+    if (num > 0) {
+        badge.classList.remove('scale-0');
+        badge.classList.add('scale-100');
+    } else {
+        badge.classList.remove('scale-100');
+        badge.classList.add('scale-0');
+    }
+
+    if (animate) {
+        badge.classList.add('animate-bounce');
+        setTimeout(() => {
+            badge.classList.remove('animate-bounce');
+        }, 1000);
+    }
+}
+
+// Client-side synchronization of cart count to bypass static Edge Cache
+function syncCartBadge() {
+    // 1. Instant sync from local session cache
+    const cachedCount = sessionStorage.getItem('cart_total_items');
+    if (cachedCount !== null) {
+        updateCartBadgeUI(cachedCount);
+    }
+
+    // 2. Refresh from server (hits /cart/count which bypasses Cloudflare cache)
+    if (window.cartCountUrl) {
+        fetch(window.cartCountUrl, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) return null;
+            return response.json();
+        })
+        .then(data => {
+            if (data && typeof data.totalItems !== 'undefined') {
+                sessionStorage.setItem('cart_total_items', data.totalItems);
+                updateCartBadgeUI(data.totalItems);
+            }
+        })
+        .catch(() => {
+            // Silently ignore network failures on background badge sync
+        });
+    }
+}
+
+// Initialize on DOM ready and BFCache pageshow
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', syncCartBadge);
+} else {
+    syncCartBadge();
+}
+window.addEventListener('pageshow', syncCartBadge);
+window.addEventListener('cart-updated', (event) => {
+    if (event.detail && typeof event.detail.totalItems !== 'undefined') {
+        sessionStorage.setItem('cart_total_items', event.detail.totalItems);
+        updateCartBadgeUI(event.detail.totalItems, true);
+    }
+});
 function addToCartAjax(uuid, buttonElement = null, quantity = 1, variantId = null) {
     let originalHtml = '';
     if (buttonElement) {
@@ -84,24 +152,9 @@ function addToCartAjax(uuid, buttonElement = null, quantity = 1, variantId = nul
     })
     .then(data => {
         if (data.success) {
-            // Update cart badge count
-            const badge = document.getElementById('cart-badge-count');
-            if (badge) {
-                badge.innerText = data.totalItems;
-                if (data.totalItems > 0) {
-                    badge.classList.remove('scale-0');
-                    badge.classList.add('scale-100');
-                } else {
-                    badge.classList.remove('scale-100');
-                    badge.classList.add('scale-0');
-                }
-                
-                // Bounce badge effect
-                badge.classList.add('animate-bounce');
-                setTimeout(() => {
-                    badge.classList.remove('animate-bounce');
-                }, 1000);
-            }
+            // Update cart badge count and sync session
+            sessionStorage.setItem('cart_total_items', data.totalItems);
+            updateCartBadgeUI(data.totalItems, true);
             
             showToast(data.message || 'Đã thêm sản phẩm vào giỏ hàng thành công!', 'success');
             

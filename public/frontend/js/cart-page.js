@@ -34,16 +34,20 @@ function updateCartAjax() {
     })
     .then(data => {
         if (data.success) {
-            // Update header badge count
-            const badge = document.getElementById('cart-badge-count');
-            if (badge) {
-                badge.innerText = data.totalItems;
-                if (data.totalItems > 0) {
-                    badge.classList.remove('scale-0');
-                    badge.classList.add('scale-100');
-                } else {
-                    badge.classList.remove('scale-100');
-                    badge.classList.add('scale-0');
+            sessionStorage.setItem('cart_total_items', data.totalItems);
+            if (typeof updateCartBadgeUI === 'function') {
+                updateCartBadgeUI(data.totalItems);
+            } else {
+                const badge = document.getElementById('cart-badge-count');
+                if (badge) {
+                    badge.innerText = data.totalItems;
+                    if (data.totalItems > 0) {
+                        badge.classList.remove('scale-0');
+                        badge.classList.add('scale-100');
+                    } else {
+                        badge.classList.remove('scale-100');
+                        badge.classList.add('scale-0');
+                    }
                 }
             }
 
