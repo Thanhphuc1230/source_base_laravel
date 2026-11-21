@@ -83,3 +83,12 @@
         </div>
     </div>
 @endsection
+
+@section('script')
+<script>
+    sessionStorage.setItem('cart_total_items', 0);
+    if (typeof updateCartBadgeUI === 'function') {
+        updateCartBadgeUI(0);
+    }
+</script>
+@endsection

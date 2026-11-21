@@ -31,8 +31,25 @@
 
     <script>
         window.addToCartUrl = "{{ url('/add-to-cart') }}";
+        window.cartCountUrl = "{{ route('web.cartCount') }}";
         window.CURRENCY_UNIT = "{{ currency_unit() }}";
     </script>
     <script defer src="{{ asset('frontend/js/cart.js') }}?v={{ file_exists(public_path('frontend/js/cart.js')) ? filemtime(public_path('frontend/js/cart.js')) : '1.0' }}"></script>
+
+    <!-- Speculation Rules API for Instant Prerender / Prefetch -->
+    <script type="speculationrules">
+    {
+      "prerender": [{
+        "where": {
+          "and": [
+            { "href_matches": "/*" },
+            { "not": { "href_matches": ["/cart*", "/checkout*", "/admintv*", "/admin*", "/logout*"] } },
+            { "not": { "selector_matches": "[rel~=nofollow]" } }
+          ]
+        },
+        "eagerness": "moderate"
+      }]
+    }
+    </script>
 </body>
 </html>

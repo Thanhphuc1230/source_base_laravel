@@ -30,6 +30,17 @@ class CartController extends Controller
         return view('frontend.modules.cart.index', $data);
     }
 
+    /**
+     * Get real-time cart total items for dynamic header badge sync (Edge Cache bypass)
+     */
+    public function cartCount()
+    {
+        return response()->json([
+            'success' => true,
+            'totalItems' => $this->cartService->getTotalItems(),
+        ]);
+    }
+
     public function addToCart(Request $request, $uuid, $quantity = 1)
     {
         $ip = $request->ip();
