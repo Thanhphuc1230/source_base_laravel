@@ -47,7 +47,7 @@ class FrontendComposer
     public function compose(View $view)
     {
         if (static::$memoizedData === null) {
-            $cacheTtl = 120; // 2 hours
+            $cacheTtl = 7200; // 2 hours in seconds
 
             $systemData = CacheService::remember('system', 'frontend_web_data', $cacheTtl, function () {
                 return System::first() ?? new System(['name_vn' => 'Base', 'name_en' => 'Base']);

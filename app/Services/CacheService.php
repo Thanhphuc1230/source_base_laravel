@@ -27,18 +27,20 @@ class CacheService
         'comments' => 'comments',
         'contacts' => 'contacts',
         'feedback' => 'feedback',
+        'services' => 'services',
+        'projects' => 'projects',
         'search' => 'search',
         'system' => 'system',
     ];
 
     /**
-     * Default cache TTL in minutes
+     * Default cache TTL in seconds (Laravel 12 Cache::remember expects seconds).
      */
     const TTL = [
-        'short' => 15,    // 15 minutes
-        'medium' => 60,   // 1 hour
-        'long' => 360,    // 6 hours
-        'day' => 1440,    // 24 hours
+        'short' => 900,     // 15 minutes
+        'medium' => 3600,   // 1 hour
+        'long' => 21600,    // 6 hours
+        'day' => 86400,     // 24 hours
     ];
 
     /**
@@ -46,7 +48,7 @@ class CacheService
      *
      * @param string $tag
      * @param string $key
-     * @param int $ttl
+     * @param int $ttl TTL in seconds
      * @param callable $callback
      * @return mixed
      */
