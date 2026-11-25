@@ -130,12 +130,44 @@ if (strpos($slugServiceContent, 'CacheService::remember') === false) {
     $errors[] = "[Rule 19 - Uncached UNION ALL] SlugResolutionService is missing CacheService::remember wrapper.";
     $perfViolations++;
 }
+$cacheServiceContent = file_get_contents($basePath . '/app/Services/CacheService.php');
+if (strpos($cacheServiceContent, "'medium' => 3600") === false) {
+    $errors[] = "[Rule 19 - Cache TTL Unit] CacheService::TTL must be defined in seconds ('medium' => 3600).";
+    $perfViolations++;
+}
 if ($perfViolations === 0) {
-    echo "✔ [PASS] Rule 19 (Performance & Cache): FrontendComposer memoization, single-query Settings map & Slug cache active.\n";
+    echo "✔ [PASS] Rule 19 (Performance & Cache): FrontendComposer memoization, second-based TTL & Slug cache active.\n";
     $checksPassed++;
 }
 
+// -----------------------------------------------------------------
+// 5. Audit Anti-AI Design System (Rule 3 - Sharp-First & Surface Discipline)
+// -----------------------------------------------------------------
+$designWarnings = 0;
+foreach ($bladeFiles as $bladeFile) {
+    $relPath = str_replace($basePath . DIRECTORY_SEPARATOR, '', $bladeFile);
+    $content = file_get_contents($bladeFile);
+    if (preg_match_all('/\b(rounded-2xl|rounded-3xl|backdrop-blur(?:-[a-z]+)?)\b/', $content, $matches)) {
+        $unique = implode(', ', array_unique($matches[1]));
+        $warnings[] = "[Rule 3 - Anti-AI Design] {$relPath} uses AI-heavy classes ({$unique}). Prefer Sharp-First (rounded-none / rounded-[4px]).";
+        $designWarnings++;
+    }
+}
+if ($designWarnings === 0) {
+    echo "✔ [PASS] Rule 3 (Anti-AI Design System): 0 excessive radius or glassmorphism violations.\n";
+    $checksPassed++;
+} else {
+    echo "⚠ [WARN] Rule 3 (Anti-AI Design System): {$designWarnings} legacy view(s) still contain rounded-2xl/3xl or backdrop-blur.\n";
+}
+
 echo "\n-----------------------------------------------------------------\n";
+if (! empty($warnings)) {
+    echo "⚠  WARNINGS (" . count($warnings) . "):\n";
+    foreach ($warnings as $warn) {
+        echo "   - {$warn}\n";
+    }
+    echo "\n";
+}
 if (! empty($errors)) {
     echo "❌ AUDIT FAILED WITH " . count($errors) . " VIOLATION(S):\n";
     foreach ($errors as $err) {
@@ -144,6 +176,6 @@ if (! empty($errors)) {
     exit(1);
 }
 
-echo "🎉 ALL {$checksPassed}/4 ENTERPRISE QUALITY GATES PASSED (0 VIOLATIONS)!\n";
+echo "🎉 ALL {$checksPassed} ENTERPRISE QUALITY GATES PASSED (0 VIOLATIONS)!\n";
 echo "=================================================================\n";
 exit(0);

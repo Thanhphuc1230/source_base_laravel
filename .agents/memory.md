@@ -4,15 +4,17 @@
 
 ---
 
-## 🎨 UI/UX & STYLING (Cập nhật chuẩn Modern Web 2026)
+## 🎨 UI/UX & STYLING (Cập nhật chuẩn Architectural / Editorial Anti-AI)
 - **Framework CSS:** Tailwind CSS (compile file local hoặc Play CDN cấu hình chỉn chu).
 - **Typography (Font mặc định bắt buộc):** Luôn luôn sử dụng font stack mặc định tối ưu chuẩn cho tiếng Việt: `font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;`. Tuyệt đối không tự ý thay đổi font stack khác trừ khi người dùng yêu cầu riêng.
-- **Phong cách:** Modern Premium Web Design (Thân thiện, bo tròn `rounded-xl`/`2xl`, shadow mượt, hover scale nhẹ 1.03-1.05, phân mảng phối màu Niche Color Palette theo ngành nghề).
+- **Phong cách:** Architectural / Editorial Minimal (Sắc nét, dứt khoát, không mang "chất AI").
+  - **Bo góc tối giản (Sharp-First):** Ảnh, Card, Container, Bảng dùng `0px` (`rounded-none`) hoặc tối đa `2px–4px`; nút bấm & input dùng tối đa `4px` (`rounded-[4px]`). **CẤM** `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `rounded-full` (trừ nút floating liên hệ góc màn hình).
+  - **Kỷ luật Nền & Bề mặt (85/10/5):** 85% diện tích là nền sạch đồng nhất (`#FFFFFF` / `#FAFAFA`), phân tách bằng khoảng trắng và đường kẻ mảnh `1px solid` (`border-t`, `divide-y`), **CẤM** bọc mọi khối vào card có nền màu, **CẤM** `backdrop-blur`, **CẤM** floating badge đè lên ảnh, **CẤM** hộp icon có nền màu.
 - **Icon Safety:** Tuyệt đối ghi đúng class FontAwesome (`fas fa-...`, `fab fa-...`) hoặc SVG Inline để tránh lỗi ô vuông.
 - **Animation:** Dùng Intersection Observer JS (`.scroll-anim.fade-up`) tạo hiệu ứng cuộn mượt.
 - **Mobile Grid:** Sản phẩm & Tin tức luôn chia 2 cột trên Mobile (`grid-cols-2`).
-- **Không dùng Dark Theme nguyên khối cho bán lẻ:** Tuyệt đối không dùng Dark Theme nguyên khối (nền đen tuyền) cho các website bán lẻ commercial trừ khi người dùng yêu cầu riêng. Mặc định ưu tiên Light Modern Premium Design để tối ưu trải nghiệm mua sắm.
-- **Khoảng cách Section:** Bắt buộc padding top/bottom của các section chỉ 15px (`py-[15px]`), tuyệt đối không dùng padding quá cao (`py-16`, `py-20`, `py-24`) làm loãng bố cục trang.
+- **Không dùng Dark Theme nguyên khối cho bán lẻ:** Tuyệt đối không dùng Dark Theme nguyên khối (nền đen tuyền) cho các website bán lẻ commercial trừ khi người dùng yêu cầu riêng. Mặc định ưu tiên Light Editorial Design để tối ưu trải nghiệm mua sắm.
+- **Khoảng cách Section:** Dùng khoảng cách thoáng đồng bộ (`py-14 md:py-20` hoặc `56px` mobile / `80px–96px` desktop) để phân tách section bằng khoảng trắng thay vì tô nhiều màu nền.
 - **Nút/Icon Header (Cart, Language Switcher, Hotline):**
   - **Không để số điện thoại trên Header:** Giữ thanh header thoáng và tối giản, hotline & Zalo bố trí ở floating action buttons góc dưới bên phải màn hình.
   - **Cart Icon:** Giữ mộc tự nhiên, tuyệt đối không dùng border-radius kèm nền background (không bọc trong khối tròn/vuông xám), chỉ hiển thị icon phẳng cùng badge số lượng.

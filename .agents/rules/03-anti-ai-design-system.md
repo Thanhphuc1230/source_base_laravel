@@ -33,44 +33,33 @@
 
 ---
 
-## 2. HỆ THỐNG MÀU SẮC THEO BẢN SẮC NGÀNH HÀNG (NICHE COLOR SYSTEM)
+## 2. HỆ THỐNG MÀU SẮC & KỶ LUẬT BỀ MẶT (SURFACE DISCIPLINE 85/10/5)
 
-Màu sắc không được hardcode mà phải tự động xây dựng theo Logo thương hiệu và tâm lý thị giác của ngành hàng được yêu cầu:
+Màu sắc xây dựng theo Logo thương hiệu và tâm lý thị giác ngành hàng, nhưng **BẮT BUỘC tuân thủ tỷ lệ 85/10/5** để tránh giao diện bị "nhiều nền màu":
 
-- **Màu chính thương hiệu (Brand Primary):** 
-  - Lấy từ màu chủ đạo của Logo hoặc màu đại diện của ngành hàng:
-    * *Xanh lá:* Tự nhiên, nông sản, dược liệu, y tế sinh học.
-    * *Xanh navy / Xanh dương:* Công nghệ, kỹ thuật số, logistics, tài chính.
-    * *Nâu đồng / Vàng kim:* Nội thất kiến trúc, resort, trang sức, cao cấp.
-    * *Đen luxury / Than chì:* Đồng hồ, thời trang cao cấp, tối giản tinh tế.
-  - Dùng cho các **MẢNG LỚN CÓ LỰC**: Nền section dải ngang, banner CTA, Footer, nút bấm chính.
-- **Hệ thống tông phụ của màu chính:**
-  - *Tông vừa (Medium):* Dùng cho trạng thái hover/active.
-  - *Tông sẫm (Dark/Deep):* Cho nền Footer và các khối cần độ sâu thị giác.
-  - *Tông rất nhạt (Light / 5-8% tint):* Làm màu nền cho các dải thông tin, dải quy trình, khối phụ trợ.
-- **Màu nhấn (Accent Color):** 
-  - Màu tương phản nổi bật lấy từ điểm nhấn của logo (hoặc màu bổ túc).
-  - **CHỈ dùng cho:** Nút CTA chính và vài chi tiết điểm nhấn nhỏ (tối đa 1 lần mỗi màn hình).
-- **Nền chủ đạo:** Trắng tinh khiết (`#FFFFFF`) hoặc Off-white sạch sẽ (`#F9FAFB` / `#F9F8F6`).
-- **Quy tắc nhịp nền xen kẽ (Alternating Rhythm):**
-  - Luân chuyển nhịp: Nền Trắng → Nền màu chính thương hiệu (chữ trắng) → Nền tông rất nhạt → Ảnh tràn lề.
-  - **CẤM** 3 section liên tiếp có cùng một màu nền.
-  - Trang chủ phải có ít nhất 2 section dải màu thương hiệu đậm chữ trắng tương phản cao.
+- **85% Nền sạch đồng nhất:** Trắng tinh khiết (`#FFFFFF`) hoặc Off-white (`#FAFAFA`). Phân tách các section và item bằng **khoảng trắng (whitespace)** và **đường kẻ mảnh `1px solid #E5E7EB`** (`border-t`, `divide-x`, `divide-y`), **KHÔNG** bọc mọi khối vào card có nền màu hay đổi màu nền liên tục mỗi section.
+- **10% Mảng nhấn thương hiệu (Brand Primary):** Tối đa 1–2 dải ngang có lực trên trang chủ (ví dụ Footer và 1 dải CTA/Highlight).
+- **5% Màu nhấn (Accent Color):** Chỉ dùng cho nút CTA chính và chi tiết điểm nhấn nhỏ (tối đa 1 lần mỗi viewport).
+- **CẤM tuyệt đối:**
+  - ❌ CẤM `backdrop-blur` (glassmorphism), floating stat card đè lên góc ảnh.
+  - ❌ CẤM hộp icon có nền màu (`w-12 h-12 bg-... rounded-...`). Icon đứng trực tiếp hoặc đặt cạnh đường kẻ mảnh.
+  - ❌ CẤM 2 section liên tiếp dùng 2 màu nền sặc sỡ khác nhau.
 
 ---
 
-## 3. LƯỚI BỐ CỤC, KHOẢNG CÁCH & BO GÓC THỐNG NHẤT
+## 3. LƯỚI BỐ CỤC, KHOẢNG CÁCH & BO GÓC TỐI GIẢN (SHARP-FIRST)
 
 - **Container chuẩn 1200px:** Mọi section căn thẳng tắp theo một lưới chung `max-w-[1200px]` (`.container-b2b` hoặc `max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto`).
 - **Khoảng cách Section (Section Spacing):** 
-  - Desktop chuẩn 96px (`py-24` hoặc `.section-sp`) đối với các dải phân cách lớn, hoặc tinh tế theo quy chuẩn niche.
-  - Mobile chuẩn 56px (`py-14`).
-- **Bo góc thống nhất (Unified Border Radius):** 
-  - Duy nhất **8px** (`rounded-[8px]`, `rounded-lg`, `--radius-base: 8px`) cho toàn bộ thẻ, nút bấm, ô input và bảng.
-  - **CẤM** nút bo tròn kiểu pill (`rounded-full`).
+  - Desktop chuẩn `80px–96px` (`py-20` hoặc `py-24`) để tạo nhịp thở bằng khoảng trắng.
+  - Mobile chuẩn `56px` (`py-14`).
+- **Bo góc tối giản (Sharp-First Radius):** 
+  - **Ảnh, Card sản phẩm, Container, Bảng:** `0px` (`rounded-none`) hoặc tối đa `2px` (`rounded-[2px]`).
+  - **Nút bấm & Input:** Tối đa `4px` (`rounded-[4px]`) hoặc `0px` (`rounded-none`).
+  - **CẤM tuyệt đối:** `rounded-xl`, `rounded-2xl`, `rounded-3xl`, nút/badge `rounded-full` (trừ nút floating liên hệ góc màn hình).
 - **Bóng đổ có kiểm soát (Controlled Elevation):** 
-  - Chỉ dùng 1 mức bóng rất nhẹ (`0 10px 30px rgba(0, 0, 0, 0.08)`) khi hover thẻ sản phẩm hoặc khi header dính (`.header-scrolled`).
-  - **CẤM** shadow mềm lớn (`shadow-md`/`lg`/`xl`) lan tràn mọi nơi.
+  - Ưu tiên viền mảnh `1px solid` (`border-slate-200`) thay cho bóng đổ. Nếu hover thẻ sản phẩm, chỉ dùng bóng rất nhẹ (`0 6px 20px rgba(0, 0, 0, 0.06)`).
+  - **CẤM** `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`.
 
 ---
 

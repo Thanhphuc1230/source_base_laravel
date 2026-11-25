@@ -29,8 +29,8 @@ Phát hiện các thông tin bị ghi cứng (hardcode) trong file `.blade.php`:
 | Link Facebook tĩnh | `href="{{ $web->facebook }}"` |
 | Thẻ logo ảnh tĩnh | `<img src="{{ asset($web->logo) }}" alt="{{ $web->name_vn }}">` |
 | Tên / giá sản phẩm tĩnh | `{{ $product->name }}` / `{{ number_format($product->price) }}đ` |
-| Mô tả / Nội dung chi tiết sản phẩm tĩnh | `{{ $product->intro_vn }}` / `{!! $product->content_vn !!}` |
-| Nội dung bài viết tin tức tĩnh | `{{ $news->intro_vn }}` / `{!! $news->content_vn !!}` |
+| Mô tả / Nội dung chi tiết sản phẩm tĩnh | `{{ $product->intro }}` / `{!! $product->content !!}` |
+| Nội dung bài viết tin tức tĩnh | `{{ $news->intro }}` / `{!! $news->content !!}` |
 | Khối cam kết / chính sách tĩnh | Lấy từ `$about_section`, `$page`, hoặc ẩn `@if(...)` nếu không có dữ liệu Admin |
 | Tiêu đề section sản phẩm/tin tức tĩnh | `{{ $product_settings['title_home'] ?? '' }}` hoặc `{{ $category->name }}` |
 
