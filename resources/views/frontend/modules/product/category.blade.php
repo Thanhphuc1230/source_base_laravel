@@ -87,7 +87,7 @@
                                     <a href="{{ route('web.resolve', ['slug' => $parent->slug]) }}" 
                                        class="flex items-center justify-between py-1 text-xs font-semibold hover:text-gold-600 transition-colors {{ isset($category_detail->id_cate_product) && $parent->id_cate_product == $category_detail->id_cate_product ? 'text-gold-600 font-extrabold border-l-2 border-gold-500 pl-2' : 'text-slate-700' }}">
                                         <span>{{ lang($parent, 'name') }}</span>
-                                        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-full font-bold">{{ $parent->products->count() }}</span>
+                                        <span class="bg-slate-100 text-slate-500 text-[10px] px-2 py-0.5 rounded-[4px] font-bold">{{ $parent->products_count ?? $parent->products->count() }}</span>
                                     </a>
 
                                     @if(isset($category_product[$parent->id_cate_product]) && count($category_product[$parent->id_cate_product]) > 0)
@@ -96,7 +96,7 @@
                                                 <li>
                                                     <a href="{{ route('web.resolve', ['slug' => $child->slug]) }}" class="flex items-center justify-between text-[11px] hover:text-gold-600 transition-colors {{ isset($category_detail->id_cate_product) && $child->id_cate_product == $category_detail->id_cate_product ? 'text-gold-600 font-extrabold' : 'text-slate-500' }}">
                                                         <span>{{ lang($child, 'name') }}</span>
-                                                        <span class="text-slate-400 font-medium">({{ $child->products->count() }})</span>
+                                                        <span class="text-slate-400 font-medium">({{ $child->products_count ?? $child->products->count() }})</span>
                                                     </a>
                                                 </li>
                                             @endforeach

@@ -34,8 +34,9 @@ class ProductService
         // Cache category data
         $data['category_detail'] = CateProduct::where('status', 1)->where('id_cate_product', $id_cate_product)->firstOrFail();
 
-        // Cache category list (sidebar) - Load all categories with hierarchy
-        $data['category_product'] = CateProduct::with(['products', 'children.products'])
+        // Cache category list (sidebar) - Load category hierarchy with product counts only (Rule 19)
+        $data['category_product'] = CateProduct::select('id_cate_product', 'uuid', 'name', 'slug', 'parent_id', 'status', 'stt')
+            ->withCount(['products' => fn ($q) => $q->where('status', 1)])
             ->where('status', 1)
             ->orderBy('stt', 'asc')
             ->get()
@@ -82,8 +83,14 @@ class ProductService
             'variants' => fn($q) => $q->where('status', true),
         ])->where('id_product', $id_product)->firstOrFail();
 
-        // Cache related products
-        $data['related_product'] = Product::where('category_id', $data['product_detail']->category_id)
+        // Cache related products with preview columns only (Rule 19)
+        $previewColumns = [
+            'id_product', 'uuid', 'name', 'slug',
+            'image_vn', 'image_en', 'price', 'price_old', 'category_id',
+            'hot', 'status', 'stt', 'intro', 'created_at',
+        ];
+        $data['related_product'] = Product::select($previewColumns)
+            ->where('category_id', $data['product_detail']->category_id)
             ->where('id_product', '!=', $data['product_detail']->id_product)
             ->where('status', 1)
             ->orderBy('stt', 'asc')
