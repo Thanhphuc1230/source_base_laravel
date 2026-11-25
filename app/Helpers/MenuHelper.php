@@ -44,6 +44,26 @@ if (!function_exists('getUrlMenu')) {
     }
 }
 
+if (!function_exists('resolveMenuSlugUrl')) {
+    function resolveMenuSlugUrl(?string $slug): string
+    {
+        if (empty($slug)) {
+            return route('web.404');
+        }
+
+        $locale = app()->getLocale();
+        if ($locale === 'vn') {
+            $locale = 'vi';
+        }
+
+        if ($locale !== 'vi' && in_array($locale, ['en', 'de', 'ja', 'ko', 'zh'], true)) {
+            return route('web.resolve.localized', ['locale' => $locale, 'slug' => $slug]);
+        }
+
+        return route('web.resolve', ['slug' => $slug]);
+    }
+}
+
 if (!function_exists('getUrlMenuRaw')) {
     function getUrlMenuRaw($item)
     {
@@ -54,11 +74,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $page ? $page->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'cate_new':
                 $cateNew = CateNew::where('id_cate_new', $item->object_id)
@@ -66,11 +82,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $cateNew ? $cateNew->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'cate_product':
                 $cateProduct = CateProduct::where('id_cate_product', $item->object_id)
@@ -78,23 +90,15 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $cateProduct ? $cateProduct->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'brand':
                 $brand = \App\Models\Brand::where('id_brand', $item->object_id)
                     ->where('status', 1)
                     ->first();
-                $slug = $brand ? ($brand->slug ?? \Illuminate\Support\Str::slug($brand->name_vn)) : null;
+                $slug = $brand ? ($brand->slug ?? \Illuminate\Support\Str::slug($brand->name)) : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'cate_service':
                 $cateService = \App\Models\CateService::where('id_cate_service', $item->object_id)
@@ -102,11 +106,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $cateService ? $cateService->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'service':
                 $service = \App\Models\Service::where('id_service', $item->object_id)
@@ -114,11 +114,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $service ? $service->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'cate_project':
                 $cateProject = \App\Models\CateProject::where('id_cate_project', $item->object_id)
@@ -126,11 +122,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $cateProject ? $cateProject->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             case 'project':
                 $project = \App\Models\Project::where('id_project', $item->object_id)
@@ -138,11 +130,7 @@ if (!function_exists('getUrlMenuRaw')) {
                     ->first();
                 $slug = $project ? $project->slug : null;
 
-                if (empty($slug)) {
-                    return route('web.404');
-                }
-
-                return route('web.resolve', ['slug' => $slug]);
+                return resolveMenuSlugUrl($slug);
 
             default:
                 return route('web.home');

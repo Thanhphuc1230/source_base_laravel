@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('tp_systems', function (Blueprint $table) {
             $table->id('id_system');
-            $table->text('active_languages')->nullable(); // Cấu hình ngôn ngữ hoạt động động
+            $table->json('active_languages')->nullable(); // Cấu hình ngôn ngữ hoạt động động
             // thông tin liên hệ
             $table->string('email', 50);
             $table->string('email_alert', 50)->nullable();
-            $table->text('address_vn')->nullable();
-            $table->text('address_en')->nullable();
+            $table->json('address')->nullable();
             $table->string('phone', 20)->nullable();
-            $table->text('footer_vn')->nullable();
-            $table->text('footer_en')->nullable();
+            $table->json('footer')->nullable();
             
             // socical media
             $table->string('facebook')->nullable();
@@ -35,20 +33,15 @@ return new class extends Migration
             $table->string('logo')->nullable();
             $table->string('share_image')->nullable();
             $table->string('meta_title')->nullable();
-            $table->string('name_vn')->nullable();
-            $table->string('name_en')->nullable();
-            $table->text('description_vn')->nullable();
-            $table->text('description_en')->nullable();
-            $table->text('keyword_vn')->nullable();
-            $table->text('keyword_en')->nullable();
+            $table->json('name')->nullable();
+            $table->json('description')->nullable();
+            $table->json('keyword')->nullable();
             $table->mediumText('header_js')->nullable();
             $table->mediumText('body_js')->nullable();
 
             // Contact page text settings
-            $table->string('contact_title_vn')->nullable();
-            $table->text('contact_desc_vn')->nullable();
-            $table->string('contact_title_en')->nullable();
-            $table->text('contact_desc_en')->nullable();
+            $table->json('contact_title')->nullable();
+            $table->json('contact_desc')->nullable();
 
             $table->text('map')->nullable();
             $table->timestamps();

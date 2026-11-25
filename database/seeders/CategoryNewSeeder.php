@@ -20,7 +20,7 @@ class CategoryNewSeeder extends Seeder
 
         $cateRepo = app(\App\Repositories\Interfaces\CateNewRepositoryInterface::class);
 
-        if (! CateNew::where('slug_vn', 'tin-tuc')->exists()) {
+        if (! CateNew::where('slug', 'LIKE', '%tin-tuc%')->exists()) {
             $cateRepo->createWithAutoSlug([
                 'name_vn' => 'Tin tức',
                 'name_en' => 'News',

@@ -22,8 +22,8 @@ class SearchService
 
         if (!empty($query)) {
             // Base query for search
-            $searchQuery = Product::with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
-                ->select('id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'price', 'price_old', 'image_vn', 'image_en', 'intro_vn', 'intro_en', 'category_id', 'status', 'stt', 'created_at')
+            $searchQuery = Product::with(['cate:id_cate_product,name,slug'])
+                ->select('id_product', 'uuid', 'name', 'slug', 'price', 'price_old', 'image_vn', 'image_en', 'intro', 'category_id', 'status', 'stt', 'created_at')
                 ->where('status', 1);
 
             // Apply search filters
@@ -53,10 +53,7 @@ class SearchService
     private function applySearchFilters($query, string $searchQuery)
     {
         // Search in product name
-        $query->where(function ($q) use ($searchQuery) {
-            $q->where('name_vn', 'like', "%{$searchQuery}%")
-              ->orWhere('name_en', 'like', "%{$searchQuery}%");
-        });
+        $query->where('name', 'like', "%{$searchQuery}%");
 
         return $query;
     }
@@ -74,10 +71,10 @@ class SearchService
 
         switch ($sort) {
             case 'name_asc':
-                $query->orderBy('name_vn', 'asc');
+                $query->orderBy('name', 'asc');
                 break;
             case 'name_desc':
-                $query->orderBy('name_vn', 'desc');
+                $query->orderBy('name', 'desc');
                 break;
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -169,13 +166,11 @@ class SearchService
 
         // Cache search suggestions
         $suggestions = Product::where('status', 1)
-            ->where(function ($q) use ($query) {
-                $q->where('name_vn', 'like', "%{$query}%")
-                  ->orWhere('name_en', 'like', "%{$query}%");
-            })
+            ->where('name', 'like', "%{$query}%")
             ->orderBy('stt', 'asc')
             ->limit(10)
-            ->pluck('name_vn')
+            ->get()
+            ->map(fn($p) => $p->name)
             ->toArray();
 
         return ['suggestions' => $suggestions];

@@ -38,12 +38,16 @@ class InteriorArchitectureSeeder extends Seeder
         DB::table('tp_systems')->truncate();
         DB::table('tp_systems')->insert([
             'email' => 'contact@base.local',
-            'active_languages' => '["vi","en"]',
-            'address_vn' => 'Showroom: KĐT Sala, TP. Thủ Đức, TP. Hồ Chí Minh | Nhà máy: Cụm Công nghiệp Thạch Thất, Hà Nội',
-            'address_en' => 'Showroom: Sala Urban Area, Thu Duc City, HCMC | Factory: Thach That Industrial Cluster, Hanoi',
+            'active_languages' => json_encode(['vi', 'en', 'de', 'ja', 'ko', 'zh']),
+            'address' => json_encode([
+                'vi' => 'Showroom: KĐT Sala, TP. Thủ Đức, TP. Hồ Chí Minh | Nhà máy: Cụm Công nghiệp Thạch Thất, Hà Nội',
+                'en' => 'Showroom: Sala Urban Area, Thu Duc City, HCMC | Factory: Thach That Industrial Cluster, Hanoi'
+            ], JSON_UNESCAPED_UNICODE),
             'phone' => '0979 248 298',
-            'footer_vn' => 'NỘI THẤT & KIẾN TRÚC BASE - Đơn vị thiết kế, sản xuất và thi công nội thất cao cấp chuẩn quốc tế. Sở hữu nhà máy sản xuất trực tiếp 5.000m² với công nghệ tiên tiến nhất, mang đến không gian sống hoàn mỹ và giá trị trường tồn.',
-            'footer_en' => 'BASE BESPOKE INTERIOR & ARCHITECTURE - International standard luxury interior design, manufacturing and build contractor. Powered by a 5,000m² direct manufacturing plant.',
+            'footer' => json_encode([
+                'vi' => 'NỘI THẤT & KIẾN TRÚC BASE - Đơn vị thiết kế, sản xuất và thi công nội thất cao cấp chuẩn quốc tế. Sở hữu nhà máy sản xuất trực tiếp 5.000m² với công nghệ tiên tiến nhất, mang đến không gian sống hoàn mỹ và giá trị trường tồn.',
+                'en' => 'BASE BESPOKE INTERIOR & ARCHITECTURE - International standard luxury interior design, manufacturing and build contractor. Powered by a 5,000m² direct manufacturing plant.'
+            ], JSON_UNESCAPED_UNICODE),
             'email_alert' => 'contact@base.local',
             'facebook' => 'https://facebook.com',
             'youtube' => 'https://youtube.com',
@@ -52,12 +56,18 @@ class InteriorArchitectureSeeder extends Seeder
             'zalo' => 'https://zalo.me/0979248298',
             'favicon' => 'uploads/demo/interior_logo.svg',
             'logo' => 'uploads/demo/interior_logo.svg',
-            'name_vn' => 'NỘI THẤT & KIẾN TRÚC BASE',
-            'name_en' => 'BASE BESPOKE INTERIOR & ARCHITECTURE',
-            'description_vn' => 'Nội Thất & Kiến Trúc Base - Thiết Kế & Thi Công Nội Thất Biệt Thự, Villa, Dinh Thự Cao Cấp. Trực tiếp sản xuất tại nhà xưởng quy mô lớn.',
-            'description_en' => 'BASE INTERIOR & ARCHITECTURE - Bespoke Living & 5,000sqm Factory',
-            'keyword_vn' => 'noi that cao cap, thiet ke thi cong villa, dinh thu, nha xuong noi that, phong cach becki owens, studio mcgee',
-            'keyword_en' => 'bespoke interior, luxury architecture, walnut furniture, factory 5000sqm',
+            'name' => json_encode([
+                'vi' => 'NỘI THẤT & KIẾN TRÚC BASE',
+                'en' => 'BASE BESPOKE INTERIOR & ARCHITECTURE'
+            ], JSON_UNESCAPED_UNICODE),
+            'description' => json_encode([
+                'vi' => 'Nội Thất & Kiến Trúc Base - Thiết Kế & Thi Công Nội Thất Biệt Thự, Villa, Dinh Thự Cao Cấp. Trực tiếp sản xuất tại nhà xưởng quy mô lớn.',
+                'en' => 'BASE INTERIOR & ARCHITECTURE - Bespoke Living & 5,000sqm Factory'
+            ], JSON_UNESCAPED_UNICODE),
+            'keyword' => json_encode([
+                'vi' => 'noi that cao cap, thiet ke thi cong villa, dinh thu, nha xuong noi that, phong cach becki owens, studio mcgee',
+                'en' => 'bespoke interior, luxury architecture, walnut furniture, factory 5000sqm'
+            ], JSON_UNESCAPED_UNICODE),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -117,10 +127,8 @@ class InteriorArchitectureSeeder extends Seeder
         DB::table('tp_features')->truncate();
         $features = [
             [
-                'title_vn' => 'Thiết Kế May Đo Độc Bản',
-                'title_en' => 'Bespoke Architectural Design',
-                'content_vn' => 'Từng đường nét, tỷ lệ được kiến trúc sư thiết kế cá nhân hóa 100% theo phong cách gia chủ.',
-                'content_en' => 'Every proportion and detail tailored exclusively to your personal lifestyle.',
+                'title' => json_encode(['vi' => 'Thiết Kế May Đo Độc Bản', 'en' => 'Bespoke Architectural Design'], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode(['vi' => 'Từng đường nét, tỷ lệ được kiến trúc sư thiết kế cá nhân hóa 100% theo phong cách gia chủ.', 'en' => 'Every proportion and detail tailored exclusively to your personal lifestyle.'], JSON_UNESCAPED_UNICODE),
                 'image' => 'fa-solid fa-compass-drafting',
                 'stt' => 1,
                 'status' => 1,
@@ -129,10 +137,8 @@ class InteriorArchitectureSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'title_vn' => 'Nhà Máy 5.000m² Trực Tiếp',
-                'title_en' => 'Direct 5,000m² Factory',
-                'content_vn' => 'Sản xuất trực tiếp không qua trung gian, bảo đảm tiến độ và kiểm soát chất lượng nghiêm ngặt.',
-                'content_en' => 'Direct production with no middlemen, ensuring strict quality control and timeline.',
+                'title' => json_encode(['vi' => 'Nhà Máy 5.000m² Trực Tiếp', 'en' => 'Direct 5,000m² Factory'], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode(['vi' => 'Sản xuất trực tiếp không qua trung gian, bảo đảm tiến độ và kiểm soát chất lượng nghiêm ngặt.', 'en' => 'Direct production with no middlemen, ensuring strict quality control and timeline.'], JSON_UNESCAPED_UNICODE),
                 'image' => 'fa-solid fa-industry',
                 'stt' => 2,
                 'status' => 1,
@@ -141,10 +147,8 @@ class InteriorArchitectureSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'title_vn' => 'Gỗ Tự Nhiên & Da Bò Ý Loại 1',
-                'title_en' => 'FAS Grade Woods & Italian Leather',
-                'content_vn' => 'Gỗ Óc chó Bắc Mỹ tuyển chọn vân nu mắt đẹp, da bò Ý Nappa mềm mại thượng hạng.',
-                'content_en' => 'Finest North American Walnut grains paired with supple Italian full-grain leather.',
+                'title' => json_encode(['vi' => 'Gỗ Tự Nhiên & Da Bò Ý Loại 1', 'en' => 'FAS Grade Woods & Italian Leather'], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode(['vi' => 'Gỗ Óc chó Bắc Mỹ tuyển chọn vân nu mắt đẹp, da bò Ý Nappa mềm mại thượng hạng.', 'en' => 'Finest North American Walnut grains paired with supple Italian full-grain leather.'], JSON_UNESCAPED_UNICODE),
                 'image' => 'fa-solid fa-couch',
                 'stt' => 3,
                 'status' => 1,
@@ -153,10 +157,8 @@ class InteriorArchitectureSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'title_vn' => 'Bảo Hành 5 Năm & Bảo Trì Trọn Đời',
-                'title_en' => '5-Year Warranty & Lifetime Care',
-                'content_vn' => 'Cam kết chất lượng vững chắc, đội ngũ bảo hành có mặt xử lý trong 24h tại công trình.',
-                'content_en' => 'Long-term commitment with on-site technical maintenance within 24 hours.',
+                'title' => json_encode(['vi' => 'Bảo Hành 5 Năm & Bảo Trì Trọn Đời', 'en' => '5-Year Warranty & Lifetime Care'], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode(['vi' => 'Cam kết chất lượng vững chắc, đội ngũ bảo hành có mặt xử lý trong 24h tại công trình.', 'en' => 'Long-term commitment with on-site technical maintenance within 24 hours.'], JSON_UNESCAPED_UNICODE),
                 'image' => 'fa-solid fa-shield-halved',
                 'stt' => 4,
                 'status' => 1,
@@ -212,12 +214,9 @@ class InteriorArchitectureSeeder extends Seeder
         foreach ($projectCates as $pc) {
             $catId = DB::table('tp_cate_projects')->insertGetId([
                 'uuid' => Str::uuid()->toString(),
-                'name_vn' => $pc['name_vn'],
-                'name_en' => $pc['name_en'],
-                'slug_vn' => $pc['slug_vn'],
-                'slug_en' => $pc['slug_en'],
-                'description_vn' => $pc['description_vn'],
-                'description_en' => $pc['description_vn'],
+                'name' => json_encode(['vi' => $pc['name_vn'], 'en' => $pc['name_en']], JSON_UNESCAPED_UNICODE),
+                'slug' => json_encode(['vi' => $pc['slug_vn'], 'en' => $pc['slug_en']], JSON_UNESCAPED_UNICODE),
+                'description' => json_encode(['vi' => $pc['description_vn'], 'en' => $pc['description_vn']], JSON_UNESCAPED_UNICODE),
                 'status' => true,
                 'home' => true,
                 'stt' => $pc['stt'],
@@ -294,15 +293,14 @@ class InteriorArchitectureSeeder extends Seeder
         foreach ($projectList as $p) {
             DB::table('tp_projects')->insert([
                 'uuid' => Str::uuid()->toString(),
-                'name_vn' => $p['name_vn'],
-                'name_en' => $p['name_en'],
-                'slug_vn' => $p['slug_vn'],
-                'slug_en' => $p['slug_en'],
+                'name' => json_encode(['vi' => $p['name_vn'], 'en' => $p['name_en']], JSON_UNESCAPED_UNICODE),
+                'slug' => json_encode(['vi' => $p['slug_vn'], 'en' => $p['slug_en']], JSON_UNESCAPED_UNICODE),
                 'category_id' => $insertedCateProjects[$p['cate_slug']] ?? 1,
-                'intro_vn' => $p['intro_vn'],
-                'intro_en' => $p['intro_vn'],
-                'content_vn' => '<p>' . $p['intro_vn'] . '</p><p>Công trình được đội ngũ kiến trúc sư và nghệ nhân thợ mộc của xưởng 5.000m² hoàn thiện tỉ mỉ từng chi tiết, đảm bảo sự đồng bộ từ bản vẽ 3D đến thực tế bàn giao.</p>',
-                'content_en' => '<p>' . $p['intro_vn'] . '</p><p>Handcrafted by our master craftsmen and installed to perfection.</p>',
+                'intro' => json_encode(['vi' => $p['intro_vn'], 'en' => $p['intro_vn']], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode([
+                    'vi' => '<p>' . $p['intro_vn'] . '</p><p>Công trình được đội ngũ kiến trúc sư và nghệ nhân thợ mộc của xưởng 5.000m² hoàn thiện tỉ mỉ từng chi tiết, đảm bảo sự đồng bộ từ bản vẽ 3D đến thực tế bàn giao.</p>',
+                    'en' => '<p>' . $p['intro_vn'] . '</p><p>Handcrafted by our master craftsmen and installed to perfection.</p>'
+                ], JSON_UNESCAPED_UNICODE),
                 'image_vn' => $p['image'],
                 'image_en' => $p['image'],
                 'status' => true,
@@ -368,10 +366,8 @@ class InteriorArchitectureSeeder extends Seeder
         foreach ($productCates as $c) {
             $cId = DB::table('tp_cate_products')->insertGetId([
                 'uuid' => Str::uuid()->toString(),
-                'name_vn' => $c['name_vn'],
-                'name_en' => $c['name_en'],
-                'slug_vn' => $c['slug_vn'],
-                'slug_en' => $c['slug_en'],
+                'name' => json_encode(['vi' => $c['name_vn'], 'en' => $c['name_en']], JSON_UNESCAPED_UNICODE),
+                'slug' => json_encode(['vi' => $c['slug_vn'], 'en' => $c['slug_en']], JSON_UNESCAPED_UNICODE),
                 'image_vn' => 'uploads/demo/product_sofa_modular_monterey.webp',
                 'image_en' => 'uploads/demo/product_sofa_modular_monterey.webp',
                 'status' => true,
@@ -494,17 +490,16 @@ class InteriorArchitectureSeeder extends Seeder
         foreach ($productList as $prod) {
             DB::table('tp_products')->insert([
                 'uuid' => Str::uuid()->toString(),
-                'name_vn' => $prod['name_vn'],
-                'name_en' => $prod['name_en'],
-                'slug_vn' => $prod['slug_vn'],
-                'slug_en' => $prod['slug_en'],
+                'name' => json_encode(['vi' => $prod['name_vn'], 'en' => $prod['name_en']], JSON_UNESCAPED_UNICODE),
+                'slug' => json_encode(['vi' => $prod['slug_vn'], 'en' => $prod['slug_en']], JSON_UNESCAPED_UNICODE),
                 'category_id' => $insertedCateProducts[$prod['cate']] ?? 1,
                 'price' => $prod['price'],
                 'price_old' => $prod['price_old'],
-                'intro_vn' => $prod['intro_vn'],
-                'intro_en' => $prod['intro_vn'],
-                'content_vn' => '<p>' . $prod['intro_vn'] . '</p><p>Sản phẩm được sản xuất trực tiếp tại nhà máy quy chuẩn 5.000m² với tiêu chuẩn kỹ thuật nghiêm ngặt. Bảo hành 5 năm kết cấu và hỗ trợ bảo dưỡng định kỳ trọn đời.</p>',
-                'content_en' => '<p>' . $prod['intro_vn'] . '</p><p>Crafted directly at our 5,000m² factory with a 5-year structural warranty.</p>',
+                'intro' => json_encode(['vi' => $prod['intro_vn'], 'en' => $prod['intro_vn']], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode([
+                    'vi' => '<p>' . $prod['intro_vn'] . '</p><p>Sản phẩm được sản xuất trực tiếp tại nhà máy quy chuẩn 5.000m² với tiêu chuẩn kỹ thuật nghiêm ngặt. Bảo hành 5 năm kết cấu và hỗ trợ bảo dưỡng định kỳ trọn đời.</p>',
+                    'en' => '<p>' . $prod['intro_vn'] . '</p><p>Crafted directly at our 5,000m² factory with a 5-year structural warranty.</p>'
+                ], JSON_UNESCAPED_UNICODE),
                 'image_vn' => $prod['image'],
                 'image_en' => $prod['image'],
                 'status' => true,
@@ -559,11 +554,9 @@ class InteriorArchitectureSeeder extends Seeder
 
         $newsCateId = DB::table('tp_cate_news')->insertGetId([
             'uuid' => Str::uuid()->toString(),
-            'name_vn' => 'Tin tức',
-            'name_en' => 'News & Articles',
-            'slug_vn' => 'tin-tuc',
-            'slug_en' => 'tin-tuc',
-            'description_vn' => 'Cập nhật các xu hướng thiết kế, vật liệu cao cấp và cảm hứng không gian sống đương đại.',
+            'name' => json_encode(['vi' => 'Tin tức', 'en' => 'News & Articles'], JSON_UNESCAPED_UNICODE),
+            'slug' => json_encode(['vi' => 'tin-tuc', 'en' => 'tin-tuc'], JSON_UNESCAPED_UNICODE),
+            'description' => json_encode(['vi' => 'Cập nhật các xu hướng thiết kế, vật liệu cao cấp và cảm hứng không gian sống đương đại.', 'en' => 'Cập nhật các xu hướng thiết kế, vật liệu cao cấp và cảm hứng không gian sống đương đại.'], JSON_UNESCAPED_UNICODE),
             'status' => true,
             'home' => true,
             'stt' => 1,
@@ -602,15 +595,14 @@ class InteriorArchitectureSeeder extends Seeder
         foreach ($newsList as $k => $n) {
             DB::table('tp_news')->insert([
                 'uuid' => Str::uuid()->toString(),
-                'name_vn' => $n['name_vn'],
-                'name_en' => $n['name_en'],
-                'slug_vn' => $n['slug_vn'],
-                'slug_en' => $n['slug_en'],
+                'name' => json_encode(['vi' => $n['name_vn'], 'en' => $n['name_en']], JSON_UNESCAPED_UNICODE),
+                'slug' => json_encode(['vi' => $n['slug_vn'], 'en' => $n['slug_en']], JSON_UNESCAPED_UNICODE),
                 'category_id' => $newsCateId,
-                'intro_vn' => $n['intro_vn'],
-                'intro_en' => $n['intro_vn'],
-                'content_vn' => '<p>' . $n['intro_vn'] . '</p><p>Không gian sống hoàn mỹ là sự hội tụ giữa bản vẽ thiết kế sáng tạo và tay nghề mộc điêu luyện. Hãy để chúng tôi đồng hành cùng bạn trên hành trình kiến tạo tổ ấm trọn vẹn.</p>',
-                'content_en' => '<p>' . $n['intro_vn'] . '</p>',
+                'intro' => json_encode(['vi' => $n['intro_vn'], 'en' => $n['intro_vn']], JSON_UNESCAPED_UNICODE),
+                'content' => json_encode([
+                    'vi' => '<p>' . $n['intro_vn'] . '</p><p>Không gian sống hoàn mỹ là sự hội tụ giữa bản vẽ thiết kế sáng tạo và tay nghề mộc điêu luyện. Hãy để chúng tôi đồng hành cùng bạn trên hành trình kiến tạo tổ ấm trọn vẹn.</p>',
+                    'en' => '<p>' . $n['intro_vn'] . '</p>'
+                ], JSON_UNESCAPED_UNICODE),
                 'image_vn' => $n['image'],
                 'image_en' => $n['image'],
                 'status' => true,
@@ -629,8 +621,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 1: Trang Chủ
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Trang chủ',
-            'name_en' => 'Home',
+            'name' => json_encode(['vi' => 'Trang chủ', 'en' => 'Home'], JSON_UNESCAPED_UNICODE),
             'link' => '/',
             'slug' => 'trang-chu',
             'type' => 'link',
@@ -642,8 +633,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 2: Giới thiệu
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Giới thiệu',
-            'name_en' => 'About Us',
+            'name' => json_encode(['vi' => 'Giới thiệu', 'en' => 'About Us'], JSON_UNESCAPED_UNICODE),
             'link' => '/gioi-thieu',
             'slug' => 'gioi-thieu',
             'type' => 'link',
@@ -655,8 +645,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 3: Sản phẩm
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Sản phẩm',
-            'name_en' => 'Products',
+            'name' => json_encode(['vi' => 'Sản phẩm', 'en' => 'Products'], JSON_UNESCAPED_UNICODE),
             'link' => '/san-pham',
             'slug' => 'san-pham',
             'type' => 'link',
@@ -668,8 +657,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 4: Thiết kế & Thi công (Cha có dropdown)
         $parentProjectMenuId = DB::table('tp_menus')->insertGetId([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Thiết kế & Thi công',
-            'name_en' => 'Design & Build',
+            'name' => json_encode(['vi' => 'Thiết kế & Thi công', 'en' => 'Design & Build'], JSON_UNESCAPED_UNICODE),
             'link' => '/thiet-ke-thi-cong',
             'slug' => 'thiet-ke-thi-cong',
             'type' => 'link',
@@ -682,8 +670,7 @@ class InteriorArchitectureSeeder extends Seeder
         DB::table('tp_menus')->insert([
             [
                 'uuid' => Str::uuid(),
-                'name_vn' => 'Villa',
-                'name_en' => 'Villa',
+                'name' => json_encode(['vi' => 'Villa', 'en' => 'Villa'], JSON_UNESCAPED_UNICODE),
                 'link' => '/villa',
                 'slug' => 'villa',
                 'type' => 'link',
@@ -693,8 +680,7 @@ class InteriorArchitectureSeeder extends Seeder
             ],
             [
                 'uuid' => Str::uuid(),
-                'name_vn' => 'Dinh thự',
-                'name_en' => 'Mansions',
+                'name' => json_encode(['vi' => 'Dinh thự', 'en' => 'Mansions'], JSON_UNESCAPED_UNICODE),
                 'link' => '/dinh-thu',
                 'slug' => 'dinh-thu',
                 'type' => 'link',
@@ -704,8 +690,7 @@ class InteriorArchitectureSeeder extends Seeder
             ],
             [
                 'uuid' => Str::uuid(),
-                'name_vn' => 'Khách sạn',
-                'name_en' => 'Hotel',
+                'name' => json_encode(['vi' => 'Khách sạn', 'en' => 'Hotel'], JSON_UNESCAPED_UNICODE),
                 'link' => '/khach-san',
                 'slug' => 'khach-san',
                 'type' => 'link',
@@ -715,8 +700,7 @@ class InteriorArchitectureSeeder extends Seeder
             ],
             [
                 'uuid' => Str::uuid(),
-                'name_vn' => 'Showroom',
-                'name_en' => 'Showroom',
+                'name' => json_encode(['vi' => 'Showroom', 'en' => 'Showroom'], JSON_UNESCAPED_UNICODE),
                 'link' => '/showroom',
                 'slug' => 'showroom',
                 'type' => 'link',
@@ -729,8 +713,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 5: Nhà xưởng
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Nhà xưởng',
-            'name_en' => 'Factory',
+            'name' => json_encode(['vi' => 'Nhà xưởng', 'en' => 'Factory'], JSON_UNESCAPED_UNICODE),
             'link' => '/nha-xuong',
             'slug' => 'nha-xuong',
             'type' => 'link',
@@ -742,8 +725,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 6: Tin tức
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Tin tức',
-            'name_en' => 'News',
+            'name' => json_encode(['vi' => 'Tin tức', 'en' => 'News'], JSON_UNESCAPED_UNICODE),
             'link' => '/tin-tuc',
             'slug' => 'tin-tuc',
             'type' => 'link',
@@ -755,8 +737,7 @@ class InteriorArchitectureSeeder extends Seeder
         // Menu 7: Liên hệ
         DB::table('tp_menus')->insert([
             'uuid' => Str::uuid(),
-            'name_vn' => 'Liên hệ',
-            'name_en' => 'Contact',
+            'name' => json_encode(['vi' => 'Liên hệ', 'en' => 'Contact'], JSON_UNESCAPED_UNICODE),
             'link' => '/lien-he',
             'slug' => 'lien-he',
             'type' => 'link',

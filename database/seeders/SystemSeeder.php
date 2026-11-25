@@ -19,7 +19,7 @@ class SystemSeeder extends Seeder
 
         $data = [
             'email' => 'contact@luxuryhome.vn',
-            'active_languages' => '["vi","en"]',
+            'active_languages' => ['vi', 'en', 'de', 'ja', 'ko', 'zh'],
             'address_vn' => 'Showroom: KĐT Sala, TP. Thủ Đức, TP. Hồ Chí Minh | Nhà máy: Cụm Công nghiệp Thạch Thất, Hà Nội',
             'address_en' => 'Showroom: Sala Urban Area, Thu Duc City, HCMC | Factory: Thach That Industrial Cluster, Hanoi',
             'phone' => '0979 248 298',

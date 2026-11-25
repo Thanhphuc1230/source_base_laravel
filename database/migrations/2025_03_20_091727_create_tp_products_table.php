@@ -15,17 +15,13 @@ return new class extends Migration
         Schema::create('tp_products', function (Blueprint $table) {
             $table->id('id_product');
             $table->uuid('uuid')->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
-            $table->string('slug_vn')->unique();
-            $table->string('slug_en')->nullable()->unique();
-            $table->text('intro_vn');
-            $table->text('intro_en')->nullable();
+            $table->json('name');
+            $table->json('slug');
+            $table->json('intro')->nullable();
             $table->decimal('price', 15, 0);
             $table->decimal('price_old', 15, 0)->nullable();
             $table->integer('quantity')->default(50);
-            $table->longText('content_vn');
-            $table->longText('content_en')->nullable();
+            $table->json('content')->nullable();
             $table->string('image_vn')->nullable();
             $table->string('image_en')->nullable();
             $table->longText('image_detail')->nullable();
@@ -35,45 +31,25 @@ return new class extends Migration
             $table->boolean('home')->default(false);
             $table->boolean('sale')->default(false);
             $table->unsignedInteger('stt')->default(1);
-            $table->string('keyword_vn')->nullable();
-            $table->string('keyword_en')->nullable();
-            $table->text('description_vn')->nullable();
-            $table->text('description_en')->nullable();
+            $table->json('keyword')->nullable();
+            $table->json('description')->nullable();
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('brand_id')->nullable()->index();
             $table->timestamps();
 
             $table->foreign('category_id')->references('id_cate_product')->on('tp_cate_products')->onDelete('cascade');
 
-            // Query & sorting indexes
-            $table->index('created_at');
-            $table->index(['category_id', 'created_at']);
+            // Query & sorting indexes (pruned redundant left-prefix duplicates)
             $table->index(['category_id', 'status', 'created_at']);
             $table->index(['category_id', 'status', 'stt']);
             $table->index(['quantity', 'status']);
 
             // Composite indexes for frontend route & display
-            $table->index(['status', 'slug_vn']);
-            $table->index(['status', 'slug_en']);
             $table->index(['status', 'stt']);
             $table->index(['status', 'home']);
-            $table->index(['status', 'hot']);
             $table->index(['status', 'hot', 'stt']);
-            $table->index(['status', 'sale']);
             $table->index(['status', 'sale', 'stt']);
-            $table->index(['status', 'category_id']);
             $table->index(['created_at', 'status']);
-
-            // Fulltext search for high-volume catalog lookup (MySQL/PostgreSQL, bypassed on TiDB)
-            $isTiDb = false;
-            try {
-                $ver = DB::selectOne("SELECT VERSION() as ver")->ver ?? '';
-                $isTiDb = str_contains($ver, 'TiDB');
-            } catch (\Throwable $e) {}
-
-            if (DB::getDriverName() !== 'sqlite' && !$isTiDb) {
-                $table->fullText(['name_vn', 'name_en']);
-            }
         });
     }
 

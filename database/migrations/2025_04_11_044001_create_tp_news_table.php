@@ -15,20 +15,14 @@ return new class extends Migration
         Schema::create('tp_news', function (Blueprint $table) {
             $table->id('id_new');
             $table->uuid('uuid')->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
-            $table->string('slug_vn')->unique();
-            $table->string('slug_en')->nullable()->unique();
+            $table->json('name');
+            $table->json('slug');
             $table->string('image_vn')->nullable();
             $table->string('image_en')->nullable();
-            $table->text('intro_vn');
-            $table->text('intro_en')->nullable();
-            $table->longText('content_vn');
-            $table->longText('content_en')->nullable();
-            $table->string('keyword_vn')->nullable();
-            $table->string('keyword_en')->nullable();
-            $table->string('description_vn')->nullable();
-            $table->string('description_en')->nullable();
+            $table->json('intro')->nullable();
+            $table->json('content')->nullable();
+            $table->json('keyword')->nullable();
+            $table->json('description')->nullable();
             $table->unsignedBigInteger('category_id');
             $table->boolean('status')->default(true);
             $table->boolean('home')->default(false);
@@ -46,25 +40,12 @@ return new class extends Migration
             $table->index(['category_id', 'status', 'stt']);
 
             // Composite indexes for frontend route & display
-            $table->index(['status', 'slug_vn']);
-            $table->index(['status', 'slug_en']);
             $table->index(['status', 'stt']);
             $table->index(['status', 'home']);
             $table->index(['status', 'home', 'stt']);
             $table->index(['status', 'category_id']);
             $table->index(['views', 'status']);
             $table->index(['created_at', 'status']);
-
-            // Fulltext search (MySQL/PostgreSQL, bypassed on TiDB)
-            $isTiDb = false;
-            try {
-                $ver = DB::selectOne("SELECT VERSION() as ver")->ver ?? '';
-                $isTiDb = str_contains($ver, 'TiDB');
-            } catch (\Throwable $e) {}
-
-            if (DB::getDriverName() !== 'sqlite' && !$isTiDb) {
-                $table->fullText(['name_vn', 'name_en']);
-            }
         });
     }
 

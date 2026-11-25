@@ -15,12 +15,12 @@ class ServiceService
 
         $data['category_detail'] = CateService::where('status', 1)
             ->where('id_cate_service', $id_cate_service)
-            ->select('id_cate_service', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status')
+            ->select('id_cate_service', 'name', 'slug', 'status')
             ->firstOrFail();
 
         $data['services'] = Service::where('category_id', $data['category_detail']->id_cate_service)
             ->where('status', 1)
-            ->select('id_service', 'name_vn', 'name_en', 'intro_vn', 'intro_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'created_at', 'category_id')
+            ->select('id_service', 'name', 'intro', 'slug', 'image_vn', 'image_en', 'created_at', 'category_id')
             ->orderBy('created_at', 'desc')
             ->paginate(8)
             ->withQueryString();
@@ -35,16 +35,16 @@ class ServiceService
         $data = [];
 
         $data['service_detail'] = Service::with(['cate' => function ($query) {
-            $query->select('id_cate_service', 'name_vn', 'name_en', 'slug_vn', 'slug_en');
+            $query->select('id_cate_service', 'name', 'slug');
         }])
             ->where('id_service', $id_service)
-            ->select('id_service', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'content_vn', 'content_en', 'created_at', 'category_id', 'keyword_vn', 'keyword_en', 'description_vn', 'description_en')
+            ->select('id_service', 'name', 'slug', 'image_vn', 'image_en', 'content', 'created_at', 'category_id', 'keyword', 'description')
             ->firstOrFail();
 
         $data['related_services'] = Service::where('category_id', $data['service_detail']->category_id)
             ->where('status', 1)
             ->where('id_service', '!=', $data['service_detail']->id_service)
-            ->select('id_service', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'created_at')
+            ->select('id_service', 'name', 'slug', 'image_vn', 'image_en', 'created_at')
             ->orderBy('created_at', 'desc')
             ->limit(4)
             ->get();
@@ -59,14 +59,14 @@ class ServiceService
         return [
             'category_product' => CateProduct::where('status', 1)
                 ->where('parent_id', 0)
-                ->select('name_vn', 'name_en', 'status', 'slug_vn', 'slug_en')
+                ->select('name', 'status', 'slug')
                 ->orderBy('created_at', 'desc')
                 ->limit(8)
                 ->get(),
 
             'product_hot' => Product::where('status', 1)
                 ->where('hot', 1)
-                ->select('name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'price', 'created_at')
+                ->select('name', 'slug', 'image_vn', 'image_en', 'price', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
                 ->get()

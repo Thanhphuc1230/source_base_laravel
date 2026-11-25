@@ -65,21 +65,27 @@
                     </span>
                 </a>
 
-                <!-- Language Switcher (Two flags side-by-side, no background, no border-radius) -->
-                <div class="flex items-center space-x-2">
-                    <a href="{{ route('lang', ['locale' => 'vn']) }}" class="inline-block transition-opacity duration-200 {{ session('locale') == 'vn' || !session('locale') ? 'opacity-100' : 'opacity-40 hover:opacity-100' }}" title="Tiếng Việt">
-                        <svg class="w-5 h-3.5 block" viewBox="0 0 640 480">
-                            <path fill="#da251d" d="M0 0h640v480H0z"/>
-                            <path fill="#ff0" d="M320 133l27 82h86l-70 51 27 82-70-51-70 51 27-82-70-51h86z"/>
-                        </svg>
-                    </a>
-                    <a href="{{ route('lang', ['locale' => 'en']) }}" class="inline-block transition-opacity duration-200 {{ session('locale') == 'en' ? 'opacity-100' : 'opacity-40 hover:opacity-100' }}" title="English">
-                        <svg class="w-5 h-3.5 block" viewBox="0 0 640 480">
-                            <path fill="#bd3d44" d="M0 0h640v480H0z"/>
-                            <path stroke="#fff" stroke-width="37" d="M0 55h640M0 129h640M0 203h640M0 277h640M0 351h640M0 425h640"/>
-                            <path fill="#192f5d" d="M0 0h256v258H0z"/>
-                        </svg>
-                    </a>
+                <!-- Dynamic Language Switcher (Active languages with flags) -->
+                @php
+                    $allSupported = config('languages.supported', []);
+                    $rawActiveLangs = $web->active_languages ?? ($systemConfig->active_languages ?? array_keys($allSupported));
+                    $activeLangs = (is_array($rawActiveLangs) ? $rawActiveLangs : (is_string($rawActiveLangs) ? json_decode($rawActiveLangs, true) : null)) ?: array_keys($allSupported);
+                    $currentLocale = app()->getLocale() ?: session('locale', 'vi');
+                    if ($currentLocale === 'vn') $currentLocale = 'vi';
+                @endphp
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    @foreach($allSupported as $code => $langInfo)
+                        @if(in_array($code, $activeLangs, true))
+                            @php
+                                $isActive = ($currentLocale === $code);
+                            @endphp
+                            <a href="{{ route('lang', ['locale' => $code]) }}" 
+                               class="inline-flex items-center transition-all duration-200 p-0.5 rounded {{ $isActive ? 'opacity-100 ring-1 ring-charcoal-400' : 'opacity-40 hover:opacity-100' }}" 
+                               title="{{ $langInfo['name'] }} ({{ $langInfo['native'] }})">
+                                <img src="{{ asset($langInfo['flag']) }}" alt="{{ $code }}" class="w-5 h-3.5 block object-cover rounded-xs">
+                            </a>
+                        @endif
+                    @endforeach
                 </div>
 
 
@@ -139,6 +145,25 @@
                 </a>
             </li>
             @endif
+
+            <!-- Mobile Language Switcher -->
+            <li class="pt-4 border-t border-cream-200 mt-2">
+                <p class="text-3xs uppercase tracking-wider text-charcoal-muted font-bold mb-2">Ngôn ngữ / Language</p>
+                <div class="flex items-center flex-wrap gap-2">
+                    @foreach($allSupported as $code => $langInfo)
+                        @if(in_array($code, $activeLangs, true))
+                            @php
+                                $isActive = ($currentLocale === $code);
+                            @endphp
+                            <a href="{{ route('lang', ['locale' => $code]) }}" 
+                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors {{ $isActive ? 'bg-taupe-oak text-white border-taupe-oak' : 'bg-white text-charcoal border-beige-warm hover:border-taupe-oak' }}">
+                                <img src="{{ asset($langInfo['flag']) }}" alt="{{ $code }}" class="w-4 h-3 object-cover rounded-2xs">
+                                <span>{{ $langInfo['native'] }}</span>
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+            </li>
         </ul>
     </div>
 </nav>

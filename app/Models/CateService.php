@@ -3,13 +3,16 @@
 namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CateService extends Model
 {
-    use AutoImagePathsTrait, Cachable, HasFactory;
+    use AutoImagePathsTrait, Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name', 'slug', 'intro', 'content', 'keyword', 'description'];
 
     protected $table = 'tp_cate_services';
 
@@ -17,6 +20,12 @@ class CateService extends Model
 
     protected $fillable = [
         'uuid',
+        'name',
+        'slug',
+        'intro',
+        'content',
+        'keyword',
+        'description',
         'name_vn',
         'name_en',
         'slug_vn',
@@ -33,14 +42,12 @@ class CateService extends Model
 
     public function getSlugAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'slug_' . $locale} ?: ($this->slug_vn ?: $this->slug_en);
+        return $this->getTranslation('slug');
     }
 
     public function getNameAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'name_' . $locale} ?: ($this->name_vn ?: $this->name_en);
+        return $this->getTranslation('name');
     }
 
     public function getImageAttribute()
@@ -51,8 +58,7 @@ class CateService extends Model
 
     public function getKeywordAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'keyword_' . $locale} ?: ($this->keyword_vn ?: $this->keyword_en);
+        return $this->getTranslation('keyword');
     }
 
     public function getKeywordsAttribute()
@@ -62,8 +68,7 @@ class CateService extends Model
 
     public function getDescriptionAttribute()
     {
-        $locale = app()->getLocale();
-        return $this->{'description_' . $locale} ?: ($this->description_vn ?: $this->description_en);
+        return $this->getTranslation('description');
     }
 
     protected $casts = [

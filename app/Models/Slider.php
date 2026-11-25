@@ -4,19 +4,23 @@ namespace App\Models;
 
 use App\Traits\AutoImagePathsTrait;
 use App\Traits\BaseLogsActivity;
+use App\Traits\HasJsonTranslations;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Slider extends Model
 {
-    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory;
+    use AutoImagePathsTrait, BaseLogsActivity, Cachable, HasFactory, HasJsonTranslations;
+
+    public array $translatable = ['name'];
 
     protected $table = 'tp_sliders';
 
     protected $primaryKey = 'id_slider';
 
     protected $fillable = [
+        'name',
         'name_vn',
         'name_en',
         'link',

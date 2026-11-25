@@ -122,6 +122,9 @@ abstract class BaseRepository implements RepositoryInterface
         // Handle UUID
         $data = $this->handleUuid($data);
         
+        // Handle JSON multi-language translations
+        $data = $this->handleTranslations($data);
+
         // Handle default status if applicable
         if (!isset($data['status']) && in_array('status', $this->model->getFillable())) {
             $data['status'] = 1;
@@ -142,6 +145,63 @@ abstract class BaseRepository implements RepositoryInterface
         // Handle timestamps
         $data = $this->handleTimestamps($data, $record);
         
+        // Handle JSON multi-language translations
+        $data = $this->handleTranslations($data, $record);
+
+        return $data;
+    }
+
+    /**
+     * Aggregate localized request fields into translatable JSON arrays
+     */
+    protected function handleTranslations(array $data, $record = null): array
+    {
+        if (!property_exists($this->model, 'translatable') || empty($this->model->translatable)) {
+            return $data;
+        }
+
+        $supported = array_keys(config('languages.supported', ['vi' => [], 'en' => []]));
+
+        foreach ($this->model->translatable as $field) {
+            $existing = [];
+            if ($record && method_exists($record, 'getTranslations')) {
+                $existing = $record->getTranslations($field);
+            }
+
+            $currentJson = $existing;
+            $hasUpdate = false;
+
+            foreach ($supported as $loc) {
+                $keys = [$field . '_' . $loc];
+                if ($loc === 'vi') {
+                    $keys[] = $field . '_vn';
+                }
+                foreach ($keys as $k) {
+                    if (array_key_exists($k, $data)) {
+                        $currentJson[$loc] = $data[$k];
+                        $hasUpdate = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($hasUpdate) {
+                // If slug field is empty for a language that has name, generate slug for it
+                if ($field === 'slug') {
+                    foreach ($supported as $loc) {
+                        $nameVal = $data['name_' . $loc] ?? ($loc === 'vi' ? ($data['name_vn'] ?? '') : '');
+                        if (empty($currentJson[$loc]) && !empty($nameVal)) {
+                            $currentJson[$loc] = \Illuminate\Support\Str::slug($nameVal);
+                        } elseif (!empty($currentJson[$loc])) {
+                            $currentJson[$loc] = \Illuminate\Support\Str::slug($currentJson[$loc]);
+                        }
+                    }
+                }
+
+                $data[$field] = $currentJson;
+            }
+        }
+
         return $data;
     }
     

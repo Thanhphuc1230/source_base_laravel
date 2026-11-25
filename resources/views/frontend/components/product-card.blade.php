@@ -5,44 +5,29 @@
     $price = $product->price;
     $priceOld = $product->price_old;
 @endphp
-<div class="card-editorial overflow-hidden flex flex-col group h-full scroll-anim fade-up">
-    <!-- Clickable Product Image (aspect-square) -->
-    <div class="aspect-square w-full overflow-hidden bg-beige-warm relative p-3 sm:p-4 flex items-center justify-center zoom-container">
+<div class="card-editorial overflow-hidden flex flex-col group h-full scroll-anim fade-up rounded-none border border-border-subtle bg-white">
+    <!-- Clickable Product Image (aspect-square, sharp corners) -->
+    <div class="aspect-square w-full overflow-hidden bg-neutral-50 relative flex items-center justify-center zoom-container">
         <a href="{{ route('web.resolve', ['slug' => $productSlug]) }}" class="block w-full h-full flex items-center justify-center">
-            <img src="{{ asset($productImage) }}" alt="{{ $productName }}" width="400" height="400" class="w-full h-full object-cover rounded-xl transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" decoding="async">
+            <img src="{{ asset($productImage) }}" alt="{{ $productName }}" width="400" height="400" class="w-full h-full object-cover rounded-none transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" decoding="async">
         </a>
-        
-        <!-- Hot / Bespoke Badge -->
-        @if($product->hot)
-            <span class="absolute top-2.5 left-2.5 badge-editorial text-3xs font-semibold z-10">
-                Bespoke
-            </span>
-        @endif
 
-        <!-- Category Badge -->
-        @if($product->cate)
-            <span class="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm border border-border-subtle text-charcoal-muted text-3xs font-medium px-2 py-0.5 rounded-full shadow-2xs z-10 hidden sm:inline-block">
-                {{ lang($product->cate, 'name') }}
+        <!-- Hot Badge -->
+        @if($product->hot)
+            <span class="absolute top-2.5 left-2.5 bg-charcoal text-white text-3xs font-semibold px-2 py-0.5 rounded-[2px] z-10">
+                Hot
             </span>
         @endif
     </div>
 
     <!-- Product Info -->
-    <div class="p-3.5 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
+    <div class="p-3.5 sm:p-4 flex-grow flex flex-col justify-between space-y-3">
         <div class="space-y-1.5">
-            <!-- Quality Indicator -->
-            <div class="flex items-center justify-between text-3xs sm:text-2xs text-taupe-oak">
-                <span class="font-medium uppercase tracking-wider flex items-center">
-                    <i class="fa-solid fa-couch text-3xs mr-1 text-taupe-oak"></i> Gỗ Tự Nhiên Cao Cấp
-                </span>
-                <div class="flex items-center text-amber-500 text-3xs">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
+            @if($product->cate)
+                <div class="text-3xs text-charcoal-light uppercase tracking-wider font-medium">
+                    {{ lang($product->cate, 'name') }}
                 </div>
-            </div>
+            @endif
 
             <!-- Product Title -->
             <h3 class="font-heading font-medium text-xs sm:text-sm text-charcoal group-hover:text-taupe-oak transition-colors line-clamp-2 leading-snug">
@@ -65,14 +50,14 @@
                 @if($priceOld > $price)
                     <span class="text-3xs text-charcoal-light line-through leading-none">{{ number_format($priceOld, 0, ',', '.') }}{{ currency_unit() }}</span>
                 @endif
-                <span class="text-xs sm:text-base font-bold text-charcoal leading-none mt-1 group-hover:text-taupe-oak transition-colors">
+                <span class="text-xs sm:text-base font-bold text-charcoal leading-none mt-1 tabular-nums group-hover:text-taupe-oak transition-colors">
                     {{ number_format($price, 0, ',', '.') }}{{ currency_unit() }}
                 </span>
             </div>
 
             <!-- Add to Cart Action Button -->
-            <button type="button" onclick="addToCartAjax('{{ $product->uuid }}', this)" class="inline-flex items-center justify-center min-w-[44px] min-h-[44px] bg-beige-warm hover:bg-taupe-oak text-charcoal hover:text-white border border-border-subtle hover:border-taupe-oak font-medium p-2 sm:p-2.5 rounded-xl transition-all duration-300 shadow-2xs group/btn flex-shrink-0" title="Thêm vào giỏ hàng" aria-label="Thêm {{ $productName }} vào giỏ hàng">
-                <i class="fa-solid fa-bag-shopping text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
+            <button type="button" onclick="addToCartAjax('{{ $product->uuid }}', this)" class="inline-flex items-center justify-center min-w-[40px] min-h-[40px] bg-white hover:bg-charcoal text-charcoal hover:text-white border border-border-subtle hover:border-charcoal font-medium p-2 rounded-[4px] transition-colors duration-200 group/btn flex-shrink-0" title="Thêm vào giỏ hàng" aria-label="Thêm {{ $productName }} vào giỏ hàng">
+                <i class="fa-solid fa-bag-shopping text-xs sm:text-sm"></i>
             </button>
         </div>
     </div>

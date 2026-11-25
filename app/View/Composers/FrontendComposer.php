@@ -47,7 +47,7 @@ class FrontendComposer
     public function compose(View $view)
     {
         if (static::$memoizedData === null) {
-            $cacheTtl = 120; // 2 hours
+            $cacheTtl = 7200; // 2 hours in seconds
 
             $systemData = CacheService::remember('system', 'frontend_web_data', $cacheTtl, function () {
                 return System::first() ?? new System(['name_vn' => 'Base', 'name_en' => 'Base']);
@@ -57,9 +57,9 @@ class FrontendComposer
             }
 
             $productPreviewCols = [
-                'id_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en',
+                'id_product', 'uuid', 'name', 'slug',
                 'image_vn', 'image_en', 'price', 'price_old', 'category_id',
-                'hot', 'status', 'stt', 'intro_vn', 'intro_en', 'created_at',
+                'hot', 'status', 'stt', 'intro', 'created_at',
             ];
 
             $currencyUnit = ProductSetting::getCurrencyUnit();
@@ -85,7 +85,7 @@ class FrontendComposer
 
                 // 4. Product categories & Brands (Tag: categories, brands)
                 'cate_product' => CacheService::remember('categories', 'frontend_cate_product_data', $cacheTtl, function () {
-                    return CateProduct::select('id_cate_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'image_vn', 'image_en', 'parent_id', 'status', 'home', 'stt')
+                    return CateProduct::select('id_cate_product', 'uuid', 'name', 'slug', 'image_vn', 'image_en', 'parent_id', 'status', 'home', 'stt')
                         ->where('status', 1)
                         ->where('parent_id', 0)
                         ->orderBy('stt', 'asc')
@@ -95,7 +95,7 @@ class FrontendComposer
                     return Brand::where('status', 1)->orderBy('stt', 'asc')->get();
                 }),
                 'category_product_footer' => CacheService::remember('categories', 'frontend_cate_product_footer_data', $cacheTtl, function () {
-                    return CateProduct::select('id_cate_product', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'parent_id', 'status', 'stt')
+                    return CateProduct::select('id_cate_product', 'uuid', 'name', 'slug', 'parent_id', 'status', 'stt')
                         ->where('status', 1)
                         ->whereIn('parent_id', [0, 1])
                         ->orderBy('stt', 'asc')
@@ -104,7 +104,7 @@ class FrontendComposer
 
                 // 5. News categories (Tag: categories)
                 'category_news_footer' => CacheService::remember('categories', 'frontend_cate_news_footer_data', $cacheTtl, function () {
-                    return CateNew::select('id_cate_new', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'parent_id', 'status', 'stt')
+                    return CateNew::select('id_cate_new', 'uuid', 'name', 'slug', 'parent_id', 'status', 'stt')
                         ->where('status', 1)
                         ->where('parent_id', 0)
                         ->orderBy('stt', 'asc')
@@ -113,7 +113,7 @@ class FrontendComposer
 
                 // 6. Footer static pages - pruned content_vn/content_en (Rule 19)
                 'footer_pages' => CacheService::remember('pages', 'frontend_footer_pages_data', $cacheTtl, function () {
-                    return Page::select('id_page', 'uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'footer', 'status', 'stt')
+                    return Page::select('id_page', 'uuid', 'name', 'slug', 'footer', 'status', 'stt')
                         ->where('status', 1)
                         ->where('footer', 1)
                         ->orderBy('stt', 'asc')

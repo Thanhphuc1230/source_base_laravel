@@ -14,8 +14,7 @@ return new class extends Migration
         Schema::create('tp_sliders', function (Blueprint $table) {
             $table->id('id_slider');
             $table->uuid('uuid')->unique();
-            $table->string('name_vn');
-            $table->string('name_en')->nullable();
+            $table->json('name');
             $table->text('link')->nullable();
             $table->boolean('status')->default(true);
             $table->string('image_desktop_vn')->nullable();

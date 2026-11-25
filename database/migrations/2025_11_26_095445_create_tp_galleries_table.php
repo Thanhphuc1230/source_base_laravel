@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tp_galleries', function (Blueprint $table) {
             $table->id('id_gallery');
             $table->uuid('uuid')->unique();
-            $table->string('name_vn');
+            $table->json('name')->nullable();
             $table->boolean('status')->default(true);
             $table->string('image');
             $table->unsignedInteger('stt')->default(0)->nullable();

@@ -14,12 +14,23 @@ Route::match(['get', 'head'], '/health', function () {
 
 // Language switching
 Route::group(['middleware' => 'web'], function () {
-    Route::get('lang/{locale}', function ($locale = 'vn') {
-        // Set default to 'vn'
-        if (! in_array($locale, ['en', 'vn'])) {
+    Route::get('lang/{locale}', function ($locale = 'vi') {
+        $supported = config('languages.supported', []);
+        $aliases = ['vn' => 'vi', 'jp' => 'ja', 'kr' => 'ko', 'cn' => 'zh'];
+        $norm = $aliases[$locale] ?? $locale;
+
+        if (!array_key_exists($norm, $supported)) {
             abort(404);
         }
-        session()->put('locale', $locale);
+
+        $system = \App\Models\System::first();
+        $activeLocales = $system->active_languages ?? array_keys($supported);
+        if (!in_array($norm, $activeLocales, true)) {
+            abort(404);
+        }
+
+        session()->put('locale', $norm);
+        app()->setLocale($norm);
 
         return redirect()->back();
     })->name('lang');

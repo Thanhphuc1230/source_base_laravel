@@ -15,12 +15,18 @@
     <!-- CSS (Font, Vendor, Icon, Plugins & Style CSS files) -->
     <link rel="preload" href="@yield('images')" as="image">
     <link rel="alternate" hreflang="x-default" href="{{ route('web.home') }}">
-    <link rel="alternate" hreflang="vi" href="{{ route('web.home') }}">
+    @php
+        $rawActiveHrefs = $web->active_languages ?? ($systemConfig->active_languages ?? array_keys(config('languages.supported', [])));
+        $activeHrefs = (is_array($rawActiveHrefs) ? $rawActiveHrefs : (is_string($rawActiveHrefs) ? json_decode($rawActiveHrefs, true) : null)) ?: array_keys(config('languages.supported', []));
+    @endphp
+    @foreach($activeHrefs as $hCode)
+        <link rel="alternate" hreflang="{{ $hCode }}" href="{{ $hCode === 'vi' ? route('web.home') : url($hCode) }}">
+    @endforeach
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ url()->current() }}" />
 
     <!-- Open Graph / Meta Facebook & Zalo & Viber -->
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'vi' ? 'vi_VN' : (app()->getLocale() . '_' . strtoupper(app()->getLocale())) }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:site_name" content="{{ $website->name_vn ?? $website->meta_name ?? 'Base' }}">
     <meta property="og:title" content="@yield('module', $website->meta_title ?? $website->name_vn ?? 'Base')">

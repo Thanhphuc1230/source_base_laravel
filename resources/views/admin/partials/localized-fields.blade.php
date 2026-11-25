@@ -1,20 +1,23 @@
 @props(['fields' => [], 'model' => $page ?? null])
 
 @php
-    // Đọc active languages từ global systemConfig
-    $activeLocales = isset($systemConfig) ? ($systemConfig->active_languages ?? ['vi', 'en']) : ['vi', 'en'];
+    // Đọc active languages từ global systemConfig hoặc config
+    $supported = config('languages.supported', []);
+    $activeLocales = isset($systemConfig) && !empty($systemConfig->active_languages) 
+        ? $systemConfig->active_languages 
+        : array_keys($supported);
+
     $languages = [];
-    if (in_array('vi', $activeLocales)) {
-        $languages['vn'] = [
-            'label' => 'Tiếng Việt',
-            'flag' => 'vietnam.png'
-        ];
-    }
-    if (in_array('en', $activeLocales)) {
-        $languages['en'] = [
-            'label' => 'Tiếng Anh (EN)',
-            'flag' => 'usa.png'
-        ];
+    foreach ($supported as $code => $cfg) {
+        if (in_array($code, $activeLocales, true)) {
+            // Dùng 'vn' cho tiếng Việt để tương thích các form request hiện tại
+            $localeKey = ($code === 'vi') ? 'vn' : $code;
+            $languages[$localeKey] = [
+                'code' => $code,
+                'label' => $cfg['name'] . ' (' . strtoupper($code) . ')',
+                'flag' => $cfg['flag'],
+            ];
+        }
     }
     
     // Tạo unique ID cho tab tránh xung đột nếu nhúng nhiều lần trên cùng 1 trang
@@ -47,7 +50,7 @@
                data-bs-toggle="tab" 
                href="#locale-{{ $locale }}-{{ $tabSuffix }}" 
                role="tab">
-                <img src="{{ asset('uploads/icon/' . $info['flag']) }}" 
+                <img src="{{ asset($info['flag']) }}" 
                      alt="{{ $locale }}" 
                      class="me-1 align-middle" 
                      style="width: 18px; height: 12px; object-fit: cover; border-radius: 2px; margin-top: -2px;">
@@ -78,12 +81,21 @@
                         
                         $name = $base.'_'.$locale;
                         $id = ($useEditor) ? ($base.'-'.$locale) : null; 
-                        $value = old($name, data_get($model, $name, ''));
+                        
+                        $value = old($name);
+                        if ($value === null && $model) {
+                            if (method_exists($model, 'getTranslation')) {
+                                $value = $model->getTranslation($base, $info['code'], false);
+                            }
+                            if ($value === null || $value === '') {
+                                $value = data_get($model, $name, '');
+                            }
+                        }
                     @endphp
 
                     <div class="{{ $col }} mb-3">
                         <label for="{{ $id ?? $name }}" class="form-label font-weight-semibold">
-                            {{ $label }} <span class="text-muted text-xs">({{ strtoupper($locale) }})</span>
+                            {{ $label }} <span class="text-muted text-xs">({{ strtoupper($info['code']) }})</span>
                         </label>
                         
                         @if ($type === 'textarea')
