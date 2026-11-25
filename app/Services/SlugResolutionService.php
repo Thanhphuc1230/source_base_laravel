@@ -38,9 +38,10 @@ class SlugResolutionService
 
         try {
             $cacheKey = "slug_resolution_{$locale}_" . md5($slug);
-            $cacheTtl = (int) (config('cache.ttl.slug_resolution', 3600) / 60) ?: 60;
+            $cacheTtl = (int) config('cache.ttl.slug_resolution', 3600) ?: 3600;
+            $notFoundSentinel = '__NOT_FOUND__';
 
-            $resolved = CacheService::remember('frontend', $cacheKey, $cacheTtl, function () use ($slug, $locale) {
+            $resolved = CacheService::remember('frontend', $cacheKey, $cacheTtl, function () use ($slug, $notFoundSentinel) {
                 $slugLike = '%"' . $slug . '"%';
 
                 $query = "
@@ -96,8 +97,13 @@ class SlugResolutionService
                     return $item;
                 }
 
-                return null;
+                // Cache sentinel so 404/bot scans do not trigger repeated 10-table UNION ALL scans
+                return $notFoundSentinel;
             });
+
+            if ($resolved === $notFoundSentinel) {
+                $resolved = null;
+            }
 
             static::$memoizedSlugs[$memoKey] = $resolved;
 

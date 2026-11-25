@@ -87,45 +87,50 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        // Clear frontend cache dynamically when data changes
-        $clearFrontendCache = function () {
-            if (class_exists(\App\Services\CacheService::class)) {
-                \App\Services\CacheService::forgetTags(['brands', 'frontend', 'system', 'menu', 'sliders', 'categories', 'pages', 'products', 'news', 'services', 'projects']);
-            }
-            FrontendComposer::flushMemoryCache();
-            SlugResolutionService::flushMemoryCache();
-            ProductSetting::flushMemoryCache();
-            NewsSetting::flushMemoryCache();
-            Cache::forget('frontend_global_data');
-            Cache::forget('admin_system_config');
-            Cache::forget('dynamic_sitemap_xml');
-        };
-
-        $watchedModels = [
-            System::class,
-            Menu::class,
-            Slider::class,
-            CateProduct::class,
-            CateNew::class,
-            CateService::class,
-            CateProject::class,
-            Page::class,
-            Product::class,
-            News::class,
-            Service::class,
-            Project::class,
-            Brand::class,
-            Feedback::class,
-            Feature::class,
-            Gallery::class,
-            ProductSetting::class,
-            NewsSetting::class,
+        // Clear frontend cache selectively per model (avoids flushing unrelated cache tags)
+        $modelTagMap = [
+            System::class => ['system', 'frontend'],
+            Menu::class => ['menu', 'frontend'],
+            Slider::class => ['sliders', 'frontend'],
+            CateProduct::class => ['categories', 'products', 'frontend'],
+            CateNew::class => ['categories', 'news', 'frontend'],
+            CateService::class => ['categories', 'services', 'frontend'],
+            CateProject::class => ['categories', 'projects', 'frontend'],
+            Page::class => ['pages', 'frontend'],
+            Product::class => ['products', 'frontend'],
+            News::class => ['news', 'frontend'],
+            Service::class => ['services', 'frontend'],
+            Project::class => ['projects', 'frontend'],
+            Brand::class => ['brands', 'frontend'],
+            Feedback::class => ['feedback'],
+            Feature::class => ['features', 'frontend'],
+            Gallery::class => ['galleries', 'frontend'],
+            ProductSetting::class => ['products', 'system', 'frontend'],
+            NewsSetting::class => ['news', 'system', 'frontend'],
         ];
 
-        foreach ($watchedModels as $model) {
+        foreach ($modelTagMap as $model => $tags) {
             if (class_exists($model)) {
-                $model::saved($clearFrontendCache);
-                $model::deleted($clearFrontendCache);
+                $flushModelCache = function () use ($tags, $model) {
+                    if (class_exists(\App\Services\CacheService::class)) {
+                        \App\Services\CacheService::forgetTags($tags);
+                    }
+                    FrontendComposer::flushMemoryCache();
+                    SlugResolutionService::flushMemoryCache();
+                    if ($model === ProductSetting::class || $model === System::class) {
+                        ProductSetting::flushMemoryCache();
+                    }
+                    if ($model === NewsSetting::class || $model === System::class) {
+                        NewsSetting::flushMemoryCache();
+                    }
+                    if ($model === System::class) {
+                        Cache::forget('frontend_global_data');
+                        Cache::forget('admin_system_config');
+                    }
+                    Cache::forget('dynamic_sitemap_xml');
+                };
+                $model::saved($flushModelCache);
+                $model::deleted($flushModelCache);
             }
         }
     }

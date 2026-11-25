@@ -37,14 +37,15 @@ Mọi thay đổi mã nguồn bắt buộc tuân thủ bộ quy tắc chuyên s�
 |---|---|---|---|
 | **01** | **Zero-Hardcode** | 100% dữ liệu lấy từ CSDL / Admin; cấm tuyệt đối text tĩnh trong Blade. | [`.agents/rules/01-architecture-boundary.md`](./rules/01-architecture-boundary.md) |
 | **02** | **Layered Architecture** | `Controller → Service → Repository → Model`. Không viết SQL trong Controller. | [`.agents/architecture.md`](./architecture.md) |
-| **03** | **Anti-AI Design System** | Lưới 1200px, bo góc duy nhất 8px, cấm pill/gradient ảo, mobile 2 cột. | [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md) |
+| **03** | **Anti-AI Design System** | Sharp-First (`0px–4px` radius), bề mặt `85/10/5`, cấm `rounded-xl/2xl/3xl` & `backdrop-blur`. | [`.agents/rules/03-anti-ai-design-system.md`](./rules/03-anti-ai-design-system.md) |
 | **04** | **Admin UI/UX Standard** | Height 38px đồng bộ, switches accent `#2563eb`, ghost action buttons 32px. | [`.agents/rules/04-admin-ui-ux.md`](./rules/04-admin-ui-ux.md) |
 | **05** | **Unified Media Storage** | Lưu ảnh/video trực tiếp `public/uploads/{module}/`, nén WebP, preview `#t=0.5`. | [`.agents/rules/05-media-storage.md`](./rules/05-media-storage.md) |
 | **06** | **SEO & Cloudflare Edge** | Dynamic sitemap, schema JSON-LD, 2 Cloudflare Cache Rules (Bypass Admin). | [`.agents/rules/06-seo-cloudflare.md`](./rules/06-seo-cloudflare.md) |
 | **07** | **Autonomous Testing** | Quy trình 6 tầng, vòng lặp 4 bước tự test trước khi báo hoàn thành cho user. | [`.agents/rules/07-autonomous-testing.md`](./rules/07-autonomous-testing.md) |
-| **08** | **Git & Commit Safety** | CẤM tự ý commit/push; commit message tiếng Anh chuẩn Conventional. | _Xem mục Invariants bên dưới_ |
+| **08** | **Security & Git Safety** | Validate FormRequest, chống XSS, CẤM tự ý commit/push; commit tiếng Anh Conventional. | [`.agents/rules/08-security-validation.md`](./rules/08-security-validation.md) |
 | **09** | **Theme Rebuilding** | Chạy `php artisan site:rebuild --topic="..."` trước khi sửa view & CSS. | [`.agents/rules/02-theme-building-process.md`](./rules/02-theme-building-process.md) |
 | **10** | **Asset Consolidation** | Cấm tạo file lẻ; CSS vào `theme-style.css`, JS vào `main.js`. | [`.agents/frontend-design.md`](./frontend-design.md) |
+| **19** | **Performance & Pruning** | Cache TTL theo **giây**, Column Pruning, `withCount`, chặn 404 storm, Redis. | [`.agents/rules/19-performance-query-pruning.md`](./rules/19-performance-query-pruning.md) |
 
 ---
 

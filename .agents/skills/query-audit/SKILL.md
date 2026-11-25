@@ -26,8 +26,8 @@ npm run ast -- -p 'DB::$METHOD($$$)' app/Http/Controllers
 
 ### 2.2. Lấy Cột Văn Bản Lớn Trong Query Danh Sách (Vi phạm Rule 19)
 - Khi hiển thị danh sách sản phẩm, tin tức, card preview:
-  - ❌ **Sai**: `Product::where('status', true)->get();` (lấy cả `content_vn`, `content_en` hàng chục KB mỗi dòng).
-  - ✅ **Đúng**: `Product::select('id_product', 'name_vn', 'slug_vn', 'price', 'avatar', 'category_id')->get();`
+  - ❌ **Sai**: `Product::where('status', true)->get();` (lấy cả `content` JSON, `image_detail` hàng chục KB mỗi dòng).
+  - ✅ **Đúng**: `Product::select('id_product', 'uuid', 'name', 'slug', 'price', 'price_old', 'image_vn', 'image_en', 'intro', 'category_id')->get();`
 
 ### 2.3. Lỗi N+1 Queries (Missing Eager Loading)
 - ❌ **Sai**:

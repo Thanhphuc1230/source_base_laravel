@@ -20,7 +20,7 @@ class HomeService
      */
     public function getHomeData(): array
     {
-        return CacheService::remember('frontend', 'home_page_aggregated_data', 60, function () {
+        return CacheService::remember('frontend', 'home_page_aggregated_data', CacheService::getTtl('medium'), function () {
             $data = [];
 
             $data['sliders'] = Slider::where('status', 1)

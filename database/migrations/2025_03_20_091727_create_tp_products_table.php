@@ -39,9 +39,7 @@ return new class extends Migration
 
             $table->foreign('category_id')->references('id_cate_product')->on('tp_cate_products')->onDelete('cascade');
 
-            // Query & sorting indexes
-            $table->index('created_at');
-            $table->index(['category_id', 'created_at']);
+            // Query & sorting indexes (pruned redundant left-prefix duplicates)
             $table->index(['category_id', 'status', 'created_at']);
             $table->index(['category_id', 'status', 'stt']);
             $table->index(['quantity', 'status']);
@@ -49,11 +47,8 @@ return new class extends Migration
             // Composite indexes for frontend route & display
             $table->index(['status', 'stt']);
             $table->index(['status', 'home']);
-            $table->index(['status', 'hot']);
             $table->index(['status', 'hot', 'stt']);
-            $table->index(['status', 'sale']);
             $table->index(['status', 'sale', 'stt']);
-            $table->index(['status', 'category_id']);
             $table->index(['created_at', 'status']);
         });
     }
