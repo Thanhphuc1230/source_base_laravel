@@ -133,5 +133,30 @@ class AppServiceProvider extends ServiceProvider
                 $model::deleted($flushModelCache);
             }
         }
+
+        // Auto-register 301 redirects when SEO slugs change on core content models
+        $slugTrackedModels = [Product::class, News::class, CateProduct::class, CateNew::class, Page::class];
+        foreach ($slugTrackedModels as $slugModel) {
+            if (class_exists($slugModel)) {
+                $slugModel::updating(function ($record) {
+                    if (! $record->isDirty('slug')) {
+                        return;
+                    }
+                    $rawOriginal = $record->getRawOriginal('slug');
+                    $oldSlugs = is_string($rawOriginal) ? (json_decode($rawOriginal, true) ?: ['vi' => $rawOriginal]) : (array) $rawOriginal;
+                    $newRaw = $record->getAttributes()['slug'] ?? null;
+                    $newSlugs = is_string($newRaw) ? (json_decode($newRaw, true) ?: ['vi' => $newRaw]) : (array) $newRaw;
+
+                    $redirectService = app(\App\Services\RedirectService::class);
+                    foreach ($oldSlugs as $loc => $oldSlug) {
+                        $newSlug = $newSlugs[$loc] ?? null;
+                        if (is_string($oldSlug) && is_string($newSlug) && $oldSlug !== '' && $newSlug !== '' && $oldSlug !== $newSlug) {
+                            $prefix = ($loc === 'vi' || $loc === 'vn') ? '/' : '/' . $loc . '/';
+                            $redirectService->registerSlugChangeRedirect($prefix . ltrim($oldSlug, '/'), $prefix . ltrim($newSlug, '/'));
+                        }
+                    }
+                });
+            }
+        }
     }
 }
