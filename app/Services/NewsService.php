@@ -82,6 +82,13 @@ class NewsService
         // Cache approved comments
         $data['comments'] = $this->commentRepository->getApprovedCommentsForItem('news', $data['news_detail']->id_new);
 
+        // Auto Table of Contents & Reading Time
+        $rawContent = function_exists('lang') ? lang($data['news_detail'], 'content') : ($data['news_detail']->content ?? '');
+        $processed = app(ContentTocService::class)->process((string) $rawContent);
+        $data['processed_content'] = $processed['html'];
+        $data['toc'] = $processed['toc'];
+        $data['reading_time'] = $processed['reading_time'];
+
         // Get common data
         $data = array_merge($data, $this->getCommonFrontendData());
 
