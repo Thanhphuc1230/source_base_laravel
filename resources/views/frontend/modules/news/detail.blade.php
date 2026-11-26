@@ -43,11 +43,17 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Left Column: Article content (col-span-2) -->
             <div class="lg:col-span-2 space-y-6">
-                <article class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-sm space-y-6">
+                <article class="bg-white rounded-none border border-gray-200 p-6 sm:p-8 space-y-6">
                     <div class="space-y-3">
-                        <span class="text-gold-650 text-2xs font-bold uppercase tracking-wider block">
-                            {{ $news_detail->created_at ? $news_detail->created_at->format('d/m/Y') : '' }}
-                        </span>
+                        <div class="flex flex-wrap items-center gap-3 text-gold-650 text-2xs font-bold uppercase tracking-wider">
+                            <span>{{ $news_detail->created_at ? $news_detail->created_at->format('d/m/Y') : '' }}</span>
+                            @if(!empty($reading_time))
+                                <span class="text-gray-400">•</span>
+                                <span class="text-gray-500 font-semibold normal-case">
+                                    <i class="fa-regular fa-clock mr-1"></i>{{ $reading_time }} phút đọc
+                                </span>
+                            @endif
+                        </div>
                         @if(empty($news_settings['banner_detail']))
                             <h1 class="text-2xl sm:text-3xl font-heading font-extrabold text-emerald-950 leading-tight">
                                 {{ lang($news_detail, 'name') }}
@@ -63,13 +69,33 @@
                     </div>
 
                     <!-- Main Article Image -->
-                    <div class="rounded-xl overflow-hidden shadow-sm h-[250px] sm:h-[400px]">
+                    <div class="rounded-none overflow-hidden h-[250px] sm:h-[400px] border border-gray-100">
                         <img src="{{ asset($news_detail->image_vn) }}" alt="{{ lang($news_detail, 'name') }}" class="w-full h-full object-cover">
                     </div>
 
+                    <!-- Auto Table of Contents -->
+                    @if(!empty($toc) && count($toc) > 0)
+                        <details open class="border border-gray-200 bg-neutral-50 p-4 rounded-none">
+                            <summary class="cursor-pointer font-heading font-bold text-sm text-emerald-950 select-none flex items-center justify-between">
+                                <span><i class="fa-solid fa-list-ul mr-2 text-gold-600"></i>Mục lục bài viết</span>
+                            </summary>
+                            <nav aria-label="Mục lục bài viết" class="mt-3 pt-3 border-t border-gray-200">
+                                <ul class="space-y-1.5 text-xs">
+                                    @foreach($toc as $item)
+                                        <li class="{{ $item['level'] === 3 ? 'pl-4 text-gray-600' : 'font-semibold text-gray-800' }}">
+                                            <a href="#{{ $item['id'] }}" class="hover:text-gold-600 hover:underline transition-colors">
+                                                {{ $item['text'] }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </nav>
+                        </details>
+                    @endif
+
                     <!-- Article Body HTML -->
                     <div class="prose prose-sm max-w-none text-xs text-gray-705 leading-relaxed space-y-4">
-                        {!! lang($news_detail, 'content') !!}
+                        {!! $processed_content ?? lang($news_detail, 'content') !!}
                     </div>
                 </article>
             </div>

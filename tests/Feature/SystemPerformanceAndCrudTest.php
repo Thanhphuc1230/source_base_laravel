@@ -19,6 +19,7 @@ use App\Repositories\Interfaces\ProductRepositoryInterface;
 use App\Services\CacheService;
 use App\Services\HomeService;
 use App\Services\ProductService;
+use App\Services\SitemapService;
 use App\Services\SlugResolutionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -254,5 +255,70 @@ class SystemPerformanceAndCrudTest extends TestCase
         $this->assertNotNull($related);
         $this->assertArrayNotHasKey('content', $related->getAttributes());
         $this->assertArrayNotHasKey('image_detail', $related->getAttributes());
+    }
+
+    public function test_updating_and_deleting_product_selectively_invalidates_related_caches_only(): void
+    {
+        Cache::flush();
+
+        $cate = CateProduct::create([
+            'uuid' => (string) Str::uuid(),
+            'name' => ['vi' => 'Bàn', 'en' => 'Tables'],
+            'slug' => ['vi' => 'ban', 'en' => 'tables'],
+            'parent_id' => 0,
+            'status' => 1,
+            'stt' => 1,
+        ]);
+
+        $product = Product::create([
+            'uuid' => (string) Str::uuid(),
+            'name' => ['vi' => 'Bàn Cũ', 'en' => 'Old Table'],
+            'slug' => ['vi' => 'ban-cu', 'en' => 'old-table'],
+            'price' => 1000000,
+            'category_id' => $cate->id_cate_product,
+            'status' => 1,
+            'hot' => 1,
+            'stt' => 1,
+        ]);
+
+        // Warm HomeService, Sitemap, and an unrelated 'menu' cache tag
+        app(HomeService::class)->getHomeData();
+        app(SitemapService::class)->generateXml();
+        $menuValue = CacheService::remember('menu', 'selective_test_menu', 3600, fn () => 'menu_intact');
+        $this->assertSame('menu_intact', $menuValue);
+        $this->assertTrue(Cache::has('dynamic_sitemap_xml'));
+
+        // Update product -> must invalidate frontend/products/sitemap, NOT 'menu'
+        $product->update(['name' => ['vi' => 'Bàn Mới', 'en' => 'New Table']]);
+
+        $this->assertFalse(Cache::has('dynamic_sitemap_xml'), 'Sitemap cache must be invalidated on product update.');
+        $menuAfterUpdate = CacheService::remember('menu', 'selective_test_menu', 3600, fn () => 'menu_recomputed');
+        $this->assertSame('menu_intact', $menuAfterUpdate, 'Unrelated menu tag must NOT be flushed on product update.');
+
+        // Re-warm sitemap, then delete product -> must invalidate sitemap again
+        app(SitemapService::class)->generateXml();
+        $this->assertTrue(Cache::has('dynamic_sitemap_xml'));
+
+        $product->delete();
+        $this->assertFalse(Cache::has('dynamic_sitemap_xml'), 'Sitemap cache must be invalidated on product delete.');
+        $menuAfterDelete = CacheService::remember('menu', 'selective_test_menu', 3600, fn () => 'menu_recomputed');
+        $this->assertSame('menu_intact', $menuAfterDelete, 'Unrelated menu tag must NOT be flushed on product delete.');
+    }
+
+    public function test_edge_cache_headers_for_guest_vs_cart(): void
+    {
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $cacheControl = (string) $homeResponse->headers->get('Cache-Control');
+        $this->assertStringContainsString('public', $cacheControl);
+        $this->assertStringContainsString('s-maxage=3600', $cacheControl);
+
+        $cartResponse = $this->get('/cart');
+        $cartCacheControl = (string) $cartResponse->headers->get('Cache-Control');
+        $this->assertStringNotContainsString('s-maxage=3600', $cartCacheControl);
+
+        while (ob_get_level() > 1) {
+            ob_end_clean();
+        }
     }
 }

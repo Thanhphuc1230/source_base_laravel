@@ -37,7 +37,7 @@ class RouteController extends Controller
         $result = $this->slugResolutionService->findContentBySlug($slug);
 
         if (! $result) {
-            return view('errors.404');
+            return response()->view('errors.404', [], 404);
         }
 
         return $this->dispatchToController($result);

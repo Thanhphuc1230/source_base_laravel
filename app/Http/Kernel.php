@@ -71,5 +71,7 @@ class Kernel extends HttpKernel
         'role' => \App\Http\Middleware\CheckRole::class,
         'permission' => \App\Http\Middleware\CheckPermission::class,
         'api.token' => \App\Http\Middleware\VerifyApiToken::class,
+        'edge.cache' => \App\Http\Middleware\EdgeCacheHeaders::class,
+        'redirect.monitor' => \App\Http\Middleware\RedirectAndMonitor404::class,
     ];
 }
