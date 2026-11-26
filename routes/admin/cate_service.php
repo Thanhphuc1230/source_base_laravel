@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(CateServiceController::class)
     ->prefix('cate-service')
-    ->name('cate-service.')
+    ->name('cate_service.')
     ->group(function () {
         Route::get('/', 'index')->name('index')->middleware('permission:cate_service.view');
         Route::get('/create', 'create')->name('create')->middleware('permission:cate_service.create');

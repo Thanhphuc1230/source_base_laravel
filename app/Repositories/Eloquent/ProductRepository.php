@@ -34,10 +34,7 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         // Search filter
         if (!empty($filters['search'])) {
             $searchTerm = trim($filters['search']);
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('name_en', 'LIKE', "%{$searchTerm}%");
-            });
+            $query->where('name', 'LIKE', "%{$searchTerm}%");
         }
 
         // Category filter (support both single category and child categories)
@@ -53,8 +50,8 @@ class ProductRepository extends BaseRepository implements ProductRepositoryInter
         $sortDirection = $filters['sort_direction'] ?? 'desc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->with(['cate:id_cate_product,name_vn,name_en,slug_vn,slug_en'])
-            ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'hot', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_product', 'seo_score')
+        return $query->with(['cate:id_cate_product,name,slug'])
+            ->select('uuid', 'name', 'slug', 'status', 'home', 'hot', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_product', 'seo_score')
             ->paginate($perPage);
     }
 

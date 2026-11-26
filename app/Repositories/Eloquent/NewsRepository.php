@@ -34,10 +34,7 @@ class NewsRepository extends BaseRepository implements NewsRepositoryInterface
         // Search filter
         if (!empty($filters['search'])) {
             $searchTerm = trim($filters['search']);
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                    ->orWhere('name_en', 'LIKE', "%{$searchTerm}%");
-            });
+            $query->where('name', 'LIKE', "%{$searchTerm}%");
         }
 
         // Category filter (support hierarchy parent & children)
@@ -53,8 +50,8 @@ class NewsRepository extends BaseRepository implements NewsRepositoryInterface
         $sortDirection = $filters['sort_direction'] ?? 'desc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->with(['cate:id_cate_new,name_vn,name_en,slug_vn,slug_en'])
-            ->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_new', 'seo_score')
+        return $query->with(['cate:id_cate_new,name,slug'])
+            ->select('uuid', 'name', 'slug', 'status', 'home', 'stt', 'created_at', 'category_id', 'image_vn', 'image_en', 'id_new', 'seo_score')
             ->paginate($perPage);
     }
 

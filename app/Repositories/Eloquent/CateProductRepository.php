@@ -34,7 +34,7 @@ class CateProductRepository extends BaseRepository implements CateProductReposit
         if (isset($filters['search'])) {
             $searchTerm = $filters['search'];
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
             });
         }
@@ -49,7 +49,7 @@ class CateProductRepository extends BaseRepository implements CateProductReposit
         $sortDirection = $filters['sort_direction'] ?? 'asc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'home', 'parent_id', 'stt', 'image_vn', 'image_en', 'created_at', 'id_cate_product', 'seo_score')->orderBy('created_at', 'desc')
+        return $query->select('uuid', 'name', 'slug', 'status', 'home', 'parent_id', 'stt', 'image_vn', 'image_en', 'created_at', 'id_cate_product', 'seo_score')->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 

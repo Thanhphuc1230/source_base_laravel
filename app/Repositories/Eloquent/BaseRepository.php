@@ -305,7 +305,7 @@ abstract class BaseRepository implements RepositoryInterface
         if (isset($filters['search'])) {
             $searchTerm = $filters['search'];
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
                   ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
             });
         }

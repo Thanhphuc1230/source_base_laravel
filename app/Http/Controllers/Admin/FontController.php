@@ -14,7 +14,7 @@ class FontController extends BaseController
 
     public function __construct()
     {
-        parent::__construct('fonts');
+        parent::__construct('font');
         $this->model = new Font();
         $this->nameItem = 'Font';
         View::share('nameClass', 'fonts');
@@ -192,5 +192,27 @@ class FontController extends BaseController
         }
 
         return back()->with('success', 'Xóa ' . count($ids) . ' font thành công!');
+    }
+
+    public function status($uuid, $status, $field)
+    {
+        $font = $this->model::find($uuid);
+        if (!$font) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+        $font->$field = (int) $status;
+        $font->save();
+        return response()->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công']);
+    }
+
+    public function numericalOrder(Request $request, $uuid)
+    {
+        $font = $this->model::find($uuid);
+        if (!$font) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+        $font->sort_order = (int) $request->input('stt', 0);
+        $font->save();
+        return response()->json(['success' => true, 'message' => 'Cập nhật thứ tự thành công']);
     }
 }

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(CateProjectController::class)
     ->prefix('cate-project')
-    ->name('cate-project.')
+    ->name('cate_project.')
     ->group(function () {
         Route::get('/', 'index')->name('index')->middleware('permission:cate_project.view');
         Route::get('/create', 'create')->name('create')->middleware('permission:cate_project.create');

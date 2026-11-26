@@ -32,10 +32,7 @@ class AboutRepository extends BaseRepository implements AboutRepositoryInterface
         // Apply search filter
         if (isset($filters['search']) && !empty($filters['search'])) {
             $searchTerm = $filters['search'];
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('name_en', 'LIKE', "%{$searchTerm}%");
-            });
+            $query->where('name', 'LIKE', "%{$searchTerm}%");
         }
 
         // Apply sorting
@@ -63,7 +60,7 @@ class AboutRepository extends BaseRepository implements AboutRepositoryInterface
     public function getAboutBySlug($slug)
     {
         return $this->model->where(function ($q) use ($slug) {
-            $q->where('slug_vn', $slug)->orWhere('slug_en', $slug);
+            $q->where('slug->vi', $slug)->orWhere('slug->en', $slug);
         })
             ->where('status', 1)
             ->first();

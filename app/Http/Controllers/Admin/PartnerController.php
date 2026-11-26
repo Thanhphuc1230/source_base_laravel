@@ -78,93 +78,53 @@ class PartnerController extends BaseController
         $data = $request->except('_token', 'return_back', 'return_list', 'currentPage');
         
         // Handle multilingual images
-        $data['image_vn'] = $this->saveImage($request, $current, 'image_vn');
-        $data['image_en'] = $this->saveImage($request, $current, 'image_en');
+        $data['image_vn'] = $this->updateImage($request, $current, null, 'image_vn');
+        $data['image_en'] = $this->updateImage($request, $current, null, 'image_en');
 
-        $this->partnerRepository->update($uuid, $data);
+        $this->partnerRepository->update($data, $uuid);
         toast('Cập nhật '.$this->nameItem.' thành công', 'success');
 
         PartnerChanged::dispatch($current, 'updated');
 
-        return $request->has('return_back') 
-            ? back() 
-            : ($request->has('return_list') 
-                ? redirect()->route('admin.'.$this->nameClass.'.index', ['page' => $request->currentPage]) 
-                : null);
+        return $request->has('return_back')
+            ? back()
+            : $this->route_admin('index', [], [], $request->input('currentPage'));
     }
 
-    public function create()
+    public function edit($uuid, $currentPage = 1)
     {
-        $data['action'] = 'create';
-        $data['nameItem'] = $this->nameItem;
-        return $this->view_admin('detail', $data);
-    }
-
-    public function edit(string $uuid, Request $request)
-    {
-        $data['page'] = $this->partnerRepository->findByUuid($uuid);
-        
-        if (!$data['page']) {
-            toast('Không tìm thấy '.$this->nameItem, 'error');
-            return back();
-        }
-
-        $data['action'] = 'edit';
-        $data['nameItem'] = $this->nameItem;
-        $data['currentPage'] = $request->page ?? 1;
-
-        return $this->view_admin('detail', $data);
+        return $this->performEdit($uuid, $currentPage);
     }
 
     public function destroy(string $uuid)
     {
         $partner = $this->partnerRepository->findByUuid($uuid);
-        
-        if ($partner) {
-            $this->partnerRepository->delete($uuid);
-            toast('Xóa '.$this->nameItem.' thành công', 'success');
-            PartnerChanged::dispatch($partner, 'deleted');
-        } else {
-            toast('Không tìm thấy '.$this->nameItem, 'error');
-        }
-
-        return back();
+        $result = $this->dataRemovalService->destroyData($this->model::class, $uuid, $this->imageFolder);
+        PartnerChanged::dispatch($partner, 'deleted');
+        return $result;
     }
 
     public function destroyAll(Request $request)
     {
         $uuids = $request->input('uuids', []);
-        
-        if (!empty($uuids)) {
-            $this->partnerRepository->deleteMultiple($uuids);
-            toast('Xóa '.$this->nameItem.' thành công', 'success');
-            PartnerChanged::dispatch(null, 'deleted');
-        }
-
-        return back();
+        $result = $this->dataRemovalService->destroyAllByUUIDs($this->model::class, $uuids, $this->imageFolder);
+        PartnerChanged::dispatch(null, 'deleted');
+        return $result;
     }
 
-    public function status(string $uuid, int $status, string $field)
+    public function status($uuid, $status, $field)
     {
-        return $this->updateFieldStatus($this->partnerRepository, $uuid, $field, $status);
+        $partner = $this->partnerRepository->findByUuid($uuid);
+        $result = $this->toggleService->toggleModelStatus($uuid, $status, $field, $this->model::class);
+        PartnerChanged::dispatch($partner, 'status_updated');
+        return $result;
     }
 
-    public function numericalOrder(Request $request, string $uuid)
+    public function numericalOrder(Request $request, $uuid)
     {
-        $order = (int) $request->input('stt', 0);
-        $updated = $this->partnerRepository->updateOrder($uuid, $order);
-
-        if ($updated) {
-            PartnerChanged::dispatch(null, 'reordered');
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Cập nhật số thứ tự thành công'
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Cập nhật thất bại'
-        ], 400);
+        $partner = $this->partnerRepository->findByUuid($uuid);
+        $result = $this->toggleService->updateModelOrder($request, $uuid, $this->model::class);
+        PartnerChanged::dispatch($partner, 'order_updated');
+        return $result;
     }
 }

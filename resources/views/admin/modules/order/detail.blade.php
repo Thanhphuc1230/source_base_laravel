@@ -144,7 +144,7 @@
                                                         <td>{{ $loop->iteration }}</td>
                                                         <td><img src="{{ $product->image }}"
                                                                 width="50px"></td>
-                                                        <td><a href="{{ route('web.resolve',['slug' => $product->slug]) }}">{{ $product->name_vn }}</a></td>
+                                                        <td><a href="{{ route('web.resolve',['slug' => $product->slug]) }}">{{ $product->name }}</a></td>
                                                       
                                                         <td>{{ number_format($item->price) }} {{ currency_unit() }}</td>
                                                         <td>{{ $item->quantity }}</td>

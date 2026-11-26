@@ -138,6 +138,5 @@
             <!-- container-fluid -->
         </div>
         @include('admin.ajax.status')
-        @include('admin.ajax.delete-modal')
         @include('admin.ajax.update-stt')
     @endsection

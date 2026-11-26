@@ -21,7 +21,11 @@ trait CrudOperationsTrait
     {
         $data['action'] = 'create';
         $data['nameItem'] = $this->nameItem ?? 'mục';
-        
+
+        if (isset($this->imageFolder)) {
+            $data['imageFolder'] = $this->imageFolder;
+        }
+
         return $this->view_admin('detail', $data);
     }
 

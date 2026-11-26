@@ -106,9 +106,13 @@ class DashboardRepository implements DashboardRepositoryInterface
      */
     public function getMonthlyRevenueChart(int $year): array
     {
+        $monthExpr = DB::connection()->getDriverName() === 'sqlite'
+            ? "CAST(strftime('%m', created_at) AS INTEGER)"
+            : 'MONTH(created_at)';
+
         $rows = DB::table('tp_order_status')
             ->selectRaw("
-                MONTH(created_at) as order_month,
+                {$monthExpr} as order_month,
                 COALESCE(SUM(CASE WHEN status = 1 THEN CAST(total AS DECIMAL(15,2)) ELSE 0 END), 0) as monthly_revenue,
                 COUNT(*) as total_orders
             ")
@@ -159,8 +163,8 @@ class DashboardRepository implements DashboardRepositoryInterface
 
         $productIds = $topSold->pluck('product_id')->toArray();
         $products = Product::whereIn('id_product', $productIds)
-            ->with('cate:id_cate_product,name_vn')
-            ->select(['id_product', 'uuid', 'name_vn', 'price', 'image_vn', 'category_id', 'quantity'])
+            ->with('cate:id_cate_product,name')
+            ->select(['id_product', 'uuid', 'name', 'price', 'image_vn', 'image_en', 'category_id', 'quantity'])
             ->get()
             ->keyBy('id_product');
 
@@ -173,10 +177,10 @@ class DashboardRepository implements DashboardRepositoryInterface
 
             return [
                 'id_product' => $item->product_id,
-                'name' => $product ? $product->name_vn : 'Sản phẩm #' . $item->product_id,
+                'name' => $product ? $product->name : 'Sản phẩm #' . $item->product_id,
                 'price' => $product ? (float) $product->price : 0,
-                'image' => $product ? $product->image_vn : null,
-                'category' => $product && $product->cate ? $product->cate->name_vn : null,
+                'image' => $product ? $product->image : null,
+                'category' => $product && $product->cate ? $product->cate->name : null,
                 'stock' => $product ? (int) $product->quantity : 0,
                 'total_sold' => $sold,
                 'total_revenue' => (float) $item->total_revenue,
@@ -195,8 +199,8 @@ class DashboardRepository implements DashboardRepositoryInterface
     public function getLowStockProducts(int $threshold = 5, int $limit = 10): array
     {
         return Product::lowStock($threshold)
-            ->with('cate:id_cate_product,name_vn')
-            ->select(['id_product', 'uuid', 'name_vn', 'price', 'quantity', 'image_vn', 'category_id', 'status'])
+            ->with('cate:id_cate_product,name')
+            ->select(['id_product', 'uuid', 'name', 'price', 'quantity', 'image_vn', 'image_en', 'category_id', 'status'])
             ->orderBy('quantity', 'asc')
             ->limit($limit)
             ->get()
@@ -204,10 +208,10 @@ class DashboardRepository implements DashboardRepositoryInterface
                 return [
                     'id_product' => $product->id_product,
                     'uuid' => $product->uuid,
-                    'name' => $product->name_vn,
+                    'name' => $product->name,
                     'price' => (float) $product->price,
-                    'image' => $product->image_vn,
-                    'category' => $product->cate ? $product->cate->name_vn : null,
+                    'image' => $product->image,
+                    'category' => $product->cate ? $product->cate->name : null,
                     'quantity' => (int) $product->quantity,
                     'is_out_of_stock' => $product->quantity <= 0,
                 ];

@@ -27,7 +27,14 @@ class SystemController extends BaseController
 
     public function index()
     {
-        $data['system'] = $this->systemRepository->all()->first();
+        $system = $this->systemRepository->all()->first();
+        if (!$system) {
+            $system = \App\Models\System::create([
+                'email' => 'admin@example.com',
+                'active_languages' => ['vi', 'en'],
+            ]);
+        }
+        $data['system'] = $system;
         return $this->view_admin('index', $data);
     }
 

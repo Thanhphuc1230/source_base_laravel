@@ -15,8 +15,8 @@
                 <i class="ri-drag-move-2-fill fs-18"></i>
             </span>
             <div class="text-truncate">
-                <h6 class="mb-1 text-dark fw-semibold text-truncate">{{ $item->name_vn }}</h6>
-                <div class="d-flex align-items-center gap-1 flex-wrap">
+                <h6 class="mb-0 text-dark fw-semibold text-truncate" style="line-height: 1.3;">{{ $item->name_vn }}</h6>
+                <div class="d-flex align-items-center gap-1 flex-wrap mt-1">
                     <span class="category-badge">{{ $typeLabel }}</span>
                     @if ($belongName)
                         <span class="text-muted small text-truncate" style="max-width: 220px;">: {{ $belongName }}</span>
@@ -45,7 +45,7 @@
     </div>
 
     {{-- Render children recursively --}}
-    <div class="list-group nested-list nested-sortable menu-children-container mt-2">
+    <div class="list-group nested-list nested-sortable menu-children-container mt-1">
         @if ($item->children && $item->children->isNotEmpty())
             @foreach ($item->children as $child)
                 @include('admin.modules.menu.menu-item', [

@@ -33,7 +33,7 @@ class CateProjectRepository extends BaseRepository implements CateProjectReposit
         if (isset($filters['search'])) {
             $searchTerm = $filters['search'];
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
                     ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
             });
         }
@@ -48,7 +48,7 @@ class CateProjectRepository extends BaseRepository implements CateProjectReposit
         $sortDirection = $filters['sort_direction'] ?? 'asc';
         $query->orderBy($sortField, $sortDirection);
 
-        return $query->select('uuid', 'name_vn', 'name_en', 'slug_vn', 'slug_en', 'status', 'parent_id', 'stt', 'image_vn', 'image_en', 'created_at', 'id_cate_project')->orderBy('created_at', 'desc')
+        return $query->select('uuid', 'name', 'slug', 'status', 'parent_id', 'stt', 'image_vn', 'image_en', 'created_at', 'id_cate_project')->orderBy('created_at', 'desc')
             ->paginate($perPage);
     }
 

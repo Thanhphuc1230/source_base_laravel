@@ -34,8 +34,7 @@ class PageRepository extends BaseRepository implements PageRepositoryInterface
         if (isset($filters['search'])) {
             $searchTerm = $filters['search'];
             $query->where(function ($q) use ($searchTerm) {
-                $q->where('name_vn', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('name_en', 'LIKE', "%{$searchTerm}%")
+                $q->where('name', 'LIKE', "%{$searchTerm}%")
                   ->orWhere('status', '=', $searchTerm === 'active' ? 1 : 0);
             });
         }
@@ -75,7 +74,7 @@ class PageRepository extends BaseRepository implements PageRepositoryInterface
     public function getPageBySlug($slug)
     {
         return $this->model->where(function ($q) use ($slug) {
-            $q->where('slug_vn', $slug)->orWhere('slug_en', $slug);
+            $q->where('slug->vi', $slug)->orWhere('slug->en', $slug);
         })
             ->where('status', 1)
             ->first();

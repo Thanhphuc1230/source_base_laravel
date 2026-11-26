@@ -12,6 +12,8 @@ Route::controller(FontController::class)
         Route::post('/', 'store')->name('store')->middleware('permission:font.create');
         Route::get('/{id}/edit', 'edit')->name('edit')->middleware('permission:font.edit');
         Route::put('/{id}', 'update')->name('update')->middleware('permission:font.edit');
+        Route::post('/status/{uuid}/{status}/{field}', 'status')->name('status')->middleware('permission:font.edit');
+        Route::post('/update-stt/{uuid}', 'numericalOrder')->name('numericalOrder')->middleware('permission:font.edit');
         Route::delete('/{id}', 'destroy')->name('destroy')->middleware('permission:font.delete');
         Route::post('/destroy-all', 'destroyAll')->name('destroyAll')->middleware('permission:font.delete');
     });

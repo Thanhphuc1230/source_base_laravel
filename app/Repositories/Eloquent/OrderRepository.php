@@ -93,7 +93,7 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
             ->join('tp_products', 'tp_order_product.product_id', '=', 'tp_products.id_product')
             ->select(
                 'tp_order_product.*',
-                'tp_products.name_vn',
+                'tp_products.name',
                 'tp_products.image_vn as image'
             )
             ->where('tp_order_product.order_status_id', $orderStatusId)
