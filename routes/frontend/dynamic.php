@@ -4,7 +4,7 @@ use App\Http\Controllers\Frontend\RouteController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('web.')
-    ->middleware(['web', 'visit'])
+    ->middleware(['web', 'redirect.monitor', 'visit', 'edge.cache'])
     ->group(function () {
         // Multi-language prefixed routes: e.g. /en/product-slug, /ja/product-slug
         Route::get('{locale}/{slug}', [RouteController::class, 'resolveLocalized'])
