@@ -1,4 +1,4 @@
-name: Deploy Laravel App & Purge Cloudflare Cache
+name: Deploy Laravel App
 
 on:
   push:
@@ -13,13 +13,15 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: "${{ secrets.PROD_HOST != '' }}"
+    env:
+      PROD_HOST: ${{ secrets.PROD_HOST }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Deploy to Server via SSH
+        if: env.PROD_HOST != ''
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PROD_HOST }}
@@ -56,13 +58,3 @@ jobs:
             php artisan view:cache
             
             echo "✅ Triển khai website thành công!"
-
-      - name: Purge Cloudflare Edge Cache
-        if: "${{ secrets.CLOUDFLARE_ZONE_ID != '' && secrets.CLOUDFLARE_API_TOKEN != '' }}"
-        run: |
-          echo "🧹 Đang xóa Edge Cache trên Cloudflare..."
-          curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
-            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            --data '{"purge_everything":true}'
-          echo "✅ Đã gửi yêu cầu Purge Cache Cloudflare!"
