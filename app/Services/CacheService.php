@@ -29,6 +29,7 @@ class CacheService
         'feedback' => 'feedback',
         'services' => 'services',
         'projects' => 'projects',
+        'redirects' => 'redirects',
         'search' => 'search',
         'system' => 'system',
     ];

@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\OrderRepository;
+use App\Repositories\Eloquent\RedirectRepository;
 use App\Repositories\Eloquent\RoleRepository;
 use App\Repositories\Eloquent\MailTemplateRepository;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use App\Repositories\Interfaces\RedirectRepositoryInterface;
 use App\Repositories\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Interfaces\MailTemplateRepositoryInterface;
 use App\Repositories\Eloquent\AboutRepository;
@@ -75,6 +77,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(AboutRepositoryInterface::class, AboutRepository::class);
+        $this->app->bind(RedirectRepositoryInterface::class, RedirectRepository::class);
         $this->app->bind(PartnerRepositoryInterface::class, PartnerRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, BrandRepository::class);
         $this->app->bind(FeatureRepositoryInterface::class, FeatureRepository::class);
