@@ -8,10 +8,185 @@
     {{-- Semantic Page Heading for Technical SEO (Hidden visually via .sr-only) --}}
     <h1 class="sr-only">{{ $web->name_company ?? $web->name_vn }} - {{ $web->name_vn }}</h1>
 
-    <!-- 1. Main Hero Slider Carousel -->
-    @include('frontend.partials.slider')
+    {{-- Dynamic Home Sections ordered by Admin Drag & Drop Builder --}}
+    @foreach(($home_sections ?? []) as $section)
+        @switch($section->type)
+            @case('hero')
+                @include('frontend.partials.slider')
+                @break
 
-    <!-- 2. About Section (Dynamic from DB) -->
+            @case('features')
+                @if(isset($features) && $features->isNotEmpty())
+                    <section class="py-14 md:py-20 bg-white border-t border-border-subtle scroll-anim fade-up">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border-subtle">
+                                @foreach($features->take($section->limit) as $feat)
+                                    <div class="p-6 border-r border-b border-border-subtle bg-white space-y-2.5 group">
+                                        <div class="text-taupe-oak text-lg">
+                                            <i class="{{ $feat->image ?? 'fa-solid fa-gem' }}"></i>
+                                        </div>
+                                        <h3 class="font-heading font-semibold text-sm text-charcoal group-hover:text-taupe-oak transition-colors">
+                                            {{ lang($feat, 'title') }}
+                                        </h3>
+                                        <p class="text-xs text-charcoal-muted leading-relaxed">
+                                            {{ lang($feat, 'content') }}
+                                        </p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+                @break
+
+            @case('icon_categories')
+                @if(isset($category_product) && $category_product->isNotEmpty())
+                    <section class="py-12 bg-white border-b border-border-subtle scroll-anim fade-up">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            @if($section->localized_title)
+                                <h2 class="text-xl sm:text-2xl font-heading font-semibold text-charcoal mb-6">{{ $section->localized_title }}</h2>
+                            @endif
+                            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
+                                @foreach($category_product->take($section->limit) as $cat)
+                                    <a href="{{ route('web.resolve', ['slug' => lang($cat, 'slug')]) }}" class="border border-border-subtle p-3 text-center hover:border-charcoal transition-colors">
+                                        @if($cat->image_vn)
+                                            <img src="{{ asset($cat->image_vn) }}" alt="{{ lang($cat, 'name') }}" class="w-10 h-10 object-cover mx-auto mb-2" loading="lazy">
+                                        @endif
+                                        <span class="block text-xs font-medium text-charcoal line-clamp-2">{{ lang($cat, 'name') }}</span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+                @break
+
+            @case('flash_sale')
+                <section class="py-14 md:py-20 bg-white border-t border-border-subtle scroll-anim fade-up" id="bespoke-products">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex flex-col md:flex-row items-center justify-between mb-10">
+                            <h2 class="text-2xl sm:text-3xl font-heading font-semibold text-charcoal tracking-tight">
+                                {{ $section->localized_title }}
+                            </h2>
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+                            @if(isset($hot_products) && $hot_products->isNotEmpty())
+                                @foreach($hot_products->take($section->limit) as $product)
+                                    <div class="w-full">
+                                        @include('frontend.components.product-card', ['product' => $product])
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                </section>
+                @break
+
+            @case('category_products')
+                @php
+                    $sectionProducts = $section->relationLoaded('resolved_items')
+                        ? $section->getRelation('resolved_items')
+                        : ($hot_products ?? collect())->take($section->limit);
+                @endphp
+                @if($sectionProducts->isNotEmpty())
+                    <section class="py-14 md:py-20 bg-white border-t border-border-subtle scroll-anim fade-up">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex items-center justify-between mb-8">
+                                <h2 class="text-2xl sm:text-3xl font-heading font-semibold text-charcoal tracking-tight">
+                                    {{ $section->localized_title }}
+                                </h2>
+                                @if($section->categoryProduct)
+                                    <a href="{{ route('web.resolve', ['slug' => lang($section->categoryProduct, 'slug')]) }}" class="text-xs font-semibold uppercase tracking-wider text-charcoal hover:text-taupe-oak">
+                                        Xem tất cả <i class="fa-solid fa-arrow-right ml-1"></i>
+                                    </a>
+                                @endif
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+                                @foreach($sectionProducts->take($section->limit) as $product)
+                                    <div class="w-full">
+                                        @include('frontend.components.product-card', ['product' => $product])
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+                @break
+
+            @case('mid_banner')
+                @if(isset($sliders) && $sliders->count() > 1)
+                    <section class="py-10 bg-white border-t border-border-subtle">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($sliders->take($section->limit) as $banner)
+                                <a href="{{ $banner->link ?: '#' }}" class="block border border-border-subtle overflow-hidden">
+                                    <img src="{{ asset($banner->image_vn) }}" alt="{{ lang($banner, 'name') }}" class="w-full h-48 object-cover" loading="lazy">
+                                </a>
+                            @endforeach
+                        </div>
+                    </section>
+                @endif
+                @break
+
+            @case('brands')
+                @if(isset($brands) && $brands->isNotEmpty())
+                    <section class="py-10 bg-white border-t border-border-subtle">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            @if($section->localized_title)
+                                <h2 class="text-xl font-heading font-semibold text-charcoal mb-6">{{ $section->localized_title }}</h2>
+                            @endif
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-4">
+                                @foreach($brands->take($section->limit) as $brand)
+                                    <div class="border border-border-subtle p-3 flex items-center justify-center bg-white">
+                                        <img src="{{ asset($brand->image) }}" alt="{{ lang($brand, 'name') }}" class="max-h-10 object-contain" loading="lazy">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </section>
+                @endif
+                @break
+
+            @case('news')
+                @php
+                    $sectionNews = $section->relationLoaded('resolved_items')
+                        ? $section->getRelation('resolved_items')
+                        : ($latest_news ?? collect())->take($section->limit);
+                @endphp
+                <section class="py-14 md:py-20 bg-white border-t border-border-subtle scroll-anim fade-up" id="architecture-journal">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex flex-col md:flex-row items-center justify-between mb-10">
+                            <h2 class="text-2xl sm:text-3xl font-heading font-semibold text-charcoal tracking-tight">
+                                {{ $section->localized_title }}
+                            </h2>
+                            @if($section->categoryNews)
+                                <a href="{{ route('web.resolve', ['slug' => lang($section->categoryNews, 'slug')]) }}" class="text-xs font-semibold uppercase tracking-wider text-charcoal hover:text-taupe-oak">
+                                    Đọc thêm bài viết <i class="fa-solid fa-arrow-right ml-1"></i>
+                                </a>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                            @foreach($sectionNews->take($section->limit) as $post)
+                                <article class="card-editorial overflow-hidden flex flex-col justify-between group h-full rounded-none border border-border-subtle bg-white">
+                                    <div class="aspect-16-11 overflow-hidden bg-neutral-50 zoom-container relative">
+                                        <a href="{{ route('web.resolve', ['slug' => lang($post, 'slug')]) }}" class="block w-full h-full">
+                                            <img src="{{ asset($post->image_vn) }}" alt="{{ lang($post, 'name') }}" class="w-full h-full object-cover" loading="lazy">
+                                        </a>
+                                    </div>
+                                    <div class="p-3.5 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
+                                        <h3 class="font-heading font-semibold text-xs sm:text-sm text-charcoal leading-snug group-hover:text-taupe-oak transition-colors line-clamp-2">
+                                            <a href="{{ route('web.resolve', ['slug' => lang($post, 'slug')]) }}">{{ lang($post, 'name') }}</a>
+                                        </h3>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+                @break
+        @endswitch
+    @endforeach
+
+    <!-- About Section (Dynamic from DB) -->
     @if(isset($about_section) && $about_section)
         <section class="py-14 md:py-20 bg-white border-b border-border-subtle scroll-anim fade-up" id="factory-about">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -151,131 +326,4 @@
             </div>
         </div>
     </section>
-
-    <!-- 4. Section Bộ Sưu Tập Nội Thất May Đo (Bespoke) - Mobile 2 cột (grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6) -->
-    <section class="py-[15px] bg-white border-t border-border-subtle scroll-anim fade-up" id="bespoke-products">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between mb-12">
-                <div class="text-center md:text-left space-y-1.5">
-                    <span class="badge-editorial">
-                        Bespoke Furniture Collection
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold text-charcoal tracking-tight">
-                        Bộ Sưu Tập Nội Thất May Đo
-                    </h2>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <a href="{{ route('web.resolve', ['slug' => 'phong-khach-bespoke']) }}" class="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-charcoal hover:text-taupe-oak transition-colors group">
-                        <span>Khám phá toàn bộ sản phẩm</span>
-                        <i class="fa-solid fa-arrow-right text-taupe-oak group-hover:translate-x-1.5 transition-transform"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Products Grid: Mobile 2 CỘT theo Rule 5 & Yêu cầu -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
-                @if(isset($hot_products) && $hot_products->isNotEmpty())
-                    @foreach($hot_products as $product)
-                        <div class="w-full">
-                            @include('frontend.components.product-card', ['product' => $product])
-                        </div>
-                    @endforeach
-                @else
-                    <div class="col-span-2 md:col-span-4 text-center py-12 text-charcoal-light">
-                        Đang cập nhật bộ sưu tập nội thất may đo.
-                    </div>
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- 5. Section Tạp Chí Kiến Trúc & Cảm Hứng Sống - Mobile 2 cột (grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6) -->
-    <section class="py-[15px] bg-cream border-t border-border-subtle scroll-anim fade-up" id="architecture-journal">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row items-center justify-between mb-12">
-                <div class="text-center md:text-left space-y-1.5">
-                    <span class="badge-editorial">
-                        Editorial Journal
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-heading font-semibold text-charcoal tracking-tight">
-                        Tạp Chí Kiến Trúc & Cảm Hứng Sống
-                    </h2>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <a href="{{ route('web.resolve', ['slug' => 'tap-chi-kien-truc']) }}" class="inline-flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-charcoal hover:text-taupe-oak transition-colors group">
-                        <span>Đọc thêm bài viết</span>
-                        <i class="fa-solid fa-arrow-right text-taupe-oak group-hover:translate-x-1.5 transition-transform"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Articles Grid: Mobile 2 CỘT theo Rule 5 & Yêu cầu -->
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
-                @if(isset($latest_news) && $latest_news->isNotEmpty())
-                    @foreach($latest_news as $post)
-                        @php
-                            $postName = lang($post, 'name');
-                            $postSlug = lang($post, 'slug');
-                            $postImage = $post->image_vn;
-                            $postDate = $post->created_at ? $post->created_at->format('d/m/Y') : date('d/m/Y');
-                        @endphp
-                        <article class="card-editorial overflow-hidden flex flex-col justify-between group h-full rounded-none border border-border-subtle bg-white">
-                            <!-- Image Container -->
-                            <div class="aspect-16-11 overflow-hidden bg-neutral-50 zoom-container relative">
-                                <a href="{{ route('web.resolve', ['slug' => $postSlug]) }}" class="block w-full h-full">
-                                    <img src="{{ asset($postImage) }}" alt="{{ $postName }}" class="w-full h-full object-cover" loading="lazy">
-                                </a>
-                                <span class="absolute bottom-2.5 left-2.5 bg-white border border-border-subtle text-charcoal text-3xs font-semibold px-2 py-0.5 rounded-[2px] tabular-nums">
-                                    {{ $postDate }}
-                                </span>
-                            </div>
-
-                            <!-- Content -->
-                            <div class="p-3.5 sm:p-5 flex-grow flex flex-col justify-between space-y-3">
-                                <div class="space-y-1.5">
-                                    <h3 class="font-heading font-semibold text-xs sm:text-sm text-charcoal leading-snug group-hover:text-taupe-oak transition-colors line-clamp-2">
-                                        <a href="{{ route('web.resolve', ['slug' => $postSlug]) }}">
-                                            {{ $postName }}
-                                        </a>
-                                    </h3>
-                                    <p class="text-3xs sm:text-2xs text-charcoal-muted leading-relaxed line-clamp-2 hidden sm:block">
-                                        {{ strip_tags(lang($post, 'intro')) }}
-                                    </p>
-                                </div>
-                                <div class="pt-2.5 border-t border-border-subtle">
-                                    <a href="{{ route('web.resolve', ['slug' => $postSlug]) }}" class="inline-flex items-center space-x-1.5 text-xs font-semibold text-charcoal group-hover:text-taupe-oak transition-colors">
-                                        <span>Đọc chi tiết</span>
-                                        <i class="fa-solid fa-chevron-right text-3xs text-taupe-oak"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- 6. Features Value Section -->
-    @if(isset($features) && $features->isNotEmpty())
-        <section class="py-14 md:py-20 bg-white border-t border-border-subtle scroll-anim fade-up">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-border-subtle">
-                    @foreach($features as $feat)
-                        <div class="p-6 border-r border-b border-border-subtle bg-white space-y-2.5 group">
-                            <div class="text-taupe-oak text-lg">
-                                <i class="{{ $feat->image ?? 'fa-solid fa-gem' }}"></i>
-                            </div>
-                            <h3 class="font-heading font-semibold text-sm text-charcoal group-hover:text-taupe-oak transition-colors">
-                                {{ lang($feat, 'title') }}
-                            </h3>
-                            <p class="text-xs text-charcoal-muted leading-relaxed">
-                                {{ lang($feat, 'content') }}
-                            </p>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </section>
-    @endif
 @endsection

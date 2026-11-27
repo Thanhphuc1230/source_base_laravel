@@ -19,6 +19,7 @@ Route::prefix('admin')
     ->group(function () {
         // Include all admin route files
         require __DIR__.'/admin/sitemap.php';
+        require __DIR__.'/admin/home-layout.php';
         require __DIR__.'/admin/redirect.php';
         require __DIR__.'/admin/analytics.php';
         require __DIR__.'/admin/profile.php';
