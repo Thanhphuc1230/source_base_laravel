@@ -10,6 +10,7 @@ use App\Models\CateService;
 use App\Models\Feature;
 use App\Models\Feedback;
 use App\Models\Gallery;
+use App\Models\HomeSection;
 use App\Models\Menu;
 use App\Models\News;
 use App\Models\NewsSetting;
@@ -107,6 +108,7 @@ class AppServiceProvider extends ServiceProvider
             Gallery::class => ['galleries', 'frontend'],
             ProductSetting::class => ['products', 'system', 'frontend'],
             NewsSetting::class => ['news', 'system', 'frontend'],
+            HomeSection::class => ['frontend', 'system', 'website', 'categories', 'products', 'sliders', 'news', 'brands', 'features'],
         ];
 
         foreach ($modelTagMap as $model => $tags) {
