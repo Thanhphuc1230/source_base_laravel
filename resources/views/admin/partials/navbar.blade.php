@@ -54,13 +54,14 @@
 
                 <!-- Dropdown Trang chủ (Quản lý các section trang chủ) -->
                 @php
-                    $isHomeActive = request()->routeIs('admin.slider.*') ||
+                    $isHomeActive = request()->routeIs('admin.home-layout.*') ||
+                                    request()->routeIs('admin.slider.*') ||
                                     request()->routeIs('admin.about.*') ||
                                     request()->routeIs('admin.feature.*') ||
                                     request()->routeIs('admin.gallery.*') ||
                                     request()->routeIs('admin.partner.*');
                 @endphp
-                @hasAnyPermission(['slider.view', 'about.view', 'feature.view', 'gallery.view', 'partner.view', 'brand.view'])
+                @hasAnyPermission(['system.view', 'slider.view', 'about.view', 'feature.view', 'gallery.view', 'partner.view', 'brand.view'])
                 <li class="nav-item">
                     <a class="nav-link menu-link {{ $isHomeActive ? 'active' : '' }}" href="#sidebarHome" data-bs-toggle="collapse" role="button"
                         aria-expanded="{{ $isHomeActive ? 'true' : 'false' }}" aria-controls="sidebarHome">
@@ -73,6 +74,13 @@
                                     <i class="ri-external-link-line me-1"></i> {{ $isEn ? 'View Website' : 'Xem trang chủ' }}
                                 </a>
                             </li>
+                            @hasPermission('system.view')
+                            <li class="nav-item">
+                                <a href="{{ route('admin.home-layout.index') }}" class="nav-link {{ request()->routeIs('admin.home-layout.*') ? 'active' : '' }}">
+                                    {{ $isEn ? 'Home Layout (Drag & Drop)' : 'Bố cục Trang chủ (Kéo thả)' }}
+                                </a>
+                            </li>
+                            @endhasPermission
                             @hasPermission('slider.view')
                             <li class="nav-item">
                                 <a href="{{ route('admin.slider.index') }}" class="nav-link {{ request()->routeIs('admin.slider.*') ? 'active' : '' }}">
